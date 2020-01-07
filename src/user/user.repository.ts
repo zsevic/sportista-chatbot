@@ -3,7 +3,7 @@ import { plainToClass } from 'class-transformer';
 import * as crypto from 'crypto';
 import { UserEntity } from './user.entity';
 import { User } from './user.payload';
-import { RegisterUserDto } from 'src/auth/dto';
+import { RegisterUserDto } from './dto';
 import { NotAcceptableException } from '@nestjs/common';
 
 @EntityRepository(UserEntity)
