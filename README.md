@@ -1,6 +1,6 @@
 # nestjs-starter
 
-> NestJS starter
+> Minimal NestJS boilerplate
 
 ## Getting started
 
@@ -49,6 +49,10 @@ npm run seed:generate <SEEDER_NAME>
 npm run seed
 npm run seed:down
 ```
+
+### API documentation
+
+API documentation is generated using [@nestjs/swagger](https://www.npmjs.com/package/@nestjs/swagger) module at `/api-docs` endpoint
 
 ### Technologies used
 
