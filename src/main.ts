@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -8,6 +9,15 @@ async function bootstrap() {
   app.enableCors();
   app.useGlobalPipes(new ValidationPipe());
 
-  await app.listen(3000);
+  const options = new DocumentBuilder()
+    .setTitle('NestJS starter')
+    .setDescription('NestJS starter API documentation')
+    .setVersion('0.0.1')
+    .addTag('auth')
+    .build();
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup('api', app, document);
+
+  await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
