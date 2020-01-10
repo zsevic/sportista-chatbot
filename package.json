@@ -11,6 +11,9 @@
     "migration:generate": "npm run typeorm -- migration:create -c migration -n $1",
     "migrate": "npm run typeorm -- migration:run -c migration",
     "migrate:down": "npm run typeorm -- migration:revert -c migration",
+    "seed:generate": "npm run typeorm -- migration:create -c seed -n $1",
+    "seed": "npm run typeorm -- migration:run -c seed",
+    "seed:down": "npm run typeorm -- migration:revert -c seed",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -21,7 +24,6 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js"
   },
   "dependencies": {

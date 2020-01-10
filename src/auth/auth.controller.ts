@@ -4,8 +4,9 @@ import { UserService } from 'src/user/user.service';
 import { User } from 'src/user/user.payload';
 import { AuthService } from './auth.service';
 import { LoginUserDto, RegisterUserDto } from 'src/user/dto';
-import { RolesGuard } from 'src/common/guards/roles.guard';
-import { Roles } from 'src/common/decorators/roles.decorator';
+import { RolesGuard } from './roles/roles.guard';
+import { Roles } from './roles/roles.decorator';
+import { AppRoles } from './roles/roles.enum';
 
 @Controller('auth')
 export class AuthController {
@@ -35,7 +36,7 @@ export class AuthController {
   }
 
   @UseGuards(AuthGuard(), RolesGuard)
-  @Roles('admin')
+  @Roles(AppRoles.ADMIN)
   @Get('me')
   async getLoggedInUser(@Request() request): Promise<User> {
     return request.user;

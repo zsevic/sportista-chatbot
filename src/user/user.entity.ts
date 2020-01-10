@@ -12,12 +12,6 @@ export class UserEntity {
   @Column()
   email: string;
 
-  @Column({default: ''})
-  bio: string;
-
-  @Column({default: ''})
-  image: string;
-
   @Column({
     transformer: new PasswordTransformer(),
   })

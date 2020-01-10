@@ -25,7 +25,7 @@ module.exports = [
     name: 'seed',
     type: 'sqlite',
     database: 'database.sqlite',
-    entities: ['dist/**/**.entity{.ts,.js}'],
+    entities: ['src/**/**.entity{.ts,.js}'],
     migrations: ['database/seeders/*{.ts,.js}'],
     migrationsTableName: 'seeders',
     cli: {

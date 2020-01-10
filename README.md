@@ -42,6 +42,14 @@ npm run migrate
 npm run migrate:down
 ```
 
+### Seeders
+
+```bash
+npm run seed:generate <SEEDER_NAME>
+npm run seed
+npm run seed:down
+```
+
 ### Technologies used
 
 * Node.js, TypeScript, NestJS, TypeORM

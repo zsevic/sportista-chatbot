@@ -1,10 +1,10 @@
+import { NotAcceptableException } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
 import { plainToClass } from 'class-transformer';
 import * as crypto from 'crypto';
 import { UserEntity } from './user.entity';
 import { User } from './user.payload';
 import { RegisterUserDto } from './dto';
-import { NotAcceptableException } from '@nestjs/common';
 
 @EntityRepository(UserEntity)
 export class UserRepository extends Repository<UserEntity> {
