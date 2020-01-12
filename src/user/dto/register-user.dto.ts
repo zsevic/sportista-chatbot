@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsEmail, MinLength } from 'class-validator';
+import { IsNotEmpty, IsEmail, MinLength, IsEnum } from 'class-validator';
+import { AppRoles } from 'src/auth/roles/roles.enum';
 
 export class RegisterUserDto {
   @IsNotEmpty()
@@ -9,6 +10,7 @@ export class RegisterUserDto {
   readonly username: string;
 
   @IsNotEmpty()
+  @IsEnum(AppRoles)
   readonly role: string;
 
   @IsNotEmpty()

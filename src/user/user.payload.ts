@@ -7,5 +7,5 @@ export class User {
   role: string;
   @Exclude()
   password?: string;
-  token?: string;
+  access_token?: string;
 }

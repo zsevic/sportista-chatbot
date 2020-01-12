@@ -20,6 +20,8 @@ export class UserService {
   }
 
   async register(payload: RegisterUserDto): Promise<User> {
+    await this.userRepository.validate(payload.username, payload.email);
+
     return this.userRepository.register(payload);
   }
 }

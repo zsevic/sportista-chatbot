@@ -1,7 +1,7 @@
-import { NotAcceptableException } from '@nestjs/common';
+import * as crypto from 'crypto';
+import { BadRequestException } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
 import { plainToClass } from 'class-transformer';
-import * as crypto from 'crypto';
 import { UserEntity } from './user.entity';
 import { User } from './user.payload';
 import { RegisterUserDto } from './dto';
@@ -35,12 +35,18 @@ export class UserRepository extends Repository<UserEntity> {
     return plainToClass(User, user);
   }
 
-  async register(payload: RegisterUserDto) {
-    const user = await this.getByEmail(payload.email);
-    if (user) {
-      throw new NotAcceptableException('User with provided email is already created');
-    }
+  async validate(username: string, email: string): Promise<void> {
+    const qb = await this.createQueryBuilder('user')
+      .where('user.username = :username', { username })
+      .orWhere('user.email = :email', { email });
 
+    const user = await qb.getOne();
+    if (user) {
+      throw new BadRequestException('Username and email must be unique');
+    }
+  }
+
+  async register(payload: RegisterUserDto) {
     const newUser = new UserEntity();
     newUser.email = payload.email;
     newUser.username = payload.username;

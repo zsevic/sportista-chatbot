@@ -18,22 +18,22 @@ export class AuthController {
   @Post('login')
   async login(@Body() payload: LoginUserDto): Promise<User> {
     const user = await this.authService.validateUser(payload);
-    const token = this.authService.createToken(user);
+    const access_token = this.authService.createToken(user);
 
     return {
       ...user,
-      token,
+      access_token,
     };
   }
 
   @Post('register')
   async register(@Body() payload: RegisterUserDto): Promise<User> {
     const user = await this.userService.register(payload);
-    const token = this.authService.createToken(user);
+    const access_token = this.authService.createToken(user);
 
     return {
       ...user,
-      token,
+      access_token,
     };
   }
 
