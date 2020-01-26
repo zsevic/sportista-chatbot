@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
-import { UserEntity } from 'src/user/user.entity';
-import { AppRoles } from 'src/auth/roles/roles.enum';
+import { UserEntity } from 'modules/user/user.entity';
+import { AppRoles } from 'modules/auth/roles/roles.enum';
 
 export class SeedUser1578622062167 implements MigrationInterface {
 

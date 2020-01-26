@@ -1,10 +1,10 @@
 import { Controller, Post, Body, Get, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags } from '@nestjs/swagger';
-import { UserService } from 'src/user/user.service';
-import { User } from 'src/user/user.payload';
+import { LoginUserDto, RegisterUserDto } from 'modules/user/dto';
+import { UserService } from 'modules/user/user.service';
+import { User } from 'modules/user/user.payload';
 import { AuthService } from './auth.service';
-import { LoginUserDto, RegisterUserDto } from 'src/user/dto';
 import { RolesGuard } from './roles/roles.guard';
 import { Roles } from './roles/roles.decorator';
 import { AppRoles } from './roles/roles.enum';

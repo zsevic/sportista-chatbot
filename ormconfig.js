@@ -1,14 +1,5 @@
 module.exports = [
   {
-    name: 'default',
-    type: 'sqlite',
-    database: 'database.sqlite',
-    entities: ['dist/**/**.entity{.ts,.js}'],
-    migrations: ['dist/database/migrations/*{.ts,.js}'],
-    logging: true,
-    synchronize: false,
-  },
-  {
     name: 'migration',
     type: 'sqlite',
     database: 'database.sqlite',
@@ -32,16 +23,6 @@ module.exports = [
       migrationsDir: 'database/seeders',
     },
     logging: true,
-    synchronize: false,
-  },
-  {
-    name: 'test',
-    type: 'sqlite',
-    database: 'database.sqlite',
-    entities: ['dist/**/**.entity{.ts,.js}'],
-    migrations: ['database/migrations/*{.ts,.js}'],
-    migrationsTableName: 'migrations',
-    logging: false,
     synchronize: false,
   },
 ];
