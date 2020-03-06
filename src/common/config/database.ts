@@ -6,7 +6,7 @@ export default registerAs('database', () => ({
   entities: ['dist/**/**.entity{.ts,.js}'],
   migrations: ['dist/database/migrations/*{.ts,.js}'],
   migrationsTableName: 'migrations',
-  logging: process.env.NODE_ENV !== 'test',
-  synchronize: false,
+  logging: false,
+  synchronize: true,
   keepConnectionAlive: true,
 }));

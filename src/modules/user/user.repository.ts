@@ -2,6 +2,7 @@ import * as crypto from 'crypto';
 import { BadRequestException } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
 import { plainToClass } from 'class-transformer';
+import { AppRoles } from 'modules/auth/roles/roles.enum';
 import { UserEntity } from './user.entity';
 import { User } from './user.payload';
 import { RegisterUserDto } from './dto';
@@ -51,7 +52,7 @@ export class UserRepository extends Repository<UserEntity> {
     newUser.email = payload.email;
     newUser.username = payload.username;
     newUser.password = payload.password;
-    newUser.role = payload.role;
+    newUser.role = AppRoles.USER;
 
     const savedUser = await this.save(newUser);
 
