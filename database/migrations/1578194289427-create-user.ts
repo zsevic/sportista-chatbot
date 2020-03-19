@@ -10,6 +10,14 @@ export class CreateUser1578194289427 implements MigrationInterface {
                 type: 'uuid',
                 isPrimary: true,
             }, {
+                name: 'facebook_id',
+                type: 'uuid',
+                isNullable: true,
+            }, {
+                name: 'google_id',
+                type: 'uuid',
+                isNullable: true,
+            }, {
                 name: 'username',
                 type: 'varchar',
             }, {
@@ -18,6 +26,7 @@ export class CreateUser1578194289427 implements MigrationInterface {
             }, {
                 name: 'password',
                 type: 'varchar',
+                isNullable: true,
             }, {
                 name: 'role',
                 type: 'varchar',

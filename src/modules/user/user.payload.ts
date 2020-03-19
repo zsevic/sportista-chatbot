@@ -2,6 +2,8 @@ import { Exclude } from 'class-transformer';
 
 export class User {
   id?: string;
+  facebook_id?: string;
+  google_id?: string;
   username: string;
   email: string;
   role: string;

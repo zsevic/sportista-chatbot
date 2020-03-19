@@ -8,11 +8,12 @@ export class CustomValidationPipe extends ValidationPipe {
       return await super.transform(value, metadata);
     } catch (e) {
       if (e instanceof BadRequestException) {
-        const messages = e.message.message.map(message =>
+        const response: any = e.getResponse(); // TODO remove any
+        const messages = response.message.map(message =>
           message.constraints ? Object.values(message.constraints) : message).flat();
         this.logger.error(messages);
 
-        throw new BadRequestException(messages.join(', '));
+        throw new BadRequestException(messages);
       }
     }
   }

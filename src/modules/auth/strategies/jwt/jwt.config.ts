@@ -1,15 +1,15 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import config from 'common/config';
+import { jwtConfig } from 'common/config/auth';
 
-export const jwtConfig = {
+export const jwtFactory = {
   imports: [ConfigModule.forRoot({
-    load: [config],
+    load: [jwtConfig],
   })],
   inject: [ConfigService],
   useFactory: async (configService: ConfigService) => {
     return {
-      secret: configService.get('JWT_SECRET_KEY'),
-      signOptions: { expiresIn: configService.get('JWT_EXPIRATION_TIME') },
+      secret: configService.get('jwt.secret'),
+      signOptions: { expiresIn: configService.get('jwt.expiresIn') },
     };
   },
 };

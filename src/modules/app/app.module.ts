@@ -1,9 +1,10 @@
 import { Module, Logger } from '@nestjs/common';
 import { ConfigService, ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Connection } from 'typeorm';
-import { AuthModule } from 'modules/auth/auth.module';
+import config from 'common/config';
 import databaseConfig from 'common/config/database';
+import { EventsModule } from 'common/events/events.module';
+import { AuthModule } from 'modules/auth/auth.module';
 import { AppController } from './app.controller';
 
 const typeOrmConfig = {
@@ -27,15 +28,20 @@ const typeOrmConfig = {
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      load: [config],
+    }),
     TypeOrmModule.forRootAsync(typeOrmConfig),
     AuthModule,
+    EventsModule,
   ],
   controllers: [AppController],
   providers: [{
     provide: 'logger',
     useFactory: () => new Logger(),
+  }, {
+    provide: 'configService',
+    useFactory: () => new ConfigService(),
   }],
 })
-export class AppModule {
-  constructor(private readonly connection: Connection) {}
-}
+export class AppModule {}

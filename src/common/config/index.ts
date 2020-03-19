@@ -1,4 +1,4 @@
 export default () => ({
-  JWT_SECRET_KEY: process.env.JWT_SECRET_KEY || 'secret',
-  JWT_EXPIRATION_TIME: process.env.JWT_EXPIRATION_TIME || '3600s',
+  EXPRESS_SESSION_SECRET: process.env.EXPRESS_SESSION_SECRET || 'secret',
+  PORT: process.env.PORT || 8080,
 });

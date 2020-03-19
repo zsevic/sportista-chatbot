@@ -1,11 +1,11 @@
 import * as crypto from 'crypto';
 import { BadRequestException } from '@nestjs/common';
-import { EntityRepository, Repository } from 'typeorm';
 import { plainToClass } from 'class-transformer';
+import { EntityRepository, Repository } from 'typeorm';
 import { AppRoles } from 'modules/auth/roles/roles.enum';
+import { RegisterUserDto } from './dto';
 import { UserEntity } from './user.entity';
 import { User } from './user.payload';
-import { RegisterUserDto } from './dto';
 
 @EntityRepository(UserEntity)
 export class UserRepository extends Repository<UserEntity> {
@@ -32,6 +32,23 @@ export class UserRepository extends Repository<UserEntity> {
       .setParameter('email', email)
       .setParameter('password', passwordHash)
       .getOne();
+
+    return plainToClass(User, user);
+  }
+
+  async findOrCreate(profile: any): Promise<User> {
+    let user = await this.findOne({
+      email: profile.emails[0].value,
+    });
+    if (!user) {
+      user = await this.save({
+        [`${profile.provider}_id`]: profile.id,
+        username: profile.displayName,
+        email: profile.emails?.[0].value || '',
+        // avatar: profile.photos?.[0].value || '',
+        role: AppRoles.USER,
+      });
+    }
 
     return plainToClass(User, user);
   }

@@ -19,6 +19,10 @@ export class UserService {
     return this.userRepository.getByEmailAndPassword(email, password);
   }
 
+  async findOrCreate(profile: any): Promise<User> {
+    return this.userRepository.findOrCreate(profile);
+  }
+
   async register(payload: RegisterUserDto): Promise<User> {
     await this.userRepository.validate(payload.username, payload.email);
 

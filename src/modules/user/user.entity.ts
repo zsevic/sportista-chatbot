@@ -6,6 +6,16 @@ export class UserEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({
+    nullable: true,
+  })
+  facebook_id?: string;
+
+  @Column({
+    nullable: true,
+  })
+  google_id?: string;
+
   @Column()
   username: string;
 
@@ -14,8 +24,9 @@ export class UserEntity {
 
   @Column({
     transformer: new PasswordTransformer(),
+    nullable: true,
   })
-  password: string;
+  password?: string;
 
   @Column()
   role: string;
