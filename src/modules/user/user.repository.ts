@@ -16,10 +16,10 @@ export class UserRepository extends Repository<UserEntity> {
   }
 
   async getByEmail(email: string): Promise<User> {
-    const user = await this.createQueryBuilder('user')
-      .where('user.email = :email')
-      .setParameter('email', email)
-      .getOne();
+    const user = await this.findOne({
+      select: ['id', 'avatar', 'email', 'name', 'role'],
+      where: { email },
+    });
 
     return plainToClass(User, user);
   }
@@ -36,38 +36,41 @@ export class UserRepository extends Repository<UserEntity> {
     return plainToClass(User, user);
   }
 
-  async findOrCreate(profile: any): Promise<User> {
-    let user = await this.findOne({
-      email: profile.emails[0].value,
+  async createUser(profile: any): Promise<User> {
+    const provider_id = `${profile.provider}_id`;
+    const newUser = await this.save({
+      [provider_id]: profile.id,
+      avatar: profile.picture,
+      email: profile.email,
+      name: profile.displayName,
+      role: AppRoles.USER,
     });
-    if (!user) {
-      user = await this.save({
-        [`${profile.provider}_id`]: profile.id,
-        username: profile.displayName,
-        email: profile.emails?.[0].value || '',
-        // avatar: profile.photos?.[0].value || '',
-        role: AppRoles.USER,
-      });
-    }
+    const user = {
+      id: newUser.id,
+      avatar: newUser.avatar,
+      email: newUser.email,
+      name: newUser.name,
+      role: newUser.role,
+    };
 
     return plainToClass(User, user);
   }
 
-  async validate(username: string, email: string): Promise<void> {
+  async validate(name: string, email: string): Promise<void> {
     const qb = await this.createQueryBuilder('user')
-      .where('user.username = :username', { username })
+      .where('user.name = :name', { name })
       .orWhere('user.email = :email', { email });
 
     const user = await qb.getOne();
     if (user) {
-      throw new BadRequestException('Username and email must be unique');
+      throw new BadRequestException('Name and email must be unique');
     }
   }
 
   async register(payload: RegisterUserDto) {
     const newUser = new UserEntity();
     newUser.email = payload.email;
-    newUser.username = payload.username;
+    newUser.name = payload.name;
     newUser.password = payload.password;
     newUser.role = AppRoles.USER;
 

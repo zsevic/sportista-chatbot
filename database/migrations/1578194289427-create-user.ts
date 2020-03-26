@@ -18,7 +18,10 @@ export class CreateUser1578194289427 implements MigrationInterface {
                 type: 'uuid',
                 isNullable: true,
             }, {
-                name: 'username',
+                name: 'name',
+                type: 'varchar',
+            }, {
+                name: 'avatar',
                 type: 'varchar',
             }, {
                 name: 'email',

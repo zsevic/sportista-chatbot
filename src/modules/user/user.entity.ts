@@ -17,7 +17,10 @@ export class UserEntity {
   google_id?: string;
 
   @Column()
-  username: string;
+  name: string;
+
+  @Column({ default: '' })
+  avatar?: string;
 
   @Column()
   email: string;

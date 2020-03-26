@@ -20,11 +20,17 @@ export class UserService {
   }
 
   async findOrCreate(profile: any): Promise<User> {
-    return this.userRepository.findOrCreate(profile);
+    const user = await this.userRepository.getByEmail(profile.email);
+    if (!user) {
+      const newUser = await this.userRepository.createUser(profile);
+      return newUser;
+    }
+
+    return user;
   }
 
   async register(payload: RegisterUserDto): Promise<User> {
-    await this.userRepository.validate(payload.username, payload.email);
+    await this.userRepository.validate(payload.name, payload.email);
 
     return this.userRepository.register(payload);
   }

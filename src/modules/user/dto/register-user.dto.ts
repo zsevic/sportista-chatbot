@@ -6,7 +6,7 @@ export class RegisterUserDto {
   readonly email: string;
 
   @IsNotEmpty()
-  readonly username: string;
+  readonly name: string;
 
   @IsNotEmpty()
   @MinLength(5)
