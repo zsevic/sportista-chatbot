@@ -1,4 +1,5 @@
 {
   "collection": "@nestjs/schematics",
+  "entryFile": "src/main",
   "sourceRoot": "src/modules"
 }

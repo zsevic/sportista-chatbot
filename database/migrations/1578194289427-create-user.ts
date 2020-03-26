@@ -33,6 +33,12 @@ export class CreateUser1578194289427 implements MigrationInterface {
             }, {
                 name: 'role',
                 type: 'varchar',
+            }, {
+                name: 'created_at',
+                type: 'Date',
+            }, {
+                name: 'updated_at',
+                type: 'Date',
             }],
         }), true);
     }
