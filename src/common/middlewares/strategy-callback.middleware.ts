@@ -1,5 +1,5 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { EventsGateway } from 'common/events/events.gateway';
 import { AuthService } from 'modules/auth/auth.service';
 import { User } from 'modules/user/user.payload';
@@ -8,10 +8,10 @@ import { User } from 'modules/user/user.payload';
 export class StrategyCallbackMiddleware implements NestMiddleware {
   constructor(private readonly authService: AuthService, private readonly eventsGateway: EventsGateway) {}
 
-  async use(req: any, res: Response): Promise<void> {
+  async use(req: Request, res: Response): Promise<void> {
     const access_token = this.authService.createToken(req.user as User);
 
-    this.eventsGateway.server.emit('logged_in', {
+    this.eventsGateway.server.in(req.session.socketId).emit('logged_in', {
       ...req.user,
       access_token,
     });
