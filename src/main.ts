@@ -17,11 +17,13 @@ async function bootstrap() {
   setupSwagger(app);
 
   app.use(passport.initialize());
-  app.use(expressSession({
-    secret: configService.get('EXPRESS_SESSION_SECRET'),
-    resave: true,
-    saveUninitialized: true,
-  }));
+  app.use(
+    expressSession({
+      secret: configService.get('EXPRESS_SESSION_SECRET'),
+      resave: true,
+      saveUninitialized: true,
+    }),
+  );
 
   await app.listen(configService.get('PORT'));
 }

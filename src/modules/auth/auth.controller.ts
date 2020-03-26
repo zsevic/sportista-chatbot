@@ -1,4 +1,12 @@
-import { Controller, Post, Body, Get, Request, UseGuards, Logger } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Request,
+  UseGuards,
+  Logger,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags } from '@nestjs/swagger';
 import { LoginUserDto, RegisterUserDto } from 'modules/user/dto';
@@ -14,8 +22,10 @@ import { AppRoles } from './roles/roles.enum';
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
 
-  constructor(private readonly authService: AuthService,
-              private readonly userService: UserService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly userService: UserService,
+  ) {}
 
   @Post('login')
   async login(@Body() payload: LoginUserDto): Promise<User> {

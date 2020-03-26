@@ -8,9 +8,11 @@ import { AuthModule } from 'modules/auth/auth.module';
 import { AppController } from './app.controller';
 
 const typeOrmConfig = {
-  imports: [ConfigModule.forRoot({
-    load: [databaseConfig],
-  })],
+  imports: [
+    ConfigModule.forRoot({
+      load: [databaseConfig],
+    }),
+  ],
   inject: [ConfigService],
   useFactory: async (configService: ConfigService) => {
     return {
@@ -36,12 +38,15 @@ const typeOrmConfig = {
     EventsModule,
   ],
   controllers: [AppController],
-  providers: [{
-    provide: 'logger',
-    useFactory: () => new Logger(),
-  }, {
-    provide: 'configService',
-    useFactory: () => new ConfigService(),
-  }],
+  providers: [
+    {
+      provide: 'logger',
+      useFactory: () => new Logger(),
+    },
+    {
+      provide: 'configService',
+      useFactory: () => new ConfigService(),
+    },
+  ],
 })
 export class AppModule {}

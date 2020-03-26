@@ -6,7 +6,10 @@ import { User } from 'modules/user/user.payload';
 
 @Injectable()
 export class StrategyCallbackMiddleware implements NestMiddleware {
-  constructor(private readonly authService: AuthService, private readonly eventsGateway: EventsGateway) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly eventsGateway: EventsGateway,
+  ) {}
 
   async use(req: Request, res: Response): Promise<void> {
     const access_token = this.authService.createToken(req.user as User);

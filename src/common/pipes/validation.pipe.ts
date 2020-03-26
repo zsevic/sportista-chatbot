@@ -1,4 +1,9 @@
-import { ArgumentMetadata, BadRequestException, Logger, ValidationPipe } from '@nestjs/common';
+import {
+  ArgumentMetadata,
+  BadRequestException,
+  Logger,
+  ValidationPipe,
+} from '@nestjs/common';
 
 export class CustomValidationPipe extends ValidationPipe {
   private readonly logger = new Logger(CustomValidationPipe.name);
@@ -9,8 +14,11 @@ export class CustomValidationPipe extends ValidationPipe {
     } catch (e) {
       if (e instanceof BadRequestException) {
         const response: any = e.getResponse(); // TODO remove any
-        const messages = response.message.map(message =>
-          message.constraints ? Object.values(message.constraints) : message).flat();
+        const messages = response.message
+          .map(message =>
+            message.constraints ? Object.values(message.constraints) : message,
+          )
+          .flat();
         this.logger.error(messages);
 
         throw new BadRequestException(messages);
