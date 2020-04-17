@@ -56,17 +56,6 @@ export class UserRepository extends Repository<UserEntity> {
     return plainToClass(User, user);
   }
 
-  async validate(name: string, email: string): Promise<void> {
-    const qb = await this.createQueryBuilder('user')
-      .where('user.name = :name', { name })
-      .orWhere('user.email = :email', { email });
-
-    const user = await qb.getOne();
-    if (user) {
-      throw new BadRequestException('Name and email must be unique');
-    }
-  }
-
   async register(payload: RegisterUserDto) {
     const newUser = new UserEntity();
     newUser.email = payload.email;
@@ -77,5 +66,16 @@ export class UserRepository extends Repository<UserEntity> {
     const savedUser = await this.save(newUser);
 
     return plainToClass(User, savedUser);
+  }
+
+  async validate(name: string, email: string): Promise<void> {
+    const qb = await this.createQueryBuilder('user')
+      .where('user.name = :name', { name })
+      .orWhere('user.email = :email', { email });
+
+    const user = await qb.getOne();
+    if (user) {
+      throw new BadRequestException('Name and email must be unique');
+    }
   }
 }

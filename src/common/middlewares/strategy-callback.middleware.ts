@@ -1,6 +1,6 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
-import { EventsGateway } from 'common/events/events.gateway';
 import { AuthService } from 'modules/auth/auth.service';
 import { User } from 'modules/user/user.payload';
 
@@ -8,17 +8,20 @@ import { User } from 'modules/user/user.payload';
 export class StrategyCallbackMiddleware implements NestMiddleware {
   constructor(
     private readonly authService: AuthService,
-    private readonly eventsGateway: EventsGateway,
+    private readonly configService: ConfigService,
   ) {}
 
   async use(req: Request, res: Response): Promise<void> {
-    const access_token = this.authService.createToken(req.user as User);
+    const user = req.user as User;
+    if (!user?.id) {
+      const LOGIN_FAILED_REDIRECTION_URL = this.configService.get(
+        'LOGIN_FAILED_REDIRECTION_URL',
+      );
+      return res.redirect(LOGIN_FAILED_REDIRECTION_URL);
+    }
 
-    this.eventsGateway.server.in(req.session.socketId).emit('logged_in', {
-      ...req.user,
-      access_token,
-    });
-
-    res.end();
+    const accessToken = this.authService.createToken(user);
+    const CLIENT_URL = this.configService.get('CLIENT_URL');
+    return res.redirect(`${CLIENT_URL}/#/login/${accessToken}`);
   }
 }

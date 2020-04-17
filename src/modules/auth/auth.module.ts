@@ -1,5 +1,5 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { authenticate } from 'passport';
@@ -31,7 +31,13 @@ import { AuthController } from './auth.controller';
   exports: [PassportModule.register({ defaultStrategy: 'jwt' })],
 })
 export class AuthModule implements NestModule {
+  constructor(private readonly configService: ConfigService) {}
+
   public configure(consumer: MiddlewareConsumer) {
+    const LOGIN_FAILED_REDIRECTION_URL = this.configService.get(
+      'LOGIN_FAILED_REDIRECTION_URL',
+    );
+
     consumer
       .apply(SessionAuthMiddleware)
       .forRoutes('/auth/facebook')
@@ -39,6 +45,7 @@ export class AuthModule implements NestModule {
         authenticate('facebook', {
           session: false,
           scope: ['email', 'profile'],
+          failureRedirect: LOGIN_FAILED_REDIRECTION_URL,
         }),
       )
       .forRoutes('/auth/facebook')
@@ -47,7 +54,11 @@ export class AuthModule implements NestModule {
       .apply(SessionAuthMiddleware)
       .forRoutes('/auth/google')
       .apply(
-        authenticate('google', { session: false, scope: ['email', 'profile'] }),
+        authenticate('google', {
+          session: false,
+          scope: ['email', 'profile'],
+          failureRedirect: LOGIN_FAILED_REDIRECTION_URL,
+        }),
       )
       .forRoutes('/auth/google')
       .apply(StrategyCallbackMiddleware)

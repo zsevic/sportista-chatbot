@@ -11,6 +11,7 @@ const typeOrmConfig = {
   imports: [
     ConfigModule.forRoot({
       load: [databaseConfig],
+      expandVariables: true,
     }),
   ],
   inject: [ConfigService],
