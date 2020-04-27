@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import * as expressSession from 'express-session';
+import * as cookieParser from 'cookie-parser';
 import * as passport from 'passport';
 import { AppModule } from 'modules/app/app.module';
 import { setupSwagger } from 'common/config/api-docs';
@@ -12,6 +13,7 @@ async function bootstrap() {
   const logger = app.get('logger');
   const configService = app.get('configService');
 
+  app.use(cookieParser());
   app.use(loggerMiddleware(logger));
   app.useGlobalPipes(new CustomValidationPipe(logger));
   setupSwagger(app);

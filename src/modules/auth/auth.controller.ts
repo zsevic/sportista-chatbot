@@ -1,17 +1,19 @@
 import {
-  Controller,
-  Post,
   Body,
+  Controller,
   Get,
-  Request,
-  UseGuards,
   Logger,
+  Post,
+  Request,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags } from '@nestjs/swagger';
 import { LoginUserDto, RegisterUserDto } from 'modules/user/dto';
 import { UserService } from 'modules/user/user.service';
 import { User } from 'modules/user/user.payload';
+import { COOKIE_OPTIONS, JWT_COOKIE_NAME } from './auth.constants';
 import { AuthService } from './auth.service';
 import { RolesGuard } from './roles/roles.guard';
 import { Roles } from './roles/roles.decorator';
@@ -28,25 +30,19 @@ export class AuthController {
   ) {}
 
   @Post('login')
-  async login(@Body() payload: LoginUserDto): Promise<User> {
+  async login(@Body() payload: LoginUserDto, @Res() res): Promise<User> {
     const user = await this.authService.validateUser(payload);
-    const access_token = this.authService.createToken(user);
+    const accessToken = this.authService.createToken(user);
 
-    return {
-      ...user,
-      access_token,
-    };
+    return res.cookie(JWT_COOKIE_NAME, accessToken, COOKIE_OPTIONS).json(user);
   }
 
   @Post('register')
-  async register(@Body() payload: RegisterUserDto): Promise<User> {
+  async register(@Body() payload: RegisterUserDto, @Res() res): Promise<User> {
     const user = await this.userService.register(payload);
-    const access_token = this.authService.createToken(user);
+    const accessToken = this.authService.createToken(user);
 
-    return {
-      ...user,
-      access_token,
-    };
+    return res.cookie(JWT_COOKIE_NAME, accessToken, COOKIE_OPTIONS).json(user);
   }
 
   @UseGuards(AuthGuard(), RolesGuard)
