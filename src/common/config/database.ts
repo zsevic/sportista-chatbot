@@ -1,12 +1,12 @@
 import { registerAs } from '@nestjs/config';
 
 export default registerAs('database', () => ({
-  type: 'sqlite',
   database: 'database.sqlite',
   entities: ['dist/**/**.entity{.ts,.js}'],
+  keepConnectionAlive: true,
+  logging: false,
   migrations: ['dist/database/migrations/*{.ts,.js}'],
   migrationsTableName: 'migrations',
-  logging: false,
-  synchronize: true,
-  keepConnectionAlive: true,
+  synchronize: false,
+  type: 'sqlite',
 }));

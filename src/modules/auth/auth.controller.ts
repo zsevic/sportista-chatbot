@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 import { LoginUserDto, RegisterUserDto } from 'modules/user/dto';
 import { UserService } from 'modules/user/user.service';
 import { User } from 'modules/user/user.payload';
@@ -43,6 +44,11 @@ export class AuthController {
     const accessToken = this.authService.createToken(user);
 
     return res.cookie(JWT_COOKIE_NAME, accessToken, COOKIE_OPTIONS).json(user);
+  }
+
+  @Post('logout')
+  async logout(@Res() res: Response): Promise<void> {
+    return res.clearCookie(JWT_COOKIE_NAME, COOKIE_OPTIONS).end();
   }
 
   @UseGuards(AuthGuard(), RolesGuard)

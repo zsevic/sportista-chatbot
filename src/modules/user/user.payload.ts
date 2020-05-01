@@ -15,6 +15,4 @@ export class User {
 
   @Exclude()
   password?: string;
-
-  access_token?: string;
 }
