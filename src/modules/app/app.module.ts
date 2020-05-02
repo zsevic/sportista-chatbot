@@ -41,10 +41,6 @@ const typeOrmConfig = {
   controllers: [AppController],
   providers: [
     {
-      provide: 'logger',
-      useFactory: () => new Logger(),
-    },
-    {
       provide: 'configService',
       useFactory: () => new ConfigService(),
     },
