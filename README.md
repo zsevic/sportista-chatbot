@@ -21,6 +21,13 @@ npm run build
 npm start
 ```
 
+### Docker build
+
+```bash
+docker build -t nestjs-starter .
+docker run -p 8080:8080 -d nestjs-starter
+```
+
 ### Linting
 
 ```bash
