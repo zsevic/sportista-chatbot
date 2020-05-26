@@ -19,12 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate({ iat, exp, id }): Promise<User> {
-    const timeDiff = exp - iat;
-    if (timeDiff <= 0) {
-      throw new UnauthorizedException();
-    }
-
+  async validate({ id }): Promise<User> {
     const user = await this.userService.get(id);
     if (!user) {
       throw new UnauthorizedException();

@@ -1,5 +1,5 @@
 import * as crypto from 'crypto';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, Logger } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { EntityRepository, Repository } from 'typeorm';
 import { AppRoles } from 'modules/auth/roles/roles.enum';
@@ -9,6 +9,8 @@ import { User } from './user.payload';
 
 @EntityRepository(UserEntity)
 export class UserRepository extends Repository<UserEntity> {
+  private readonly logger = new Logger(UserRepository.name);
+
   async get(id: string): Promise<User> {
     const user = await this.findOne(id);
 
@@ -32,6 +34,15 @@ export class UserRepository extends Repository<UserEntity> {
       .setParameter('email', email)
       .setParameter('password', passwordHash)
       .getOne();
+
+    return plainToClass(User, user);
+  }
+
+  async getByRefreshToken(refreshToken: string): Promise<User> {
+    const user = await this.findOne({ refresh_token: refreshToken });
+    if (!user) {
+      throw new BadRequestException('Refresh token is not valid');
+    }
 
     return plainToClass(User, user);
   }
@@ -66,6 +77,23 @@ export class UserRepository extends Repository<UserEntity> {
     const savedUser = await this.save(newUser);
 
     return plainToClass(User, savedUser);
+  }
+
+  async updateRefreshToken(
+    userId: string,
+    refreshToken: string,
+  ): Promise<void> {
+    const user = await this.findOne(userId);
+    if (!user) {
+      throw new BadRequestException('User is not valid');
+    }
+
+    await this.save({
+      ...user,
+      refresh_token: refreshToken,
+    }).then(() => {
+      this.logger.log('Refresh token is updated');
+    });
   }
 
   async validate(name: string, email: string): Promise<void> {

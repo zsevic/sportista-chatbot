@@ -8,15 +8,18 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { LoginUserDto, RegisterUserDto } from 'modules/user/dto';
 import { UserService } from 'modules/user/user.service';
 import { User } from 'modules/user/user.payload';
-import { COOKIE_OPTIONS, JWT_COOKIE_NAME } from './auth.constants';
+import {
+  ACCESS_TOKEN_COOKIE_NAME,
+  COOKIE_OPTIONS,
+  REFRESH_TOKEN_COOKIE_NAME,
+} from './auth.constants';
 import { AuthService } from './auth.service';
-import { RolesGuard } from './roles/roles.guard';
+import { CustomAuthGuard, RolesGuard } from './guards';
 import { Roles } from './roles/roles.decorator';
 import { AppRoles } from './roles/roles.enum';
 
@@ -33,25 +36,31 @@ export class AuthController {
   @Post('login')
   async login(@Body() payload: LoginUserDto, @Res() res): Promise<User> {
     const user = await this.authService.validateUser(payload);
-    const accessToken = this.authService.createToken(user);
+    const { accessToken, refreshToken } = this.authService.createTokens(
+      user.id,
+    );
+    await this.userService.updateRefreshToken(user.id, refreshToken);
 
-    return res.cookie(JWT_COOKIE_NAME, accessToken, COOKIE_OPTIONS).json(user);
+    res.cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, COOKIE_OPTIONS);
+    res.cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, COOKIE_OPTIONS);
+
+    return res.json(user);
   }
 
   @Post('register')
-  async register(@Body() payload: RegisterUserDto, @Res() res): Promise<User> {
-    const user = await this.userService.register(payload);
-    const accessToken = this.authService.createToken(user);
-
-    return res.cookie(JWT_COOKIE_NAME, accessToken, COOKIE_OPTIONS).json(user);
+  async register(@Body() payload: RegisterUserDto): Promise<User> {
+    return this.userService.register(payload);
   }
 
   @Post('logout')
   async logout(@Res() res: Response): Promise<void> {
-    return res.clearCookie(JWT_COOKIE_NAME, COOKIE_OPTIONS).end();
+    res.clearCookie(ACCESS_TOKEN_COOKIE_NAME, COOKIE_OPTIONS);
+    res.clearCookie(REFRESH_TOKEN_COOKIE_NAME, COOKIE_OPTIONS);
+
+    return res.end();
   }
 
-  @UseGuards(AuthGuard(), RolesGuard)
+  @UseGuards(CustomAuthGuard, RolesGuard)
   @Roles(AppRoles.USER)
   @Get('me')
   async getLoggedInUser(@Request() request): Promise<User> {

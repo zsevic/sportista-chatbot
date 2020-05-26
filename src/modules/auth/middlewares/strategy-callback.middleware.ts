@@ -1,7 +1,11 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
-import { COOKIE_OPTIONS, JWT_COOKIE_NAME } from 'modules/auth/auth.constants';
+import {
+  ACCESS_TOKEN_COOKIE_NAME,
+  COOKIE_OPTIONS,
+  REFRESH_TOKEN_COOKIE_NAME,
+} from 'modules/auth/auth.constants';
 import { AuthService } from 'modules/auth/auth.service';
 import { User } from 'modules/user/user.payload';
 
@@ -21,12 +25,15 @@ export class StrategyCallbackMiddleware implements NestMiddleware {
       return res.redirect(LOGIN_FAILED_REDIRECTION_URL);
     }
 
-    const accessToken = this.authService.createToken(user);
+    const { accessToken, refreshToken } = this.authService.createTokens(
+      user.id,
+    );
     const LOGIN_SUCCESS_REDIRECTION_URL = this.configService.get(
       'LOGIN_SUCCESS_REDIRECTION_URL',
     );
-    return res
-      .cookie(JWT_COOKIE_NAME, accessToken, COOKIE_OPTIONS)
-      .redirect(LOGIN_SUCCESS_REDIRECTION_URL);
+    res.cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, COOKIE_OPTIONS);
+    res.cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, COOKIE_OPTIONS);
+
+    return res.redirect(LOGIN_SUCCESS_REDIRECTION_URL);
   }
 }

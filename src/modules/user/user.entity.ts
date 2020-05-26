@@ -1,8 +1,8 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { PasswordTransformer } from './transformers/password.transformer';
@@ -36,6 +36,12 @@ export class UserEntity {
     nullable: true,
   })
   password?: string;
+
+  @Column({
+    nullable: true,
+    select: false,
+  })
+  refresh_token: string;
 
   @Column()
   role: string;

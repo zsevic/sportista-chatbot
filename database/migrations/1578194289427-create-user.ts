@@ -31,6 +31,10 @@ export class CreateUser1578194289427 implements MigrationInterface {
                 type: 'varchar',
                 isNullable: true,
             }, {
+                name: 'refresh_token',
+                type: 'varchar',
+                isNullable: true,
+            }, {
                 name: 'role',
                 type: 'varchar',
             }, {

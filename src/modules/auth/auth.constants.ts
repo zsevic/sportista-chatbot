@@ -6,4 +6,5 @@ export const COOKIE_OPTIONS: CookieOptions = {
   sameSite: 'lax',
 };
 
-export const JWT_COOKIE_NAME = 'jwt';
+export const ACCESS_TOKEN_COOKIE_NAME = 'access_token';
+export const REFRESH_TOKEN_COOKIE_NAME = 'refresh_token';

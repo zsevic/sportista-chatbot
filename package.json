@@ -8,7 +8,7 @@
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
+    "lint": "eslint \"{database,src,test}/**/*.ts\"",
     "lint:fix": "npm run lint -- --fix",
     "migration:generate": "npm run typeorm -- migration:create -c migration -n $1",
     "migrate": "npm run typeorm -- migration:run -c migration",

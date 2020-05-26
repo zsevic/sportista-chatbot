@@ -3,7 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { authenticate } from 'passport';
-import { jwtConfig, facebookConfig, googleConfig } from 'common/config/auth';
+import { jwtConfig, facebookConfig, googleConfig } from 'modules/auth/config';
 import { EventsModule } from 'common/events/events.module';
 import { StrategyCallbackMiddleware } from './middlewares';
 import { FacebookStrategy } from 'modules/auth/strategies/facebook';

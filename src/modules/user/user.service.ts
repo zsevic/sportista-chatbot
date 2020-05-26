@@ -19,6 +19,10 @@ export class UserService {
     return this.userRepository.getByEmailAndPassword(email, password);
   }
 
+  async getByRefreshToken(refreshToken: string): Promise<User> {
+    return this.userRepository.getByRefreshToken(refreshToken);
+  }
+
   async findOrCreate(profile: any): Promise<User> {
     const user = await this.userRepository.getByEmail(profile.email);
     if (!user) {
@@ -33,5 +37,12 @@ export class UserService {
     await this.userRepository.validate(payload.name, payload.email);
 
     return this.userRepository.register(payload);
+  }
+
+  async updateRefreshToken(
+    userId: string,
+    refreshToken: string,
+  ): Promise<void> {
+    return this.userRepository.updateRefreshToken(userId, refreshToken);
   }
 }

@@ -1,5 +1,5 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { jwtConfig } from 'common/config/auth';
+import { jwtConfig } from 'modules/auth/config';
 
 export const jwtFactory = {
   imports: [
@@ -11,7 +11,6 @@ export const jwtFactory = {
   useFactory: async (configService: ConfigService) => {
     return {
       secret: configService.get('jwt.secret'),
-      signOptions: { expiresIn: configService.get('jwt.expiresIn') },
     };
   },
 };
