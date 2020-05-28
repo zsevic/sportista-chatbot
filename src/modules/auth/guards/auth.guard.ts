@@ -21,7 +21,7 @@ export class CustomAuthGuard extends AuthGuard('jwt') {
     super();
   }
 
-  handleRequest(_, user, info: Error, context: ExecutionContext) {
+  handleRequest(_, loggedInUser, info: Error, context: ExecutionContext) {
     const response = context.switchToHttp().getResponse();
     try {
       if (info?.name === 'TokenExpiredError') {
@@ -33,14 +33,15 @@ export class CustomAuthGuard extends AuthGuard('jwt') {
         return this.userService
           .getByRefreshToken(refreshToken)
           .then(user => {
-            const { accessToken, refreshToken } = this.authService.createTokens(
-              user.id,
-            );
+            const {
+              accessToken,
+              refreshToken: newRefreshToken,
+            } = this.authService.createTokens(user.id);
             return this.userService
-              .updateRefreshToken(user.id, refreshToken)
-              .then(() => ({ accessToken, refreshToken, user }));
+              .updateRefreshToken(user.id, newRefreshToken)
+              .then(() => ({ accessToken, newRefreshToken, user }));
           })
-          .then(({ accessToken, refreshToken, user }) => {
+          .then(({ accessToken, newRefreshToken, user }) => {
             response.cookie(
               ACCESS_TOKEN_COOKIE_NAME,
               accessToken,
@@ -48,14 +49,14 @@ export class CustomAuthGuard extends AuthGuard('jwt') {
             );
             response.cookie(
               REFRESH_TOKEN_COOKIE_NAME,
-              refreshToken,
+              newRefreshToken,
               COOKIE_OPTIONS,
             );
 
             return user;
           });
       }
-      return user;
+      return loggedInUser;
     } catch (err) {
       response.clearCookie(ACCESS_TOKEN_COOKIE_NAME, COOKIE_OPTIONS);
       response.clearCookie(REFRESH_TOKEN_COOKIE_NAME, COOKIE_OPTIONS);
