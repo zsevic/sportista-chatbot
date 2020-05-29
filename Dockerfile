@@ -8,6 +8,7 @@ RUN npm install
 COPY . .
 
 RUN npm run build
+RUN npm run migrate
 
 FROM node:13.14-alpine as app_stage
 
