@@ -19,7 +19,7 @@ USER node
 
 COPY --from=build_stage /home/src/package*.json ./
 
-RUN npm install --production
+RUN npm install --only=production
 
 COPY --from=build_stage /home/src/dist ./dist/
 
