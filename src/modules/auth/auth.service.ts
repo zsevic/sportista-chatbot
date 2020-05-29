@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { LoginUserDto } from 'modules/user/dto';
@@ -8,6 +8,8 @@ import { Tokens } from './auth.types';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
@@ -48,6 +50,7 @@ export class AuthService {
       this.jwtService.verify(token);
       return true;
     } catch (err) {
+      this.logger.error(err.message);
       return false;
     }
   }
