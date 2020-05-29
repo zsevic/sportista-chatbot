@@ -28,6 +28,12 @@ docker build -t nestjs-starter .
 docker run -e PORT=8080 -d -p 8080:8080 nestjs-starter
 ```
 
+### Docker compose
+
+```bash
+docker-compose up --build -V
+```
+
 ### Linting
 
 ```bash
