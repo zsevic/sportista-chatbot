@@ -25,7 +25,7 @@ npm start
 
 ```bash
 docker build -t nestjs-starter .
-docker run -p 8080:8080 -d nestjs-starter
+docker run -e PORT=8080 -d -p 8080:8080 nestjs-starter
 ```
 
 ### Linting
@@ -63,4 +63,4 @@ API documentation is generated using [@nestjs/swagger](https://www.npmjs.com/pac
 
 ### Technologies used
 
-* Node.js, TypeScript, NestJS, TypeORM
+- Node.js, TypeScript, NestJS, TypeORM
