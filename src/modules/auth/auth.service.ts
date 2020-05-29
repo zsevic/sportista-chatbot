@@ -43,11 +43,12 @@ export class AuthService {
     return user;
   }
 
-  verifyToken(token: string): void {
+  validateToken(token: string): boolean {
     try {
       this.jwtService.verify(token);
+      return true;
     } catch (err) {
-      throw new UnauthorizedException('Token is not valid');
+      return false;
     }
   }
 }
