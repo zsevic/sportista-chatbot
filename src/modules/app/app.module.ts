@@ -15,18 +15,8 @@ const typeOrmConfig = {
     }),
   ],
   inject: [ConfigService],
-  useFactory: async (configService: ConfigService) => {
-    return {
-      type: configService.get('database.type'),
-      database: configService.get('database.database'),
-      entities: configService.get('database.entities'),
-      migrations: configService.get('database.migrations'),
-      migrationsTableName: configService.get('database.migrationsTableName'),
-      logging: configService.get('database.logging'),
-      synchronize: configService.get('database.synchronize'),
-      keepConnectionAlive: configService.get('database.keepConnectionAlive'),
-    };
-  },
+  useFactory: async (configService: ConfigService) =>
+    configService.get('database'),
 };
 
 @Module({
