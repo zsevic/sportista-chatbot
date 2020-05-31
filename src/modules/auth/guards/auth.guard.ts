@@ -29,12 +29,15 @@ export class CustomAuthGuard extends AuthGuard('jwt') {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const response = context.switchToHttp().getResponse();
-    const accessToken = ExtractJwt.fromExtractors([cookieExtractor])(request);
-
-    const isValidAccessToken = this.authService.validateToken(accessToken);
-    if (isValidAccessToken) return this.activate(context);
 
     try {
+      const accessToken = ExtractJwt.fromExtractors([cookieExtractor])(request);
+      if (!accessToken)
+        throw new UnauthorizedException('Access token is not set');
+
+      const isValidAccessToken = this.authService.validateToken(accessToken);
+      if (isValidAccessToken) return this.activate(context);
+
       const refreshToken = request.cookies[REFRESH_TOKEN_COOKIE_NAME];
       if (!refreshToken)
         throw new UnauthorizedException('Refresh token is not set');
