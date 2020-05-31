@@ -6,6 +6,7 @@ import { AppRoles } from 'modules/auth/roles/roles.enum';
 import { RegisterUserDto } from './dto';
 import { UserEntity } from './user.entity';
 import { User } from './user.payload';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 @EntityRepository(UserEntity)
 export class UserRepository extends Repository<UserEntity> {
@@ -67,6 +68,7 @@ export class UserRepository extends Repository<UserEntity> {
     return plainToClass(User, user);
   }
 
+  @Transactional()
   async register(payload: RegisterUserDto) {
     const newUser = new UserEntity();
     newUser.email = payload.email;

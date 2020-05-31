@@ -1,6 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigService, ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import {
+  initializeTransactionalContext,
+  patchTypeORMRepositoryWithBaseRepository,
+} from 'typeorm-transactional-cls-hooked';
 import config from 'common/config';
 import databaseConfig from 'common/config/database';
 import { EventsModule } from 'common/events/events.module';
@@ -15,8 +19,11 @@ const typeOrmConfig = {
     }),
   ],
   inject: [ConfigService],
-  useFactory: async (configService: ConfigService) =>
-    configService.get('database'),
+  useFactory: async (configService: ConfigService) => {
+    initializeTransactionalContext();
+    patchTypeORMRepositoryWithBaseRepository();
+    return configService.get('database');
+  },
 };
 
 @Module({
