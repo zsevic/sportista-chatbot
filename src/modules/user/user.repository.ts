@@ -3,9 +3,8 @@ import { BadRequestException, Logger } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { EntityRepository, Repository } from 'typeorm';
 import { AppRoles } from 'modules/auth/roles/roles.enum';
-import { RegisterUserDto } from './dto';
+import { RegisterUserDto, User } from './dto';
 import { UserEntity } from './user.entity';
-import { User } from './user.payload';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 @EntityRepository(UserEntity)

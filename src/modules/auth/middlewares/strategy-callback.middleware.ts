@@ -7,7 +7,7 @@ import {
   REFRESH_TOKEN_COOKIE_NAME,
 } from 'modules/auth/auth.constants';
 import { AuthService } from 'modules/auth/auth.service';
-import { User } from 'modules/user/user.payload';
+import { User } from 'modules/user/dto';
 
 @Injectable()
 export class StrategyCallbackMiddleware implements NestMiddleware {

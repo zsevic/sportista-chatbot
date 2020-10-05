@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-jwt';
 import { cookieExtractor } from 'modules/auth/extractors';
-import { User } from 'modules/user/user.payload';
+import { User } from 'modules/user/dto';
 import { UserService } from 'modules/user/user.service';
 
 @Injectable()

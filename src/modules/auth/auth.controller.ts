@@ -10,9 +10,8 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
-import { LoginUserDto, RegisterUserDto } from 'modules/user/dto';
+import { LoginUserDto, RegisterUserDto, User } from 'modules/user/dto';
 import { UserService } from 'modules/user/user.service';
-import { User } from 'modules/user/user.payload';
 import {
   ACCESS_TOKEN_COOKIE_NAME,
   COOKIE_OPTIONS,
