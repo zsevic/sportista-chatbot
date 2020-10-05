@@ -19,7 +19,7 @@ export class CustomValidationPipe extends ValidationPipe {
             message.constraints ? Object.values(message.constraints) : message,
           )
           .flat();
-        this.logger.error(messages);
+        this.logger.error(JSON.stringify(messages));
 
         throw new BadRequestException(messages);
       }
