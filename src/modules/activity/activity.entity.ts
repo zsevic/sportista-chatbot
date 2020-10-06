@@ -11,7 +11,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { UserEntity } from 'modules/user/user.entity';
-import { LocationEntity } from 'modules/location/location.entity';
+import { LocationEntity } from './location/location.entity';
 
 @Entity('activity')
 export class ActivityEntity {

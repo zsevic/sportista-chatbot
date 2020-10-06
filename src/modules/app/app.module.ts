@@ -30,7 +30,7 @@ import { AppController } from './app.controller';
   ],
 })
 export class AppModule {
-  constructor(){
+  constructor() {
     initializeTransactionalContext();
     patchTypeORMRepositoryWithBaseRepository();
   }

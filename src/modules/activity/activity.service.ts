@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { FIRST_PAGE } from 'common/config/constants';
 import { PaginatedResponse } from 'common/dtos';
-import { LocationRepository } from 'modules/location/location.repository';
 import { ParticipationRepository } from 'modules/participation/participation.repository';
 import { StateRepository } from 'modules/state/state.repository';
 import { Activity } from './activity.dto';
 import { ActivityRepository } from './activity.repository';
+import { LocationRepository } from './location/location.repository';
 
 @Injectable()
 export class ActivityService {
