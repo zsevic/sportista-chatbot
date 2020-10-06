@@ -1,17 +1,23 @@
-# nestjs-starter
+# sportista-chatbot
 
-> Minimal NestJS boilerplate
+> Chatbot for sportista.fit
 
 ## Getting started
+
+### Prerequisites
+
+* Node version 14
+* Local PostgreSQL database
 
 ### Setup
 
 ```bash
-git clone https://github.com/zsevic/nestjs-starter
-cd nestjs-starter
+git clone https://github.com/zsevic/sportista-chatbot
+cd sportista-chatbot
 cp .env.sample .env # change values after copying
 npm i
-npm run start:dev
+pg_ctl -D /usr/local/var/postgres restart
+npm run dev
 ```
 
 ### Build
@@ -19,19 +25,6 @@ npm run start:dev
 ```bash
 npm run build
 npm start
-```
-
-### Docker build
-
-```bash
-docker build -t nestjs-starter .
-docker run -e PORT=8080 -d -p 8080:8080 nestjs-starter
-```
-
-### Docker compose
-
-```bash
-docker-compose up --build -V
 ```
 
 ### Linting
@@ -55,18 +48,6 @@ npm run migrate
 npm run migrate:down
 ```
 
-### Seeders
-
-```bash
-npm run seed:generate <SEEDER_NAME>
-npm run seed
-npm run seed:down
-```
-
-### API documentation
-
-API documentation is generated using [@nestjs/swagger](https://www.npmjs.com/package/@nestjs/swagger) module at `/api-docs` endpoint
-
 ### Technologies used
 
-- Node.js, TypeScript, NestJS, TypeORM
+- Node.js, TypeScript, NestJS, TypeORM, BootBot
