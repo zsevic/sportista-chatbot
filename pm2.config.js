@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'app',
-      script: 'dist/src/gateways/database/connection.js',
+      script: 'dist/src/main.js',
       instances: 'max',
       env: {
         NODE_ENV: 'development',
