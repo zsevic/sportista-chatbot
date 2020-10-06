@@ -59,6 +59,7 @@ export class ActivityRepository extends Repository<ActivityEntity> {
   ): Promise<PaginatedResponse<Activity>> => {
     const skip = getSkip(page);
     const [results, total] = await this.createQueryBuilder('activity')
+      .leftJoinAndSelect('activity.location', 'location')
       .where({ organizer_id })
       .skip(skip)
       .take(PAGE_SIZE)
@@ -77,6 +78,7 @@ export class ActivityRepository extends Repository<ActivityEntity> {
   ): Promise<PaginatedResponse<Activity>> => {
     const skip = getSkip(page);
     const [results, total] = await this.createQueryBuilder('activity')
+      .leftJoinAndSelect('activity.location', 'location')
       .leftJoin('activity.participants', 'participants')
       .where('participants.id = CAST(:user_id AS bigint)', { user_id })
       .andWhere((qb: SelectQueryBuilder<ActivityEntity>) => {
@@ -108,6 +110,7 @@ export class ActivityRepository extends Repository<ActivityEntity> {
   ): Promise<PaginatedResponse<Activity>> => {
     const skip = getSkip(page);
     const [results, total] = await this.createQueryBuilder('activity')
+      .leftJoinAndSelect('activity.location', 'location')
       .where((qb: SelectQueryBuilder<ActivityEntity>) => {
         const subQuery = qb
           .subQuery()

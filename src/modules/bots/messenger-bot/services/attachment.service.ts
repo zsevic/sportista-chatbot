@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { DEFAULT_ANSWER } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { MessengerBotResolver } from 'modules/bots/messenger-bot/messenger-bot.resolver';
-import { nextStates, states } from 'modules/state/state.constants';
+import { StateService } from 'modules/state/state.service';
 
 @Injectable()
 export class AttachmentService {
-  constructor(private readonly resolver: MessengerBotResolver) {}
+  constructor(
+    private readonly resolver: MessengerBotResolver,
+    private readonly stateService: StateService,
+  ) {}
 
   handleAttachment = async (message: any, userId: number) => {
     const { type, title } = message.attachments[0];
@@ -15,7 +18,10 @@ export class AttachmentService {
       return DEFAULT_ANSWER;
     }
 
-    if (type === 'location' && state.current_state === states.location) {
+    if (
+      type === 'location' &&
+      state.current_state === this.stateService.states.location
+    ) {
       const {
         coordinates: { lat, long },
       } = message.attachments[0].payload;
@@ -24,7 +30,8 @@ export class AttachmentService {
         location_title: title,
         location_latitude: lat,
         location_longitude: long,
-        current_state: nextStates[state.current_state] || null,
+        current_state:
+          this.stateService.nextStates[state.current_state] || null,
       };
 
       return this.resolver.updateState(userId, updatedState);

@@ -4,6 +4,23 @@ import { StateRepository } from './state.repository';
 
 @Injectable()
 export class StateService {
+  states = {
+    type: 'type',
+    datetime: 'datetime',
+    location: 'location',
+    price: 'price',
+    remaining_vacancies: 'remaining_vacancies',
+    closing: 'closing',
+  };
+
+  nextStates = {
+    [this.states.type]: this.states.datetime,
+    [this.states.datetime]: this.states.location,
+    [this.states.location]: this.states.price,
+    [this.states.price]: this.states.remaining_vacancies,
+    [this.states.remaining_vacancies]: this.states.closing,
+  };
+
   constructor(private readonly stateRepository: StateRepository) {}
 
   getCurrentState = async (userId: number): Promise<State> =>

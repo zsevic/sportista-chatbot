@@ -11,6 +11,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { UserEntity } from 'modules/user/user.entity';
+import { LocationEntity } from 'modules/location/location.entity';
 
 @Entity('activity')
 export class ActivityEntity {
@@ -25,18 +26,10 @@ export class ActivityEntity {
   @Column()
   datetime: Date;
 
-  @Column()
-  location_title: string;
-
   @Column({
-    type: 'decimal',
+    type: 'uuid',
   })
-  location_latitude: number;
-
-  @Column({
-    type: 'decimal',
-  })
-  location_longitude: number;
+  location_id: string;
 
   @Column()
   price: number;
@@ -58,17 +51,11 @@ export class ActivityEntity {
   @DeleteDateColumn()
   deleted_at: Date;
 
-  @ManyToOne(
-    () => UserEntity,
-    userEntity => userEntity.activities,
-  )
+  @ManyToOne(() => UserEntity, (userEntity) => userEntity.activities)
   @JoinColumn({ name: 'organizer_id' })
   organizer: UserEntity;
 
-  @ManyToMany(
-    () => UserEntity,
-    userEntity => userEntity.participations,
-  )
+  @ManyToMany(() => UserEntity, (userEntity) => userEntity.participations)
   @JoinTable({
     name: 'participation',
     joinColumn: {
@@ -81,4 +68,11 @@ export class ActivityEntity {
     },
   })
   participants: UserEntity[];
+
+  @ManyToOne(
+    () => LocationEntity,
+    (locationEntity) => locationEntity.activities,
+  )
+  @JoinColumn({ name: 'location_id' })
+  location: LocationEntity;
 }

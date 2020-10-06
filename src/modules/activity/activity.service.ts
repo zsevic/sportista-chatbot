@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { FIRST_PAGE } from 'common/config/constants';
 import { PaginatedResponse } from 'common/dtos';
+import { LocationRepository } from 'modules/location/location.repository';
 import { ParticipationRepository } from 'modules/participation/participation.repository';
 import { StateRepository } from 'modules/state/state.repository';
 import { Activity } from './activity.dto';
@@ -11,6 +12,7 @@ import { ActivityRepository } from './activity.repository';
 export class ActivityService {
   constructor(
     private readonly activityRepository: ActivityRepository,
+    private readonly locationRepository: LocationRepository,
     private readonly participationRepository: ParticipationRepository,
     private readonly stateRepository: StateRepository,
   ) {}
@@ -29,7 +31,19 @@ export class ActivityService {
 
   @Transactional()
   async createActivity(activity: Activity): Promise<void> {
-    await this.activityRepository.createActivity(activity);
+    const location = await this.locationRepository.findOrCreate({
+      latitude: activity.location_latitude,
+      longitude: activity.location_longitude,
+      title: activity.location_title,
+    });
+    await this.activityRepository.createActivity({
+      organizer_id: activity.organizer_id,
+      location_id: location.id,
+      datetime: activity.datetime,
+      price: activity.price,
+      remaining_vacancies: activity.remaining_vacancies,
+      type: activity.type,
+    });
     await this.stateRepository.resetState(activity.organizer_id);
   }
 

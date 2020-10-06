@@ -34,8 +34,8 @@ const getElementFromActivity = (
       : NO_REMAINING_VACANCIES_TEXT
   } za ${activity.type}`;
   const url = getLocationUrl(
-    activity.location_latitude,
-    activity.location_longitude,
+    activity.location.latitude,
+    activity.location.longitude,
   );
 
   const buttons = [
@@ -53,7 +53,7 @@ const getElementFromActivity = (
 
   return {
     title,
-    subtitle: `${datetime}, ${activity.location_title}, ${activity.price} RSD`,
+    subtitle: `${datetime}, ${activity.location.title}, ${activity.price} RSD`,
     ...(ACTIVITY_TYPES[activity.type] && {
       image_url: `https://loremflickr.com/320/240/${
         ACTIVITY_TYPES[activity.type]

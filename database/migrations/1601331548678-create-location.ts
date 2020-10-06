@@ -1,10 +1,10 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-export class CreateActivity1601331561468 implements MigrationInterface {
+export class CreateLocation1601331548678 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'activity',
+        name: 'location',
         columns: [
           {
             name: 'id',
@@ -15,38 +15,21 @@ export class CreateActivity1601331561468 implements MigrationInterface {
             isPrimary: true,
           },
           {
-            name: 'organizer_id',
-            type: 'bigint',
-          },
-          {
-            name: 'type',
+            name: 'title',
             type: 'varchar',
           },
           {
-            name: 'location_id',
-            type: 'uuid',
-          },
-          {
-            name: 'datetime',
-            type: 'timestamp',
-          },
-          {
-            name: 'price',
+            name: 'latitude',
             type: 'decimal',
           },
           {
-            name: 'remaining_vacancies',
-            type: 'int',
+            name: 'longitude',
+            type: 'decimal',
           },
           {
             name: 'created_at',
             type: 'timestamp',
             default: 'current_timestamp',
-          },
-          {
-            name: 'deleted_at',
-            type: 'timestamp',
-            isNullable: true,
           },
           {
             name: 'updated_at',
@@ -59,6 +42,6 @@ export class CreateActivity1601331561468 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('activity');
+    await queryRunner.dropTable('location');
   }
 }

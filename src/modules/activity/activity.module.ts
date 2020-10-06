@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { LocationRepository } from 'modules/location/location.repository';
 import { ParticipationRepository } from 'modules/participation/participation.repository';
 import { StateRepository } from 'modules/state/state.repository';
 import { ActivityRepository } from './activity.repository';
@@ -9,6 +10,7 @@ import { ActivityService } from './activity.service';
   imports: [
     TypeOrmModule.forFeature([
       ActivityRepository,
+      LocationRepository,
       ParticipationRepository,
       StateRepository,
     ]),

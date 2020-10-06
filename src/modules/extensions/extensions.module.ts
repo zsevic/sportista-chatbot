@@ -5,9 +5,12 @@ import { MessengerBotModule } from 'modules/bots/messenger-bot/messenger-bot.mod
 import { ExtensionsController } from './extensions.controller';
 
 @Module({
-  imports: [ConfigModule.forRoot({
-    load: [config],
-  }), MessengerBotModule],
+  imports: [
+    ConfigModule.forRoot({
+      load: [config],
+    }),
+    MessengerBotModule,
+  ],
   controllers: [ExtensionsController],
   providers: [MessengerBotModule],
 })

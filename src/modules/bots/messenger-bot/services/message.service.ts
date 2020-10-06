@@ -14,15 +14,15 @@ import {
   INVALID_PRICE_TEXT,
   INVALID_REMAINING_VACANCIES_TEXT,
 } from 'modules/bots/messenger-bot/messenger-bot.texts';
-import { states, nextStates } from 'modules/state/state.constants';
 import { State } from 'modules/state/state.dto';
-import { getDatetimeQuestion } from 'modules/state/state.utils';
+import { StateService } from 'modules/state/state.service';
 
 @Injectable()
 export class MessageService {
   constructor(
     private readonly responses: MessengerBotResponses,
     private readonly resolver: MessengerBotResolver,
+    private readonly stateService: StateService,
   ) {}
 
   handleMessage = async (message: any, userId: number) => {
@@ -34,10 +34,10 @@ export class MessageService {
     const { text } = message;
     const updatedState = {
       [state.current_state]: text,
-      current_state: nextStates[state.current_state] || null,
+      current_state: this.stateService.nextStates[state.current_state] || null,
     };
 
-    if (updatedState.current_state === states.closing) {
+    if (updatedState.current_state === this.stateService.states.closing) {
       validationResponse = this.validateRemainingVacancies(+text);
       if (validationResponse) return validationResponse;
 
@@ -67,25 +67,28 @@ export class MessageService {
     }
 
     if (
-      state.current_state === states.type &&
+      state.current_state === this.stateService.states.type &&
       !Object.keys(ACTIVITY_TYPES).includes(text)
     ) {
       return this.responses.getInvalidActivityTypeResponse();
     }
 
-    if (state.current_state === states.location) {
+    if (state.current_state === this.stateService.states.location) {
       return INVALID_LOCATION_TEXT;
     }
 
     if (
-      state.current_state === states.datetime &&
+      state.current_state === this.stateService.states.datetime &&
       (!isValid(parseISO(text)) || !isAfter(new Date(text), new Date()))
     ) {
-      return getDatetimeQuestion(INVALID_DATETIME_TEXT, DATETIME_TEXT);
+      return this.responses.getDatetimeQuestion(
+        INVALID_DATETIME_TEXT,
+        DATETIME_TEXT,
+      );
     }
 
     if (
-      state.current_state === states.price &&
+      state.current_state === this.stateService.states.price &&
       (Number.isNaN(text) || Math.sign(+text) !== 1)
     )
       return INVALID_PRICE_TEXT;

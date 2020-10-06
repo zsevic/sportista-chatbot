@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PaginatedResponse } from 'common/dtos';
 import { ACTIVITY_TYPES } from 'modules/activity/activity.constants';
 import { Activity } from 'modules/activity/activity.dto';
@@ -13,13 +14,18 @@ import {
   UPCOMING_ACTIVITIES_TYPE,
   UPDATE_REMAINING_VACANCIES_TYPE,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
-import { messages, states } from 'modules/state/state.constants';
+import { StateService } from 'modules/state/state.service';
 import { User } from 'modules/user/user.dto';
 import {
   ACTIVITY_OPTIONS_TEXT,
+  ACTIVITY_TYPE_QUESTION_TEXT,
   CANCEL_TEXT,
+  CREATE_ACTIVITY_CLOSING_TEXT,
+  DATETIME_QUESTION_TEXT,
+  DATETIME_TEXT,
   INVALID_ACTIVITY_TYPE_TEXT,
   JOIN_ACTIVITY_TEXT,
+  LOCATION_QUESTION_TEXT,
   NO_CREATED_ACTIVITIES_TEXT,
   NO_JOINED_ACTIVITIES_TEXT,
   NO_PARTICIPANTS_TEXT,
@@ -27,6 +33,8 @@ import {
   NO_UPCOMING_ACTIVITIES_TEXT,
   OPTIONS_TEXT,
   PARTICIPANT_LIST_TEXT,
+  PRICE_QUESTION_TEXT,
+  REMAINING_VACANCIES_QUESTION_TEXT,
   UPDATED_REMAINING_VACANCIES_TEXT,
   UPDATE_REMAINING_VACANCIES_TEXT,
   VIEW_MORE_CREATED_ACTIVITIES_TEXT,
@@ -41,6 +49,25 @@ import {
 
 @Injectable()
 export class MessengerBotResponses {
+  messages: any = {
+    [this.stateService.states.type]: ACTIVITY_TYPE_QUESTION_TEXT,
+    [this.stateService.states.location]: LOCATION_QUESTION_TEXT,
+    [this.stateService.states.price]: PRICE_QUESTION_TEXT,
+    [this.stateService.states
+      .remaining_vacancies]: REMAINING_VACANCIES_QUESTION_TEXT,
+    [this.stateService.states.closing]: CREATE_ACTIVITY_CLOSING_TEXT,
+  };
+
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly stateService: StateService,
+  ) {
+    this.messages[this.stateService.states.datetime] = this.getDatetimeQuestion(
+      DATETIME_QUESTION_TEXT,
+      DATETIME_TEXT,
+    );
+  }
+
   getActivityOptionsResponse = (activityId: string) => ({
     text: ACTIVITY_OPTIONS_TEXT,
     buttons: [
@@ -75,8 +102,27 @@ export class MessengerBotResponses {
       isOrganizerShown: false,
     });
 
+  getDatetimeQuestion = (text: string, title: string) => {
+    const url = `${this.configService.get(
+      'EXTENSIONS_URL',
+    )}/extensions/datetime`;
+
+    return {
+      text,
+      buttons: [
+        {
+          type: 'web_url',
+          title,
+          url,
+          messenger_extensions: true,
+          webview_height_ratio: 'compact',
+        },
+      ],
+    };
+  };
+
   getInitializeActivityResponse = () => ({
-    text: messages[states.type],
+    text: this.messages[this.stateService.states.type],
     quickReplies: Object.keys(ACTIVITY_TYPES),
   });
 

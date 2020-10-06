@@ -3,7 +3,6 @@ import { Activity } from 'modules/activity/activity.dto';
 import { ActivityService } from 'modules/activity/activity.service';
 import { FIRST_PAGE } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { ParticipationService } from 'modules/participation/participation.service';
-import { messages, states } from 'modules/state/state.constants';
 import { State } from 'modules/state/state.dto';
 import { StateService } from 'modules/state/state.service';
 import { User } from 'modules/user/user.dto';
@@ -75,7 +74,7 @@ export class MessengerBotResolver {
   createActivity = async (newActivity: Activity) => {
     await this.activityService.createActivity(newActivity);
 
-    return messages[states.closing];
+    return this.responses.messages[this.stateService.states.closing];
   };
 
   getCreatedActivities = async (userId: number, page = FIRST_PAGE) => {
@@ -129,7 +128,7 @@ export class MessengerBotResolver {
 
   initializeActivity = async (userId: number) => {
     const initialState = {
-      current_state: states.type,
+      current_state: this.stateService.states.type,
     };
     await this.stateService.updateState(userId, initialState);
 
@@ -196,6 +195,6 @@ export class MessengerBotResolver {
   updateState = async (userId: number, updatedState: State) => {
     await this.stateService.updateState(userId, updatedState);
 
-    return messages[updatedState.current_state];
+    return this.responses.messages[updatedState.current_state];
   };
 }
