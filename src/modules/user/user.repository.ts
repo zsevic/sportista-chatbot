@@ -1,110 +1,46 @@
-import * as crypto from 'crypto';
-import { BadRequestException, Logger } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
-import { EntityRepository, Repository } from 'typeorm';
-import { AppRoles } from 'modules/auth/roles/roles.enum';
-import { RegisterUserDto, User } from './dto';
+import { EntityRepository, Repository, SelectQueryBuilder } from 'typeorm';
+import { ActivityEntity } from 'modules/activity/activity.entity';
+import { ParticipationEntity } from 'modules/participation/participation.entity';
+import { User } from './user.dto';
 import { UserEntity } from './user.entity';
-import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 @EntityRepository(UserEntity)
 export class UserRepository extends Repository<UserEntity> {
-  private readonly logger = new Logger(UserRepository.name);
+  getParticipantListByActivity = async (
+    activity_id: string,
+  ): Promise<User[]> => {
+    const participantList = await this.createQueryBuilder('user')
+      .leftJoin('user.participations', 'participations')
+      .where((qb: SelectQueryBuilder<ActivityEntity>) => {
+        const subQuery = qb
+          .subQuery()
+          .select('activity_id')
+          .from(ParticipationEntity, 'participation')
+          .where('participation.activity_id = CAST(:activity_id AS uuid)', {
+            activity_id,
+          })
+          .getQuery();
+        return `participations.id IN ${subQuery}`;
+      })
+      .andWhere('participations.deleted_at IS NULL')
+      .getMany();
 
-  async get(id: string): Promise<User> {
+    return plainToClass(User, participantList);
+  };
+
+  getUser = async (id: number): Promise<User> => {
     const user = await this.findOne(id);
+    if (!user) throw new Error("User doesn't exist");
 
     return plainToClass(User, user);
-  }
+  };
 
-  async getByEmail(email: string): Promise<User> {
-    const user = await this.findOne({
-      select: ['id', 'avatar', 'email', 'name', 'role'],
-      where: { email },
-    });
+  registerUser = async (userDto: User): Promise<User> => {
+    const user = await this.findOne(userDto.id);
+    if (user) return plainToClass(User, user);
 
-    return plainToClass(User, user);
-  }
-
-  async getByEmailAndPassword(email: string, password: string): Promise<User> {
-    const passwordHash = crypto.createHmac('sha256', password).digest('hex');
-
-    const user = await this.createQueryBuilder('user')
-      .where('user.email = :email and user.password = :password')
-      .setParameter('email', email)
-      .setParameter('password', passwordHash)
-      .getOne();
-
-    return plainToClass(User, user);
-  }
-
-  async getByRefreshToken(refreshToken: string): Promise<User> {
-    const user = await this.findOne({ refresh_token: refreshToken });
-    if (!user) {
-      throw new BadRequestException('Refresh token is not valid');
-    }
-
-    return plainToClass(User, user);
-  }
-
-  async createUser(profile: any): Promise<User> {
-    const provider_id = `${profile.provider}_id`;
-    const newUser = await this.save({
-      [provider_id]: profile.id,
-      avatar: profile.picture,
-      email: profile.email,
-      name: profile.displayName,
-      role: AppRoles.USER,
-    });
-    const user = {
-      id: newUser.id,
-      avatar: newUser.avatar,
-      email: newUser.email,
-      name: newUser.name,
-      role: newUser.role,
-    };
-
-    return plainToClass(User, user);
-  }
-
-  @Transactional()
-  async register(payload: RegisterUserDto) {
-    const newUser = new UserEntity();
-    newUser.email = payload.email;
-    newUser.name = payload.name;
-    newUser.password = payload.password;
-    newUser.role = AppRoles.USER;
-
-    const savedUser = await this.save(newUser);
-
-    return plainToClass(User, savedUser);
-  }
-
-  async updateRefreshToken(
-    userId: string,
-    refreshToken: string,
-  ): Promise<void> {
-    const user = await this.findOne(userId);
-    if (!user) {
-      throw new BadRequestException('User is not valid');
-    }
-
-    await this.save({
-      ...user,
-      refresh_token: refreshToken,
-    }).then(() => {
-      this.logger.log('Refresh token is updated');
-    });
-  }
-
-  async validate(name: string, email: string): Promise<void> {
-    const qb = await this.createQueryBuilder('user')
-      .where('user.name = :name', { name })
-      .orWhere('user.email = :email', { email });
-
-    const user = await qb.getOne();
-    if (user) {
-      throw new BadRequestException('Name and email must be unique');
-    }
-  }
+    const newUser = await this.save(userDto);
+    return plainToClass(User, newUser);
+  };
 }

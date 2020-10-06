@@ -1,28 +1,26 @@
-module.exports = [
-  {
-    name: 'migration',
-    type: 'sqlite',
-    database: 'database.sqlite',
-    entities: ['dist/**/**.entity{.ts,.js}'],
-    migrations: ['database/migrations/*{.ts,.js}'],
-    migrationsTableName: 'migrations',
-    cli: {
-      migrationsDir: 'database/migrations',
-    },
-    logging: true,
-    synchronize: false
+require('dotenv/config');
+
+const options = {
+  name: 'migrations',
+  type: 'postgres',
+  url: process.env.DATABASE_URL,
+  entities: ['dist/**/*.entity.js'],
+  migrationsTableName: 'migrations',
+  cli: {
+    migrationsDir: 'database/migrations',
   },
-  {
-    name: 'seed',
-    type: 'sqlite',
-    database: 'database.sqlite',
-    entities: ['src/**/**.entity{.ts,.js}'],
-    migrations: ['database/seeders/*{.ts,.js}'],
-    migrationsTableName: 'seeders',
-    cli: {
-      migrationsDir: 'database/seeders',
-    },
+  synchronize: false,
+};
+
+module.exports = [{
+    ...options,
+    name: 'default',
+    logging: false,
+    migrations: ['database/migrations/*.js'],
+  }, {
+    ...options,
+    name: 'migrations',
     logging: true,
-    synchronize: false,
+    migrations: ['database/migrations/*.ts'],
   },
 ];

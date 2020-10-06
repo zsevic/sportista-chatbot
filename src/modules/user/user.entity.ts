@@ -2,53 +2,55 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  PrimaryGeneratedColumn,
+  ManyToMany,
+  OneToMany,
+  OneToOne,
+  PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { PasswordTransformer } from './transformers/password.transformer';
+import { ActivityEntity } from 'modules/activity/activity.entity';
+import { StateEntity } from 'modules/state/state.entity';
 
 @Entity('user')
 export class UserEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column({
-    nullable: true,
+  @PrimaryColumn({
+    type: 'bigint',
   })
-  facebook_id?: string;
-
-  @Column({
-    nullable: true,
-  })
-  google_id?: string;
+  id: number;
 
   @Column()
-  name: string;
-
-  @Column({ default: '' })
-  avatar?: string;
+  first_name: string;
 
   @Column()
-  email: string;
-
-  @Column({
-    transformer: new PasswordTransformer(),
-    nullable: true,
-  })
-  password?: string;
-
-  @Column({
-    nullable: true,
-    select: false,
-  })
-  refresh_token: string;
+  gender: string;
 
   @Column()
-  role: string;
+  image_url: string;
+
+  @Column()
+  last_name: string;
 
   @CreateDateColumn()
   created_at: Date;
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @OneToMany(
+    () => ActivityEntity,
+    activityEntity => activityEntity.organizer,
+  )
+  activities: ActivityEntity[];
+
+  @OneToOne(
+    () => StateEntity,
+    stateEntity => stateEntity.user,
+  )
+  state: StateEntity;
+
+  @ManyToMany(
+    () => ActivityEntity,
+    activityEntity => activityEntity.participants,
+  )
+  participations: ActivityEntity[];
 }

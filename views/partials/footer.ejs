@@ -1,0 +1,50 @@
+<p class="text-center text-muted">© Copyright 2020 Sportista.fit</p>
+<script>
+  (function (d, s, id) {
+    var js,
+      fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) {
+      return;
+    }
+    js = d.createElement(s);
+    js.id = id;
+    js.src = '//connect.facebook.com/en_US/messenger.Extensions.js';
+    fjs.parentNode.insertBefore(js, fjs);
+  })(document, 'script', 'Messenger');
+</script>
+<script>
+  window.extAsyncInit = async function () {
+    MessengerExtensions.getUserID(
+      function success(uids) {
+        const { psid: user_id } = uids;
+        if (!user_id) return;
+
+        document
+          .getElementById('form')
+          .addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            try {
+              const datetime = document.getElementById('datetime').value;
+              const response = await fetch('/extensions/datetime', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ datetime, user_id }),
+              });
+              if (response.status === 200) {
+                MessengerExtensions.requestCloseBrowser(
+                  function success() {},
+                  function error(err) {},
+                );
+              }
+            } catch (error) {
+              console.error(error);
+            }
+          });
+      },
+      function error(err) {},
+    );
+  };
+</script>

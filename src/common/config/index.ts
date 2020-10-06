@@ -1,10 +1,6 @@
 export default () => ({
-  CLIENT_URL: process.env.CLIENT_URL || 'http://localhost:3000',
-  LOGIN_FAILED_REDIRECTION_URL:
-    process.env.LOGIN_FAILED_REDIRECTION_URL ||
-    'http://localhost:3000/#/login/failed',
-  LOGIN_SUCCESS_REDIRECTION_URL:
-    process.env.LOGIN_FAILED_REDIRECTION_URL ||
-    'http://localhost:3000/#/login/success',
+  FB_APP_SECRET: process.env.FB_APP_SECRET,
+  FB_PAGE_ACCESS_TOKEN: process.env.FB_PAGE_ACCESS_TOKEN,
+  WEBHOOK_VERIFY_TOKEN: process.env.WEBHOOK_VERIFY_TOKEN,
   PORT: process.env.PORT || 8080,
 });

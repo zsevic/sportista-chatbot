@@ -1,23 +1,19 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import * as cookieParser from 'cookie-parser';
-import { AppModule } from 'modules/app/app.module';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { setupSwagger } from 'common/config/api-docs';
 import { AllExceptionsFilter } from 'common/filters';
-import { loggerMiddleware } from 'common/middlewares';
+// import { loggerMiddleware } from 'common/middlewares';
 import { CustomValidationPipe } from 'common/pipes';
+import { AppModule } from 'modules/app/app.module';
 
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const logger = new Logger(bootstrap.name);
   const configService = app.get('configService');
 
-  app.enableCors({
-    credentials: true,
-    origin: configService.get('CLIENT_URL'),
-  });
-  app.use(cookieParser());
-  app.use(loggerMiddleware);
+  // app.use(loggerMiddleware);
+  app.setViewEngine('ejs');
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalPipes(
     new CustomValidationPipe({

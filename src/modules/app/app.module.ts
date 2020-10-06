@@ -6,34 +6,20 @@ import {
   patchTypeORMRepositoryWithBaseRepository,
 } from 'typeorm-transactional-cls-hooked';
 import config from 'common/config';
-import databaseConfig from 'common/config/database';
-import { EventsModule } from 'common/events/events.module';
-import { AuthModule } from 'modules/auth/auth.module';
+import { BotsModule } from 'modules/bots/bots.module';
+import { ExtensionsModule } from 'modules/extensions/extensions.module';
+import { WebhookModule } from 'modules/webhook/webhook.module';
 import { AppController } from './app.controller';
-
-const typeOrmConfig = {
-  imports: [
-    ConfigModule.forRoot({
-      load: [databaseConfig],
-      expandVariables: true,
-    }),
-  ],
-  inject: [ConfigService],
-  useFactory: async (configService: ConfigService) => {
-    initializeTransactionalContext();
-    patchTypeORMRepositoryWithBaseRepository();
-    return configService.get('database');
-  },
-};
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       load: [config],
     }),
-    TypeOrmModule.forRootAsync(typeOrmConfig),
-    AuthModule,
-    EventsModule,
+    TypeOrmModule.forRoot(),
+    ExtensionsModule,
+    WebhookModule,
+    BotsModule,
   ],
   controllers: [AppController],
   providers: [
@@ -43,4 +29,9 @@ const typeOrmConfig = {
     },
   ],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(){
+    initializeTransactionalContext();
+    patchTypeORMRepositoryWithBaseRepository();
+  }
+}
