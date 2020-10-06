@@ -5,6 +5,7 @@ import { StateRepository } from 'modules/state/state.repository';
 import { ActivityRepository } from './activity.repository';
 import { ActivityService } from './activity.service';
 import { LocationRepository } from './location/location.repository';
+import { PriceRepository } from './price/price.repository';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { LocationRepository } from './location/location.repository';
       ActivityRepository,
       LocationRepository,
       ParticipationRepository,
+      PriceRepository,
       StateRepository,
     ]),
   ],

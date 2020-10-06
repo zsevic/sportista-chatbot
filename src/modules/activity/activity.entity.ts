@@ -12,6 +12,7 @@ import {
 } from 'typeorm';
 import { UserEntity } from 'modules/user/user.entity';
 import { LocationEntity } from './location/location.entity';
+import { PriceEntity } from './price/price.entity';
 
 @Entity('activity')
 export class ActivityEntity {
@@ -31,8 +32,10 @@ export class ActivityEntity {
   })
   location_id: string;
 
-  @Column()
-  price: number;
+  @Column({
+    type: 'uuid',
+  })
+  price_id: string;
 
   @Column({
     type: 'int',
@@ -75,4 +78,8 @@ export class ActivityEntity {
   )
   @JoinColumn({ name: 'location_id' })
   location: LocationEntity;
+
+  @ManyToOne(() => PriceEntity, (priceEntity) => priceEntity.activities)
+  @JoinColumn({ name: 'price_id' })
+  price: PriceEntity;
 }

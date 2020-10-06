@@ -13,9 +13,9 @@ export class State {
 
   datetime?: string | null;
 
-  price?: number | null;
+  price_value?: number | null;
 
   remaining_vacancies?: number | null;
 
-  type?: string | null;
+  activity_type?: string | null;
 }

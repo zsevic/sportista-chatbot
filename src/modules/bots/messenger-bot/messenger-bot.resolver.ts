@@ -1,5 +1,4 @@
-import { Injectable } from '@nestjs/common';
-import { Activity } from 'modules/activity/activity.dto';
+import { Injectable, Logger } from '@nestjs/common';
 import { ActivityService } from 'modules/activity/activity.service';
 import { FIRST_PAGE } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { ParticipationService } from 'modules/participation/participation.service';
@@ -25,6 +24,8 @@ import {
 
 @Injectable()
 export class MessengerBotResolver {
+  private readonly logger = new Logger(MessengerBotResolver.name);
+
   constructor(
     private readonly activityService: ActivityService,
     private readonly responses: MessengerBotResponses,
@@ -71,7 +72,7 @@ export class MessengerBotResolver {
     }
   };
 
-  createActivity = async (newActivity: Activity) => {
+  createActivity = async (newActivity: any) => {
     await this.activityService.createActivity(newActivity);
 
     return this.responses.messages[this.stateService.states.closing];
@@ -128,7 +129,7 @@ export class MessengerBotResolver {
 
   initializeActivity = async (userId: number) => {
     const initialState = {
-      current_state: this.stateService.states.type,
+      current_state: this.stateService.states.activity_type,
     };
     await this.stateService.updateState(userId, initialState);
 
@@ -151,7 +152,8 @@ export class MessengerBotResolver {
     try {
       await this.userService.registerUser(userDto);
       return REGISTRATION_SUCCESS_TEXT;
-    } catch {
+    } catch (err) {
+      this.logger.error(err);
       return REGISTRATION_FAILURE_TEXT;
     }
   };

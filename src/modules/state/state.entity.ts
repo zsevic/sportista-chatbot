@@ -27,6 +27,11 @@ export class StateEntity {
   @Column({
     nullable: true,
   })
+  activity_type: string;
+
+  @Column({
+    nullable: true,
+  })
   datetime: Date;
 
   @Column({
@@ -49,7 +54,7 @@ export class StateEntity {
   @Column({
     nullable: true,
   })
-  price: number;
+  price_value: number;
 
   @Column({
     nullable: true,
@@ -57,21 +62,13 @@ export class StateEntity {
   })
   remaining_vacancies: number;
 
-  @Column({
-    nullable: true,
-  })
-  type: string;
-
   @CreateDateColumn()
   created_at: Date;
 
   @UpdateDateColumn()
   updated_at: Date;
 
-  @OneToOne(
-    () => UserEntity,
-    userEntity => userEntity.state,
-  )
+  @OneToOne(() => UserEntity, (userEntity) => userEntity.state)
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 }

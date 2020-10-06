@@ -53,7 +53,7 @@ const getElementFromActivity = (
 
   return {
     title,
-    subtitle: `${datetime}, ${activity.location.title}, ${activity.price} RSD`,
+    subtitle: `${datetime}, ${activity.location.title}, ${activity.price.value} ${activity.price.currency}`,
     ...(ACTIVITY_TYPES[activity.type] && {
       image_url: `https://loremflickr.com/320/240/${
         ACTIVITY_TYPES[activity.type]

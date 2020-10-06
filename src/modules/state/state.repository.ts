@@ -33,13 +33,13 @@ export class StateRepository extends Repository<StateEntity> {
     const updatedState = await this.save({
       ...state,
       current_state: null,
+      activity_type: null,
       datetime: null,
       location_title: null,
       location_latitude: null,
       location_longitude: null,
-      price: null,
+      price_value: null,
       remaining_vacancies: null,
-      type: null,
     });
 
     return plainToClass(State, updatedState);

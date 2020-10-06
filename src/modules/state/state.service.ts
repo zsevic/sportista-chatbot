@@ -5,7 +5,7 @@ import { StateRepository } from './state.repository';
 @Injectable()
 export class StateService {
   states = {
-    type: 'type',
+    activity_type: 'activity_type',
     datetime: 'datetime',
     location: 'location',
     price: 'price',
@@ -14,7 +14,7 @@ export class StateService {
   };
 
   nextStates = {
-    [this.states.type]: this.states.datetime,
+    [this.states.activity_type]: this.states.datetime,
     [this.states.datetime]: this.states.location,
     [this.states.location]: this.states.price,
     [this.states.price]: this.states.remaining_vacancies,

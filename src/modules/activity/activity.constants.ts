@@ -5,3 +5,5 @@ export const ACTIVITY_TYPES = {
   '🏓': 'table-tennis',
 };
 export const MIN_REMAINING_VACANCIES = 0;
+
+export const DEFAULT_PRICE_CURRENCY = 'RSD';

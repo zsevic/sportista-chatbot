@@ -24,7 +24,7 @@ export class CreateState1601332913068 implements MigrationInterface {
             isNullable: true,
           },
           {
-            name: 'type',
+            name: 'activity_type',
             type: 'varchar',
             isNullable: true,
           },
@@ -49,7 +49,7 @@ export class CreateState1601332913068 implements MigrationInterface {
             isNullable: true,
           },
           {
-            name: 'price',
+            name: 'price_value',
             type: 'decimal',
             isNullable: true,
           },

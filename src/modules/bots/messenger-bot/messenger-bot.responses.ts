@@ -50,7 +50,7 @@ import {
 @Injectable()
 export class MessengerBotResponses {
   messages: any = {
-    [this.stateService.states.type]: ACTIVITY_TYPE_QUESTION_TEXT,
+    [this.stateService.states.activity_type]: ACTIVITY_TYPE_QUESTION_TEXT,
     [this.stateService.states.location]: LOCATION_QUESTION_TEXT,
     [this.stateService.states.price]: PRICE_QUESTION_TEXT,
     [this.stateService.states
@@ -122,7 +122,7 @@ export class MessengerBotResponses {
   };
 
   getInitializeActivityResponse = () => ({
-    text: this.messages[this.stateService.states.type],
+    text: this.messages[this.stateService.states.activity_type],
     quickReplies: Object.keys(ACTIVITY_TYPES),
   });
 

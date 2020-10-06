@@ -47,9 +47,9 @@ export class MessageService {
         location_title: state.location_title,
         location_latitude: state.location_latitude,
         location_longitude: state.location_longitude,
-        price: state.price,
+        price: state.price_value,
         remaining_vacancies: +text,
-        type: state.type,
+        type: state.activity_type,
       };
 
       return this.resolver.createActivity(newActivity);
@@ -67,7 +67,7 @@ export class MessageService {
     }
 
     if (
-      state.current_state === this.stateService.states.type &&
+      state.current_state === this.stateService.states.activity_type &&
       !Object.keys(ACTIVITY_TYPES).includes(text)
     ) {
       return this.responses.getInvalidActivityTypeResponse();

@@ -4,9 +4,11 @@ import { FIRST_PAGE } from 'common/config/constants';
 import { PaginatedResponse } from 'common/dtos';
 import { ParticipationRepository } from 'modules/participation/participation.repository';
 import { StateRepository } from 'modules/state/state.repository';
+import { DEFAULT_PRICE_CURRENCY } from './activity.constants';
 import { Activity } from './activity.dto';
 import { ActivityRepository } from './activity.repository';
 import { LocationRepository } from './location/location.repository';
+import { PriceRepository } from './price/price.repository';
 
 @Injectable()
 export class ActivityService {
@@ -14,6 +16,7 @@ export class ActivityService {
     private readonly activityRepository: ActivityRepository,
     private readonly locationRepository: LocationRepository,
     private readonly participationRepository: ParticipationRepository,
+    private readonly priceRepository: PriceRepository,
     private readonly stateRepository: StateRepository,
   ) {}
 
@@ -30,17 +33,21 @@ export class ActivityService {
   }
 
   @Transactional()
-  async createActivity(activity: Activity): Promise<void> {
+  async createActivity(activity: any): Promise<void> {
     const location = await this.locationRepository.findOrCreate({
       latitude: activity.location_latitude,
       longitude: activity.location_longitude,
       title: activity.location_title,
     });
+    const price = await this.priceRepository.findOrCreate({
+      value: activity.price,
+      currency: DEFAULT_PRICE_CURRENCY,
+    });
     await this.activityRepository.createActivity({
       organizer_id: activity.organizer_id,
       location_id: location.id,
+      price_id: price.id,
       datetime: activity.datetime,
-      price: activity.price,
       remaining_vacancies: activity.remaining_vacancies,
       type: activity.type,
     });

@@ -60,6 +60,7 @@ export class ActivityRepository extends Repository<ActivityEntity> {
     const skip = getSkip(page);
     const [results, total] = await this.createQueryBuilder('activity')
       .leftJoinAndSelect('activity.location', 'location')
+      .leftJoinAndSelect('activity.price', 'price')
       .where({ organizer_id })
       .orderBy('activity.datetime', 'ASC')
       .skip(skip)
@@ -80,6 +81,7 @@ export class ActivityRepository extends Repository<ActivityEntity> {
     const skip = getSkip(page);
     const [results, total] = await this.createQueryBuilder('activity')
       .leftJoinAndSelect('activity.location', 'location')
+      .leftJoinAndSelect('activity.price', 'price')
       .leftJoin('activity.participants', 'participants')
       .where('participants.id = CAST(:user_id AS bigint)', { user_id })
       .andWhere((qb: SelectQueryBuilder<ActivityEntity>) => {
@@ -113,6 +115,7 @@ export class ActivityRepository extends Repository<ActivityEntity> {
     const skip = getSkip(page);
     const [results, total] = await this.createQueryBuilder('activity')
       .leftJoinAndSelect('activity.location', 'location')
+      .leftJoinAndSelect('activity.price', 'price')
       .where((qb: SelectQueryBuilder<ActivityEntity>) => {
         const subQuery = qb
           .subQuery()
