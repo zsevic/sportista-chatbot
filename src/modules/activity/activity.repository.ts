@@ -61,6 +61,7 @@ export class ActivityRepository extends Repository<ActivityEntity> {
     const [results, total] = await this.createQueryBuilder('activity')
       .leftJoinAndSelect('activity.location', 'location')
       .where({ organizer_id })
+      .orderBy('activity.datetime', 'ASC')
       .skip(skip)
       .take(PAGE_SIZE)
       .getManyAndCount();
@@ -93,6 +94,7 @@ export class ActivityRepository extends Repository<ActivityEntity> {
         return `activity.id IN ${subQuery}`;
       })
       .andWhere('activity.deleted_at IS NULL')
+      .orderBy('activity.datetime', 'ASC')
       .skip(skip)
       .take(PAGE_SIZE)
       .getManyAndCount();
@@ -124,6 +126,10 @@ export class ActivityRepository extends Repository<ActivityEntity> {
         return `activity.id NOT IN ${subQuery}`;
       })
       .andWhere('activity.remaining_vacancies > 0')
+      .andWhere('activity.datetime > :now', {
+        now: new Date().toDateString(),
+      })
+      .orderBy('activity.datetime', 'ASC')
       .skip(skip)
       .take(PAGE_SIZE)
       .getManyAndCount();
