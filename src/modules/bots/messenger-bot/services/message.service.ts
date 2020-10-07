@@ -33,7 +33,9 @@ export class MessageService {
 
     const { text } = message;
     const updatedState = {
-      [state.current_state]: text,
+      ...(state.current_state === this.stateService.states.price
+        ? { price_value: +text }
+        : { [state.current_state]: text }),
       current_state: this.stateService.nextStates[state.current_state] || null,
     };
 
