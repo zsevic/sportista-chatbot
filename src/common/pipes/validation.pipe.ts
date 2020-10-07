@@ -15,7 +15,7 @@ export class CustomValidationPipe extends ValidationPipe {
       if (e instanceof BadRequestException) {
         const response: any = e.getResponse(); // TODO remove any
         const messages = response.message
-          .map(message =>
+          .map((message) =>
             message.constraints ? Object.values(message.constraints) : message,
           )
           .flat();

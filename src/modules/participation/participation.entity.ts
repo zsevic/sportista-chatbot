@@ -39,15 +39,12 @@ export class ParticipationEntity {
 
   @ManyToOne(
     () => ActivityEntity,
-    activityEntity => activityEntity.participants,
+    (activityEntity) => activityEntity.participants,
   )
   @JoinColumn({ name: 'activity_id' })
   activity: ActivityEntity;
 
-  @ManyToOne(
-    () => UserEntity,
-    userEntity => userEntity.participations,
-  )
+  @ManyToOne(() => UserEntity, (userEntity) => userEntity.participations)
   @JoinColumn({ name: 'participant_id' })
   participant: UserEntity;
 }

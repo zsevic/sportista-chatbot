@@ -36,21 +36,15 @@ export class UserEntity {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @OneToMany(
-    () => ActivityEntity,
-    activityEntity => activityEntity.organizer,
-  )
+  @OneToMany(() => ActivityEntity, (activityEntity) => activityEntity.organizer)
   activities: ActivityEntity[];
 
-  @OneToOne(
-    () => StateEntity,
-    stateEntity => stateEntity.user,
-  )
+  @OneToOne(() => StateEntity, (stateEntity) => stateEntity.user)
   state: StateEntity;
 
   @ManyToMany(
     () => ActivityEntity,
-    activityEntity => activityEntity.participants,
+    (activityEntity) => activityEntity.participants,
   )
   participations: ActivityEntity[];
 }
