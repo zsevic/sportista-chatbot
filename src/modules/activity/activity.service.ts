@@ -7,14 +7,14 @@ import { StateRepository } from 'modules/state/state.repository';
 import { DEFAULT_PRICE_CURRENCY } from './activity.constants';
 import { Activity } from './activity.dto';
 import { ActivityRepository } from './activity.repository';
-import { LocationRepository } from './location/location.repository';
+import { LocationService } from './location/services';
 import { PriceRepository } from './price/price.repository';
 
 @Injectable()
 export class ActivityService {
   constructor(
     private readonly activityRepository: ActivityRepository,
-    private readonly locationRepository: LocationRepository,
+    private readonly locationService: LocationService,
     private readonly participationRepository: ParticipationRepository,
     private readonly priceRepository: PriceRepository,
     private readonly stateRepository: StateRepository,
@@ -34,7 +34,7 @@ export class ActivityService {
 
   @Transactional()
   async createActivity(activity: any): Promise<void> {
-    const location = await this.locationRepository.findOrCreate({
+    const location = await this.locationService.findOrCreate({
       latitude: activity.location_latitude,
       longitude: activity.location_longitude,
       title: activity.location_title,

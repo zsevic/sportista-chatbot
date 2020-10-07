@@ -5,17 +5,24 @@ import { LocationEntity } from './location.entity';
 
 @EntityRepository(LocationEntity)
 export class LocationRepository extends Repository<LocationEntity> {
-  findOrCreate = async (locationDto: Location): Promise<Location> => {
+  findLocation = async (
+    latitude: number,
+    longitude: number,
+  ): Promise<Location> => {
     const location = await this.findOne({
       where: {
-        latitude: locationDto.latitude,
-        longitude: locationDto.longitude,
+        latitude,
+        longitude,
       },
     });
-    if (!location) {
-      const newLocation = await this.save(locationDto);
-      return plainToClass(Location, newLocation);
-    }
+    if (!location) return;
+
+    return plainToClass(Location, location);
+  };
+
+  createLocation = async (locationDto: Location): Promise<Location> => {
+    const location = await this.save(locationDto);
+
     return plainToClass(Location, location);
   };
 }
