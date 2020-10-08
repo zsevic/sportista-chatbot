@@ -16,7 +16,6 @@ import {
   JOIN_ACTIVITY_SUCCESS_TEXT,
   NOTIFY_ORGANIZER_TEXT,
   NOTIFY_PARTICIPANTS_TEXT,
-  REGISTRATION_FAILURE_TEXT,
   REGISTRATION_SUCCESS_TEXT,
   RESET_REMAINING_VACANCIES_TEXT,
   UPDATE_REMAINING_VACANCIES_FAILURE_TEXT,
@@ -148,13 +147,13 @@ export class MessengerBotResolver {
     }
   };
 
-  registerUser = async (userDto: User): Promise<string> => {
+  registerUser = async (userDto: User) => {
     try {
       await this.userService.registerUser(userDto);
       return REGISTRATION_SUCCESS_TEXT;
     } catch (err) {
       this.logger.error(err);
-      return REGISTRATION_FAILURE_TEXT;
+      return this.responses.getRegistrationFailureResponse();
     }
   };
 

@@ -8,6 +8,7 @@ import {
   CANCEL_ACTIVITY_TYPE,
   CANCEL_PARTICIPATION_TYPE,
   CREATED_ACTIVITIES_TYPE,
+  GET_STARTED_PAYLOAD,
   JOINED_ACTIVITIES_TYPE,
   JOIN_ACTIVITY_TYPE,
   PARTICIPANT_LIST_TYPE,
@@ -34,6 +35,8 @@ import {
   OPTIONS_TEXT,
   PARTICIPANT_LIST_TEXT,
   PRICE_QUESTION_TEXT,
+  REGISTRATION_FAILURE_TEXT,
+  REGISTRATION_TEXT,
   REMAINING_VACANCIES_QUESTION_TEXT,
   UPDATED_REMAINING_VACANCIES_TEXT,
   UPDATE_REMAINING_VACANCIES_TEXT,
@@ -162,6 +165,17 @@ export class MessengerBotResponses {
 
     return response;
   };
+
+  getRegistrationFailureResponse = async () => ({
+    text: REGISTRATION_FAILURE_TEXT,
+    buttons: [
+      {
+        type: 'postback',
+        title: REGISTRATION_TEXT,
+        payload: GET_STARTED_PAYLOAD,
+      },
+    ],
+  });
 
   getUpcomingActivitiesResponse = (
     activityListData: PaginatedResponse<Activity>,
