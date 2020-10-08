@@ -12,6 +12,9 @@ async function bootstrap(): Promise<void> {
   const logger = new Logger(bootstrap.name);
   const configService = app.get('configService');
 
+  app.enableShutdownHooks();
+  app.get(AppModule).subscribeToShutdown(() => app.close());
+
   // app.use(loggerMiddleware);
   app.setViewEngine('ejs');
   app.useGlobalFilters(new AllExceptionsFilter());

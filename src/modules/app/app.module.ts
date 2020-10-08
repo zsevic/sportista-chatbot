@@ -1,6 +1,8 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { ConfigService, ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { InjectConnection, TypeOrmModule } from '@nestjs/typeorm';
+import { Subject } from 'rxjs';
+import { Connection } from 'typeorm';
 import {
   initializeTransactionalContext,
   patchTypeORMRepositoryWithBaseRepository,
@@ -30,8 +32,30 @@ import { AppController } from './app.controller';
   ],
 })
 export class AppModule {
-  constructor() {
+  private readonly logger = new Logger(AppModule.name);
+  private readonly shutdownListener$: Subject<void> = new Subject();
+
+  constructor(@InjectConnection() private readonly connection: Connection) {
     initializeTransactionalContext();
     patchTypeORMRepositoryWithBaseRepository();
   }
+
+  onApplicationShutdown = async (signal: string): Promise<void> => {
+    if (!signal) return;
+    this.logger.log(`Detected signal: ${signal}`);
+
+    try {
+      await this.connection.close();
+      this.logger.log('Database connection is closed');
+    } catch (error) {
+      this.logger.error(error.message);
+    }
+  };
+
+  subscribeToShutdown = (shutdownFn: () => void): void => {
+    this.shutdownListener$.subscribe(() => {
+      this.logger.log('App is closed');
+      shutdownFn();
+    });
+  };
 }
