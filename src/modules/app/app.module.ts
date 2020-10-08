@@ -1,6 +1,11 @@
-import { Logger, Module } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  Module,
+  OnApplicationShutdown,
+} from '@nestjs/common';
 import { ConfigService, ConfigModule } from '@nestjs/config';
-import { InjectConnection, TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { Subject } from 'rxjs';
 import { Connection } from 'typeorm';
 import {
@@ -8,17 +13,32 @@ import {
   patchTypeORMRepositoryWithBaseRepository,
 } from 'typeorm-transactional-cls-hooked';
 import config from 'common/config';
+import databaseConfig from 'common/config/database';
 import { BotsModule } from 'modules/bots/bots.module';
 import { ExtensionsModule } from 'modules/extensions/extensions.module';
 import { WebhookModule } from 'modules/webhook/webhook.module';
 import { AppController } from './app.controller';
+
+const typeOrmConfig = {
+  imports: [
+    ConfigModule.forRoot({
+      load: [databaseConfig],
+    }),
+  ],
+  inject: [ConfigService],
+  useFactory: async (configService: ConfigService) => {
+    initializeTransactionalContext();
+    patchTypeORMRepositoryWithBaseRepository();
+    return configService.get('database');
+  },
+};
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       load: [config],
     }),
-    TypeOrmModule.forRoot(),
+    TypeOrmModule.forRootAsync(typeOrmConfig),
     ExtensionsModule,
     WebhookModule,
     BotsModule,
@@ -31,25 +51,28 @@ import { AppController } from './app.controller';
     },
   ],
 })
-export class AppModule {
+@Injectable()
+export class AppModule implements OnApplicationShutdown {
   private readonly logger = new Logger(AppModule.name);
   private readonly shutdownListener$: Subject<void> = new Subject();
 
-  constructor(@InjectConnection() private readonly connection: Connection) {
-    initializeTransactionalContext();
-    patchTypeORMRepositoryWithBaseRepository();
-  }
+  constructor(private readonly connection: Connection) {}
 
-  onApplicationShutdown = async (signal: string): Promise<void> => {
-    if (!signal) return;
-    this.logger.log(`Detected signal: ${signal}`);
-
+  closeDatabaseConnection = async (): Promise<void> => {
     try {
       await this.connection.close();
       this.logger.log('Database connection is closed');
     } catch (error) {
       this.logger.error(error.message);
     }
+  };
+
+  onApplicationShutdown = async (signal: string): Promise<void> => {
+    if (!signal) return;
+    this.logger.log(`Detected signal: ${signal}`);
+
+    this.shutdownListener$.next();
+    return this.closeDatabaseConnection();
   };
 
   subscribeToShutdown = (shutdownFn: () => void): void => {
