@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { setupSwagger } from 'common/config/api-docs';
+import { setupApiDocs } from 'common/config/api-docs';
 import { AllExceptionsFilter } from 'common/filters';
 // import { loggerMiddleware } from 'common/middlewares';
 import { CustomValidationPipe } from 'common/pipes';
@@ -22,7 +22,7 @@ async function bootstrap(): Promise<void> {
       whitelist: true,
     }),
   );
-  setupSwagger(app);
+  setupApiDocs(app);
 
   await app.listen(configService.get('PORT')).then(() => {
     logger.log(`Server is running on port ${configService.get('PORT')}`);
