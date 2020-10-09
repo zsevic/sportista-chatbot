@@ -15,8 +15,6 @@ import {
   UPCOMING_ACTIVITIES_TYPE,
   UPDATE_REMAINING_VACANCIES_TYPE,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
-import { StateService } from 'modules/state/state.service';
-import { User } from 'modules/user/user.dto';
 import {
   ACTIVITY_OPTIONS_TEXT,
   ACTIVITY_TYPE_QUESTION_TEXT,
@@ -43,15 +41,17 @@ import {
   VIEW_MORE_CREATED_ACTIVITIES_TEXT,
   VIEW_MORE_JOINED_ACTIVITIES_TEXT,
   VIEW_MORE_UPCOMING_ACTIVITIES_TEXT,
-} from './messenger-bot.texts';
+} from 'modules/bots/messenger-bot/messenger-bot.texts';
 import {
   getActivitiesResponse,
   getElementFromUser,
   getRemainingVacanciesButtons,
-} from './messenger-bot.utils';
+} from 'modules/bots/messenger-bot/messenger-bot.utils';
+import { StateService } from 'modules/state/state.service';
+import { User } from 'modules/user/user.dto';
 
 @Injectable()
-export class MessengerBotResponses {
+export class ResponseService {
   messages: any = {
     [this.stateService.states.activity_type]: ACTIVITY_TYPE_QUESTION_TEXT,
     [this.stateService.states.location]: LOCATION_QUESTION_TEXT,

@@ -1,6 +1,10 @@
 import { Controller } from '@nestjs/common';
-import { MessengerBotResolver } from 'modules/bots/messenger-bot/messenger-bot.resolver';
-import { AttachmentService, MessageService, PostbackService } from './services';
+import {
+  AttachmentService,
+  MessageService,
+  ResolverService,
+  PostbackService,
+} from './services';
 
 @Controller()
 export class MessengerBotController {
@@ -8,7 +12,7 @@ export class MessengerBotController {
     private readonly attachmentService: AttachmentService,
     private readonly messageService: MessageService,
     private readonly postbackService: PostbackService,
-    private readonly resolver: MessengerBotResolver,
+    private readonly resolverService: ResolverService,
   ) {}
 
   attachmentHandler = async (payload, chat) => {
@@ -27,7 +31,7 @@ export class MessengerBotController {
   };
 
   createdActivitiesHandler = async (payload, chat) => {
-    const response = await this.resolver.getCreatedActivities(
+    const response = await this.resolverService.getCreatedActivities(
       payload.sender.id,
     );
     return chat.say(response);
@@ -41,7 +45,7 @@ export class MessengerBotController {
       last_name,
       profile_pic: image_url,
     } = await chat.getUserProfile();
-    const response = await this.resolver.registerUser({
+    const response = await this.resolverService.registerUser({
       id,
       first_name,
       gender,
@@ -53,12 +57,16 @@ export class MessengerBotController {
   };
 
   initializeActivityHandler = async (payload, chat) => {
-    const response = await this.resolver.initializeActivity(payload.sender.id);
+    const response = await this.resolverService.initializeActivity(
+      payload.sender.id,
+    );
     return chat.say(response);
   };
 
   joinedActivitiesHandler = async (payload, chat) => {
-    const response = await this.resolver.getJoinedActivities(payload.sender.id);
+    const response = await this.resolverService.getJoinedActivities(
+      payload.sender.id,
+    );
     return chat.say(response);
   };
 
@@ -90,7 +98,7 @@ export class MessengerBotController {
   };
 
   upcomingActivitiesHandler = async (payload, chat) => {
-    const response = await this.resolver.getUpcomingActivities(
+    const response = await this.resolverService.getUpcomingActivities(
       payload.sender.id,
     );
     return chat.say(response);

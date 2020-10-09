@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { DEFAULT_ANSWER } from 'modules/bots/messenger-bot/messenger-bot.constants';
-import { MessengerBotResolver } from 'modules/bots/messenger-bot/messenger-bot.resolver';
 import { StateService } from 'modules/state/state.service';
+import { ResolverService } from './resolver.service';
 
 @Injectable()
 export class AttachmentService {
   constructor(
-    private readonly resolver: MessengerBotResolver,
+    private readonly resolverService: ResolverService,
     private readonly stateService: StateService,
   ) {}
 
   handleAttachment = async (message: any, userId: number) => {
     const { type, title } = message.attachments[0];
 
-    const state = await this.resolver.getCurrentState(userId);
+    const state = await this.resolverService.getCurrentState(userId);
     if (!state || !state.current_state) {
       return DEFAULT_ANSWER;
     }
@@ -34,7 +34,7 @@ export class AttachmentService {
           this.stateService.nextStates[state.current_state] || null,
       };
 
-      return this.resolver.updateState(userId, updatedState);
+      return this.resolverService.updateState(userId, updatedState);
     }
   };
 }

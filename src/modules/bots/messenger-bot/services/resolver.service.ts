@@ -1,12 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ActivityService } from 'modules/activity/activity.service';
 import { FIRST_PAGE } from 'modules/bots/messenger-bot/messenger-bot.constants';
-import { ParticipationService } from 'modules/participation/participation.service';
-import { State } from 'modules/state/state.dto';
-import { StateService } from 'modules/state/state.service';
-import { User } from 'modules/user/user.dto';
-import { UserService } from 'modules/user/user.service';
-import { MessengerBotResponses } from './messenger-bot.responses';
 import {
   CANCEL_ACTIVITY_FAILURE_TEXT,
   CANCEL_ACTIVITY_SUCCESS_TEXT,
@@ -19,16 +13,22 @@ import {
   REGISTRATION_SUCCESS_TEXT,
   RESET_REMAINING_VACANCIES_TEXT,
   UPDATE_REMAINING_VACANCIES_FAILURE_TEXT,
-} from './messenger-bot.texts';
+} from 'modules/bots/messenger-bot/messenger-bot.texts';
+import { ParticipationService } from 'modules/participation/participation.service';
+import { State } from 'modules/state/state.dto';
+import { StateService } from 'modules/state/state.service';
+import { User } from 'modules/user/user.dto';
+import { UserService } from 'modules/user/user.service';
+import { ResponseService } from './response.service';
 
 @Injectable()
-export class MessengerBotResolver {
-  private readonly logger = new Logger(MessengerBotResolver.name);
+export class ResolverService {
+  private readonly logger = new Logger(ResolverService.name);
 
   constructor(
     private readonly activityService: ActivityService,
-    private readonly responses: MessengerBotResponses,
     private readonly participationService: ParticipationService,
+    private readonly responseService: ResponseService,
     private readonly stateService: StateService,
     private readonly userService: UserService,
   ) {}
@@ -39,7 +39,7 @@ export class MessengerBotResolver {
         activityId,
         organizerId,
       );
-      return this.responses.getUpdatedRemainingVacanciesResponse(
+      return this.responseService.getUpdatedRemainingVacanciesResponse(
         updatedActivity,
       );
     } catch {
@@ -74,7 +74,7 @@ export class MessengerBotResolver {
   createActivity = async (newActivity: any) => {
     await this.activityService.createActivity(newActivity);
 
-    return this.responses.messages[this.stateService.states.closing];
+    return this.responseService.messages[this.stateService.states.closing];
   };
 
   getCreatedActivities = async (userId: number, page = FIRST_PAGE) => {
@@ -82,7 +82,7 @@ export class MessengerBotResolver {
       userId,
     );
 
-    return this.responses.getCreatedActivitiesResponse({
+    return this.responseService.getCreatedActivitiesResponse({
       ...activityListData,
       page,
     });
@@ -97,7 +97,7 @@ export class MessengerBotResolver {
       page,
     );
 
-    return this.responses.getJoinedActivitiesResponse({
+    return this.responseService.getJoinedActivitiesResponse({
       ...activityListData,
       page,
     });
@@ -106,13 +106,13 @@ export class MessengerBotResolver {
   getOrganizer = async (id: number) => {
     const organizer = await this.userService.getOrganizer(id);
 
-    return this.responses.getOrganizerResponse(organizer);
+    return this.responseService.getOrganizerResponse(organizer);
   };
 
   getParticipantList = async (id: string) => {
     const participantList = await this.userService.getParticipantList(id);
 
-    return this.responses.getParticipantListResponse(participantList);
+    return this.responseService.getParticipantListResponse(participantList);
   };
 
   getUpcomingActivities = async (userId: number, page = FIRST_PAGE) => {
@@ -120,7 +120,7 @@ export class MessengerBotResolver {
       userId,
     );
 
-    return this.responses.getUpcomingActivitiesResponse({
+    return this.responseService.getUpcomingActivitiesResponse({
       ...activityListData,
       page,
     });
@@ -132,7 +132,7 @@ export class MessengerBotResolver {
     };
     await this.stateService.updateState(userId, initialState);
 
-    return this.responses.getInitializeActivityResponse();
+    return this.responseService.getInitializeActivityResponse();
   };
 
   joinActivity = async (
@@ -153,7 +153,7 @@ export class MessengerBotResolver {
       return REGISTRATION_SUCCESS_TEXT;
     } catch (err) {
       this.logger.error(err);
-      return this.responses.getRegistrationFailureResponse();
+      return this.responseService.getRegistrationFailureResponse();
     }
   };
 
@@ -185,7 +185,7 @@ export class MessengerBotResolver {
         organizerId,
       );
 
-      return this.responses.getUpdatedRemainingVacanciesResponse(
+      return this.responseService.getUpdatedRemainingVacanciesResponse(
         updatedActivity,
       );
     } catch {
@@ -196,6 +196,6 @@ export class MessengerBotResolver {
   updateState = async (userId: number, updatedState: State) => {
     await this.stateService.updateState(userId, updatedState);
 
-    return this.responses.messages[updatedState.current_state];
+    return this.responseService.messages[updatedState.current_state];
   };
 }

@@ -17,76 +17,82 @@ import {
   UPCOMING_ACTIVITIES_TYPE,
   UPDATE_REMAINING_VACANCIES_TYPE,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
-import { MessengerBotResponses } from 'modules/bots/messenger-bot/messenger-bot.responses';
-import { MessengerBotResolver } from 'modules/bots/messenger-bot/messenger-bot.resolver';
+import { ResolverService } from './resolver.service';
+import { ResponseService } from './response.service';
 
 @Injectable()
 export class PostbackService {
   constructor(
-    private readonly responses: MessengerBotResponses,
-    private readonly resolver: MessengerBotResolver,
+    private readonly responseService: ResponseService,
+    private readonly resolverService: ResolverService,
   ) {}
 
   handlePostback = async (buttonPayload: string, userId: number) => {
     const SKIP_PAYLOADS = [GET_STARTED_PAYLOAD, INITIALIZE_ACTIVITY_PAYLOAD];
 
     if (SKIP_PAYLOADS.includes(buttonPayload)) return;
-    await this.resolver.resetState(userId);
+    await this.resolverService.resetState(userId);
 
     const { activity_id, type, page, user_id } = parse(buttonPayload);
     switch (type) {
       case ADD_REMAINING_VACANCIES_TYPE: {
-        return this.resolver.addRemainingVacancies(
+        return this.resolverService.addRemainingVacancies(
           activity_id.toString(),
           userId,
         );
       }
       case CANCEL_ACTIVITY_TYPE: {
-        return this.resolver.cancelActivity(activity_id.toString(), userId);
+        return this.resolverService.cancelActivity(
+          activity_id.toString(),
+          userId,
+        );
       }
       case CANCEL_PARTICIPATION_TYPE: {
-        return this.resolver.cancelParticipation(
+        return this.resolverService.cancelParticipation(
           activity_id.toString(),
           userId,
         );
       }
       case CREATED_ACTIVITIES_TYPE: {
-        return this.resolver.getCreatedActivities(userId, +page);
+        return this.resolverService.getCreatedActivities(userId, +page);
       }
       case ACTIVITY_OPTIONS_TYPE: {
-        return this.responses.getActivityOptionsResponse(
+        return this.responseService.getActivityOptionsResponse(
           activity_id.toString(),
         );
       }
       case JOIN_ACTIVITY_TYPE: {
-        return this.resolver.joinActivity(activity_id.toString(), userId);
+        return this.resolverService.joinActivity(
+          activity_id.toString(),
+          userId,
+        );
       }
       case JOINED_ACTIVITIES_TYPE: {
-        return this.resolver.getJoinedActivities(userId, +page);
+        return this.resolverService.getJoinedActivities(userId, +page);
       }
       case ORGANIZER_TYPE: {
-        return this.resolver.getOrganizer(+user_id);
+        return this.resolverService.getOrganizer(+user_id);
       }
       case PARTICIPANT_LIST_TYPE: {
-        return this.resolver.getParticipantList(activity_id.toString());
+        return this.resolverService.getParticipantList(activity_id.toString());
       }
       case RESET_REMAINING_VACANCIES_TYPE: {
-        return this.resolver.resetRemainingVacancies(
+        return this.resolverService.resetRemainingVacancies(
           activity_id.toString(),
           userId,
         );
       }
       case SUBTRACT_REMAINING_VACANCIES_TYPE: {
-        return this.resolver.subtractRemainingVacancies(
+        return this.resolverService.subtractRemainingVacancies(
           activity_id.toString(),
           userId,
         );
       }
       case UPCOMING_ACTIVITIES_TYPE: {
-        return this.resolver.getUpcomingActivities(userId, +page);
+        return this.resolverService.getUpcomingActivities(userId, +page);
       }
       case UPDATE_REMAINING_VACANCIES_TYPE: {
-        return this.responses.getUpdateRemainingVacanciesResponse(
+        return this.responseService.getUpdateRemainingVacanciesResponse(
           activity_id.toString(),
         );
       }

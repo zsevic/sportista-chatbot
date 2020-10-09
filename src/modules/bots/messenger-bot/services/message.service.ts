@@ -5,8 +5,6 @@ import {
   MIN_REMAINING_VACANCIES,
 } from 'modules/activity/activity.constants';
 import { DEFAULT_ANSWER } from 'modules/bots/messenger-bot/messenger-bot.constants';
-import { MessengerBotResolver } from 'modules/bots/messenger-bot/messenger-bot.resolver';
-import { MessengerBotResponses } from 'modules/bots/messenger-bot/messenger-bot.responses';
 import {
   DATETIME_TEXT,
   INVALID_DATETIME_TEXT,
@@ -16,17 +14,19 @@ import {
 } from 'modules/bots/messenger-bot/messenger-bot.texts';
 import { State } from 'modules/state/state.dto';
 import { StateService } from 'modules/state/state.service';
+import { ResolverService } from './resolver.service';
+import { ResponseService } from './response.service';
 
 @Injectable()
 export class MessageService {
   constructor(
-    private readonly responses: MessengerBotResponses,
-    private readonly resolver: MessengerBotResolver,
+    private readonly responseService: ResponseService,
+    private readonly resolverService: ResolverService,
     private readonly stateService: StateService,
   ) {}
 
   handleMessage = async (message: any, userId: number) => {
-    const state = await this.resolver.getCurrentState(userId);
+    const state = await this.resolverService.getCurrentState(userId);
 
     let validationResponse = this.validateMessage(message, state);
     if (validationResponse) return validationResponse;
@@ -54,10 +54,10 @@ export class MessageService {
         type: state.activity_type,
       };
 
-      return this.resolver.createActivity(newActivity);
+      return this.resolverService.createActivity(newActivity);
     }
 
-    return this.resolver.updateState(userId, updatedState);
+    return this.resolverService.updateState(userId, updatedState);
   };
 
   validateMessage = (message: any, state: State) => {
@@ -72,7 +72,7 @@ export class MessageService {
       state.current_state === this.stateService.states.activity_type &&
       !Object.keys(ACTIVITY_TYPES).includes(text)
     ) {
-      return this.responses.getInvalidActivityTypeResponse();
+      return this.responseService.getInvalidActivityTypeResponse();
     }
 
     if (state.current_state === this.stateService.states.location) {
@@ -83,7 +83,7 @@ export class MessageService {
       state.current_state === this.stateService.states.datetime &&
       (!isValid(parseISO(text)) || !isAfter(new Date(text), new Date()))
     ) {
-      return this.responses.getDatetimeQuestion(
+      return this.responseService.getDatetimeQuestion(
         INVALID_DATETIME_TEXT,
         DATETIME_TEXT,
       );

@@ -14,10 +14,14 @@ import {
   UPCOMING_ACTIVITIES_PAYLOAD,
 } from './messenger-bot.constants';
 import { MessengerBotController } from './messenger-bot.controller';
-import { MessengerBotResolver } from './messenger-bot.resolver';
-import { MessengerBotResponses } from './messenger-bot.responses';
 import { GREETING_TEXT } from './messenger-bot.texts';
-import { AttachmentService, MessageService, PostbackService } from './services';
+import {
+  AttachmentService,
+  MessageService,
+  PostbackService,
+  ResolverService,
+  ResponseService,
+} from './services';
 
 @Module({
   imports: [
@@ -34,9 +38,9 @@ import { AttachmentService, MessageService, PostbackService } from './services';
     AttachmentService,
     MessageService,
     MessengerBotController,
-    MessengerBotResolver,
-    MessengerBotResponses,
     PostbackService,
+    ResolverService,
+    ResponseService,
   ],
   exports: [MessengerBotController],
 })
