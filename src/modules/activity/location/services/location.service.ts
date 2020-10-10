@@ -42,11 +42,9 @@ export class LocationService {
         lat: locationDto.latitude,
         lon: locationDto.longitude,
       });
-      let address = location.streetName;
-      address += location.streetNumber ? ` ${location.streetNumber},` : ',';
-      address += location.city;
+      if (!location.streetName || !location.streetNumber) return location.city;
 
-      return address;
+      return `${location.streetName} ${location.streetNumber}, ${location.city}`;
     } catch (err) {
       this.logger.error(err);
       return;

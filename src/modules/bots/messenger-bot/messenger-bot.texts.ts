@@ -44,6 +44,8 @@ export const DATETIME_QUESTION_TEXT = 'Kad se igra?';
 export const DATETIME_TEXT = '📆 Unesi datum i vreme';
 export const INVALID_DATETIME_TEXT = 'Vreme nije dobro, pokušaj ponovo';
 export const LOCATION_QUESTION_TEXT = 'Gde se igra? Pošalji lokaciju';
+export const LOCATION_INSTRUCTION_TEXT =
+  'Sa leve strane klikni na 4 tačkice i izaberi lokaciju';
 export const INVALID_LOCATION_TEXT = 'Lokacija nije dobra, pokušaj ponovo';
 export const PRICE_QUESTION_TEXT = 'Koliko plaća svaki igrač?';
 export const INVALID_PRICE_TEXT = 'Cena nije dobra, pokušaj ponovo';

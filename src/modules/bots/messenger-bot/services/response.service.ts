@@ -24,6 +24,7 @@ import {
   DATETIME_TEXT,
   INVALID_ACTIVITY_TYPE_TEXT,
   JOIN_ACTIVITY_TEXT,
+  LOCATION_INSTRUCTION_TEXT,
   LOCATION_QUESTION_TEXT,
   NO_CREATED_ACTIVITIES_TEXT,
   NO_JOINED_ACTIVITIES_TEXT,
@@ -54,7 +55,10 @@ import { User } from 'modules/user/user.dto';
 export class ResponseService {
   messages: any = {
     [this.stateService.states.activity_type]: ACTIVITY_TYPE_QUESTION_TEXT,
-    [this.stateService.states.location]: LOCATION_QUESTION_TEXT,
+    [this.stateService.states.location]: [
+      LOCATION_QUESTION_TEXT,
+      LOCATION_INSTRUCTION_TEXT,
+    ],
     [this.stateService.states.price]: PRICE_QUESTION_TEXT,
     [this.stateService.states
       .remaining_vacancies]: REMAINING_VACANCIES_QUESTION_TEXT,
