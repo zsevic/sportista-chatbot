@@ -35,6 +35,11 @@ export class PostbackService {
 
     const { activity_id, type, page, user_id } = parse(buttonPayload);
     switch (type) {
+      case ACTIVITY_OPTIONS_TYPE: {
+        return this.responseService.getActivityOptionsResponse(
+          activity_id.toString(),
+        );
+      }
       case ADD_REMAINING_VACANCIES_TYPE: {
         return this.resolverService.addRemainingVacancies(
           activity_id.toString(),
@@ -55,11 +60,6 @@ export class PostbackService {
       }
       case CREATED_ACTIVITIES_TYPE: {
         return this.resolverService.getCreatedActivities(userId, +page);
-      }
-      case ACTIVITY_OPTIONS_TYPE: {
-        return this.responseService.getActivityOptionsResponse(
-          activity_id.toString(),
-        );
       }
       case JOIN_ACTIVITY_TYPE: {
         return this.resolverService.joinActivity(

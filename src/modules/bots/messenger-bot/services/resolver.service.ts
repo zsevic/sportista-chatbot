@@ -80,6 +80,7 @@ export class ResolverService {
   getCreatedActivities = async (userId: number, page = FIRST_PAGE) => {
     const activityListData = await this.activityService.getCreatedActivities(
       userId,
+      page,
     );
 
     return this.responseService.getCreatedActivitiesResponse({
@@ -118,6 +119,7 @@ export class ResolverService {
   getUpcomingActivities = async (userId: number, page = FIRST_PAGE) => {
     const activityListData = await this.activityService.getUpcomingActivities(
       userId,
+      page,
     );
 
     return this.responseService.getUpcomingActivitiesResponse({
