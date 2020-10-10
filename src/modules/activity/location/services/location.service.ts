@@ -1,16 +1,17 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import convert from 'cyrillic-to-latin';
 import { PINNED_LOCATION } from 'modules/activity/location/location.constants';
 import { Location } from 'modules/activity/location/location.dto';
 import { LocationRepository } from 'modules/activity/location/location.repository';
-import { GeocoderService } from './geocoder.service';
+import { NODE_GEOCODER_OPTIONS_FACTORY } from 'modules/external/node-geocoder';
 
 @Injectable()
 export class LocationService {
   private readonly logger = new Logger(LocationService.name);
 
   constructor(
-    private readonly geocoderService: GeocoderService,
+    @Inject(NODE_GEOCODER_OPTIONS_FACTORY)
+    private readonly geocoderService,
     private readonly locationRepository: LocationRepository,
   ) {}
 
@@ -37,11 +38,15 @@ export class LocationService {
 
   getLocationTitle = async (locationDto: Location): Promise<string> => {
     try {
-      const locationData = await this.geocoderService.instance.reverse({
+      const [location] = await this.geocoderService.reverse({
         lat: locationDto.latitude,
         lon: locationDto.longitude,
       });
-      return `${locationData[0].streetName} ${locationData[0].streetNumber}, ${locationData[0].city}`;
+      let address = location.streetName;
+      address += location.streetNumber ? ` ${location.streetNumber},` : ',';
+      address += location.city;
+
+      return address;
     } catch (err) {
       this.logger.error(err);
       return;

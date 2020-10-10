@@ -13,10 +13,12 @@ import {
   patchTypeORMRepositoryWithBaseRepository,
 } from 'typeorm-transactional-cls-hooked';
 import config from 'common/config';
+import { NODEGEOCODER_PROVIDER } from 'common/config/constants';
 import databaseConfig from 'common/config/database';
 import { BotsModule } from 'modules/bots/bots.module';
 import { ExtensionsModule } from 'modules/extensions/extensions.module';
 import { BootbotModule } from 'modules/external/bootbot';
+import { NodeGeocoderModule } from 'modules/external/node-geocoder';
 import { WebhookModule } from 'modules/webhook/webhook.module';
 import { AppController } from './app.controller';
 
@@ -46,6 +48,11 @@ const typeOrmConfig = {
         accessToken: configService.get('FB_PAGE_ACCESS_TOKEN'),
         appSecret: configService.get('FB_APP_SECRET'),
         verifyToken: configService.get('WEBHOOK_VERIFY_TOKEN'),
+      }),
+    }),
+    NodeGeocoderModule.registerAsync({
+      useFactory: () => ({
+        provider: NODEGEOCODER_PROVIDER,
       }),
     }),
     ExtensionsModule,

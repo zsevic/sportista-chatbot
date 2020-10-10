@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import config from 'common/config';
-import { MessengerBotModule } from 'modules/bots/messenger-bot/messenger-bot.module';
 import { ExtensionsController } from './extensions.controller';
 
 @Module({
@@ -11,6 +10,5 @@ import { ExtensionsController } from './extensions.controller';
     }),
   ],
   controllers: [ExtensionsController],
-  providers: [MessengerBotModule],
 })
 export class ExtensionsModule {}
