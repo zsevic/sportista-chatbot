@@ -5,23 +5,24 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Inject,
   Logger,
   Post,
   Query,
 } from '@nestjs/common';
-import { MessengerBotModule } from 'modules/bots/messenger-bot/messenger-bot.module';
+import { BOOTBOT_OPTIONS_FACTORY } from 'modules/external/bootbot';
 
 @Controller('webhook')
 export class WebhookController {
   private readonly logger = new Logger(WebhookController.name);
-  constructor(private readonly messengerBot: MessengerBotModule) {}
+  constructor(@Inject(BOOTBOT_OPTIONS_FACTORY) private readonly bot) {}
 
   @Get()
   @HttpCode(HttpStatus.OK)
   async validateWebhook(@Query() query) {
     if (
       query['hub.mode'] === 'subscribe' &&
-      query['hub.verify_token'] === this.messengerBot.instance.verifyToken
+      query['hub.verify_token'] === this.bot.verifyToken
     ) {
       this.logger.log('Validation Succeded.');
       return query['hub.challenge'];
@@ -40,6 +41,6 @@ export class WebhookController {
       return;
     }
 
-    this.messengerBot.instance.handleFacebookData(data);
+    this.bot.handleFacebookData(data);
   }
 }

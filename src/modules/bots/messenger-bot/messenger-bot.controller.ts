@@ -1,10 +1,8 @@
 import { Controller } from '@nestjs/common';
-import {
-  AttachmentService,
-  MessageService,
-  ResolverService,
-  PostbackService,
-} from './services';
+import { AttachmentService } from './services/attachment.service';
+import { MessageService } from './services/message.service';
+import { PostbackService } from './services/postback.service';
+import { ResolverService } from './services/resolver.service';
 
 @Controller()
 export class MessengerBotController {

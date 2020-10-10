@@ -9,7 +9,6 @@ import { WebhookController } from './webhook.controller';
     ConfigModule.forRoot({
       load: [config],
     }),
-    MessengerBotModule,
   ],
   controllers: [WebhookController],
   providers: [MessengerBotModule],

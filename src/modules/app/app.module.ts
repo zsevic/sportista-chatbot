@@ -16,6 +16,7 @@ import config from 'common/config';
 import databaseConfig from 'common/config/database';
 import { BotsModule } from 'modules/bots/bots.module';
 import { ExtensionsModule } from 'modules/extensions/extensions.module';
+import { BootbotModule } from 'modules/external/bootbot';
 import { WebhookModule } from 'modules/webhook/webhook.module';
 import { AppController } from './app.controller';
 
@@ -39,6 +40,14 @@ const typeOrmConfig = {
       load: [config],
     }),
     TypeOrmModule.forRootAsync(typeOrmConfig),
+    BootbotModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        accessToken: configService.get('FB_PAGE_ACCESS_TOKEN'),
+        appSecret: configService.get('FB_APP_SECRET'),
+        verifyToken: configService.get('WEBHOOK_VERIFY_TOKEN'),
+      }),
+    }),
     ExtensionsModule,
     WebhookModule,
     BotsModule,

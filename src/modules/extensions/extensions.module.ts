@@ -9,7 +9,6 @@ import { ExtensionsController } from './extensions.controller';
     ConfigModule.forRoot({
       load: [config],
     }),
-    MessengerBotModule,
   ],
   controllers: [ExtensionsController],
   providers: [MessengerBotModule],

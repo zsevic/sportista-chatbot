@@ -4,16 +4,17 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Inject,
   Post,
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { MessengerBotModule } from 'modules/bots/messenger-bot/messenger-bot.module';
+import { BOOTBOT_OPTIONS_FACTORY } from 'modules/external/bootbot';
 import { DatetimeMessageDto } from './dto';
 
 @Controller('extensions')
 export class ExtensionsController {
-  constructor(private readonly messengerBot: MessengerBotModule) {}
+  constructor(@Inject(BOOTBOT_OPTIONS_FACTORY) private readonly bot) {}
 
   @Get('datetime')
   getDatetime(@Res() res: Response) {
@@ -39,6 +40,6 @@ export class ExtensionsController {
         },
       ],
     };
-    this.messengerBot.instance.handleFacebookData(messageData);
+    this.bot.handleFacebookData(messageData);
   }
 }
