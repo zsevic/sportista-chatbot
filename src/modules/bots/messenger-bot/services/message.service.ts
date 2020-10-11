@@ -4,7 +4,10 @@ import {
   ACTIVITY_TYPES,
   MIN_REMAINING_VACANCIES,
 } from 'modules/activity/activity.constants';
-import { DEFAULT_ANSWER } from 'modules/bots/messenger-bot/messenger-bot.constants';
+import {
+  DEFAULT_ANSWER,
+  SKIPPED_QUICK_REPLY_PAYLOADS,
+} from 'modules/bots/messenger-bot/messenger-bot.constants';
 import {
   DATETIME_TEXT,
   INVALID_DATETIME_TEXT,
@@ -63,7 +66,9 @@ export class MessageService {
   validateMessage = (message: any, state: State) => {
     const { quick_reply, text } = message;
     if (!state || !state.current_state) {
-      if (quick_reply?.payload) return;
+      if (quick_reply?.payload) {
+        if (SKIPPED_QUICK_REPLY_PAYLOADS.includes(quick_reply?.payload)) return;
+      }
 
       return DEFAULT_ANSWER;
     }

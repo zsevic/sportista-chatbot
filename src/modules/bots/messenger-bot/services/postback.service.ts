@@ -6,13 +6,12 @@ import {
   CANCEL_ACTIVITY_TYPE,
   CANCEL_PARTICIPATION_TYPE,
   CREATED_ACTIVITIES_TYPE,
-  GET_STARTED_PAYLOAD,
-  INITIALIZE_ACTIVITY_PAYLOAD,
   JOINED_ACTIVITIES_TYPE,
   JOIN_ACTIVITY_TYPE,
   ORGANIZER_TYPE,
   PARTICIPANT_LIST_TYPE,
   RESET_REMAINING_VACANCIES_TYPE,
+  SKIPPED_POSTBACK_PAYLOADS,
   SUBTRACT_REMAINING_VACANCIES_TYPE,
   UPCOMING_ACTIVITIES_TYPE,
   UPDATE_REMAINING_VACANCIES_TYPE,
@@ -28,9 +27,7 @@ export class PostbackService {
   ) {}
 
   handlePostback = async (buttonPayload: string, userId: number) => {
-    const SKIP_PAYLOADS = [GET_STARTED_PAYLOAD, INITIALIZE_ACTIVITY_PAYLOAD];
-
-    if (SKIP_PAYLOADS.includes(buttonPayload)) return;
+    if (SKIPPED_POSTBACK_PAYLOADS.includes(buttonPayload)) return;
     await this.resolverService.resetState(userId);
 
     const { activity_id, type, page, user_id } = parse(buttonPayload);
