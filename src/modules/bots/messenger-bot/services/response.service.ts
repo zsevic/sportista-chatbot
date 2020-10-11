@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PaginatedResponse } from 'common/dtos';
+import { formatDatetime } from 'common/utils';
 import { ACTIVITY_TYPES } from 'modules/activity/activity.constants';
 import { Activity } from 'modules/activity/activity.dto';
 import {
@@ -21,6 +22,7 @@ import {
   ACTIVITY_TYPE_QUESTION_TEXT,
   CANCEL_TEXT,
   CREATE_ACTIVITY_CLOSING_TEXT,
+  DATETIME_CONFIRMATION_TEXT,
   DATETIME_QUESTION_TEXT,
   DATETIME_TEXT,
   INVALID_ACTIVITY_TYPE_TEXT,
@@ -133,6 +135,12 @@ export class ResponseService {
         },
       ],
     };
+  };
+
+  getDatetimeConfirmationResponse = (datetime: string): string => {
+    const formattedDatetime = formatDatetime(datetime);
+
+    return `${DATETIME_CONFIRMATION_TEXT} ${formattedDatetime}`;
   };
 
   getInitializeActivityResponse = () => ({

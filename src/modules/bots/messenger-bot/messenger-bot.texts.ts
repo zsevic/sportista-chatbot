@@ -48,6 +48,7 @@ export const INVALID_ACTIVITY_TYPE_TEXT =
   'Izabrani sport nije ispravan, izaberi jedan od ponuđenih';
 export const DATETIME_QUESTION_TEXT = 'Kad se igra?';
 export const DATETIME_TEXT = '📆 Unesi datum i vreme';
+export const DATETIME_CONFIRMATION_TEXT = 'Izabrani datum i vreme su';
 export const INVALID_DATETIME_TEXT = 'Vreme nije dobro, pokušaj ponovo';
 export const LOCATION_QUESTION_TEXT = 'Gde se igra? Pošalji lokaciju';
 export const LOCATION_INSTRUCTION_TEXT =

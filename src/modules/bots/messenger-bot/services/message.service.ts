@@ -65,7 +65,18 @@ export class MessageService {
       return this.resolverService.createActivity(newActivity);
     }
 
-    return this.resolverService.updateState(userId, updatedState);
+    const response = await this.resolverService.updateState(
+      userId,
+      updatedState,
+    );
+    if (state.current_state === this.stateService.states.datetime) {
+      const datetimeConfirmationResponse = this.responseService.getDatetimeConfirmationResponse(
+        text,
+      );
+      return [datetimeConfirmationResponse, response];
+    }
+
+    return response;
   };
 
   validateMessage = (message: any, state: State) => {
