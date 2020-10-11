@@ -25,7 +25,7 @@ export class ActivityEntity {
   organizer_id: number;
 
   @Column()
-  datetime: Date;
+  datetime: string;
 
   @Column({
     type: 'uuid',

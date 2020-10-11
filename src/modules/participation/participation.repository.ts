@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
-import { plainToClass } from 'class-transformer';
+import { methodTransformToDto } from 'common/decorators';
 import { Participation } from './participation.dto';
 import { ParticipationEntity } from './participation.entity';
 
@@ -24,10 +24,11 @@ export class ParticipationRepository extends Repository<ParticipationEntity> {
     return Promise.resolve();
   };
 
-  createParticipation = async (
+  @methodTransformToDto(Participation)
+  async createParticipation(
     activity_id: string,
     participant_id: number,
-  ): Promise<Participation> => {
+  ): Promise<ParticipationEntity> {
     const participation = await this.findOne({
       where: { activity_id, participant_id },
       withDeleted: true,
@@ -39,9 +40,8 @@ export class ParticipationRepository extends Repository<ParticipationEntity> {
       throw new Error('User already joined the activity');
     }
 
-    const newParticipation = await this.save({ activity_id, participant_id });
-    return plainToClass(Participation, newParticipation);
-  };
+    return this.save({ activity_id, participant_id });
+  }
 
   removeParticipationList = async (activity_id: string): Promise<void> => {
     const participationList = await this.find({ where: { activity_id } });

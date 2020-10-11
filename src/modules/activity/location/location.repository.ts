@@ -1,14 +1,15 @@
-import { plainToClass } from 'class-transformer';
 import { EntityRepository, Repository } from 'typeorm';
+import { classTransformToDto } from 'common/decorators';
 import { Location } from './location.dto';
 import { LocationEntity } from './location.entity';
 
 @EntityRepository(LocationEntity)
+@classTransformToDto(Location)
 export class LocationRepository extends Repository<LocationEntity> {
-  findLocation = async (
+  async findLocation(
     latitude: number,
     longitude: number,
-  ): Promise<Location> => {
+  ): Promise<LocationEntity> {
     const location = await this.findOne({
       where: {
         latitude,
@@ -17,12 +18,10 @@ export class LocationRepository extends Repository<LocationEntity> {
     });
     if (!location) return;
 
-    return plainToClass(Location, location);
-  };
+    return location;
+  }
 
-  createLocation = async (locationDto: Location): Promise<Location> => {
-    const location = await this.save(locationDto);
-
-    return plainToClass(Location, location);
-  };
+  async createLocation(locationDto: Location): Promise<LocationEntity> {
+    return this.save(locationDto);
+  }
 }

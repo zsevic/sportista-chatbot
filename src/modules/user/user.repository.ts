@@ -1,16 +1,17 @@
-import { plainToClass } from 'class-transformer';
 import { EntityRepository, Repository, SelectQueryBuilder } from 'typeorm';
+import { classTransformToDto } from 'common/decorators';
 import { ActivityEntity } from 'modules/activity/activity.entity';
 import { ParticipationEntity } from 'modules/participation/participation.entity';
 import { User } from './user.dto';
 import { UserEntity } from './user.entity';
 
 @EntityRepository(UserEntity)
+@classTransformToDto(User)
 export class UserRepository extends Repository<UserEntity> {
-  getParticipantListByActivity = async (
+  async getParticipantListByActivity(
     activity_id: string,
-  ): Promise<User[]> => {
-    const participantList = await this.createQueryBuilder('user')
+  ): Promise<UserEntity[]> {
+    return this.createQueryBuilder('user')
       .leftJoin('user.participations', 'participations')
       .where((qb: SelectQueryBuilder<ActivityEntity>) => {
         const subQuery = qb
@@ -25,22 +26,19 @@ export class UserRepository extends Repository<UserEntity> {
       })
       .andWhere('participations.deleted_at IS NULL')
       .getMany();
+  }
 
-    return plainToClass(User, participantList);
-  };
-
-  getUser = async (id: number): Promise<User> => {
+  async getUser(id: number): Promise<UserEntity> {
     const user = await this.findOne(id);
     if (!user) throw new Error("User doesn't exist");
 
-    return plainToClass(User, user);
-  };
+    return user;
+  }
 
-  registerUser = async (userDto: User): Promise<User> => {
+  async registerUser(userDto: User): Promise<UserEntity> {
     const user = await this.findOne(userDto.id);
-    if (user) return plainToClass(User, user);
+    if (!user) return this.save(userDto);
 
-    const newUser = await this.save(userDto);
-    return plainToClass(User, newUser);
-  };
+    return user;
+  }
 }

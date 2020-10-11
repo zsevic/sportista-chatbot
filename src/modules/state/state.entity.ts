@@ -32,7 +32,7 @@ export class StateEntity {
   @Column({
     nullable: true,
   })
-  datetime: Date;
+  datetime: string;
 
   @Column({
     nullable: true,

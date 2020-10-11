@@ -1,36 +1,34 @@
 import { Logger } from '@nestjs/common';
-import { plainToClass } from 'class-transformer';
 import { EntityRepository, Repository } from 'typeorm';
+import { classTransformToDto } from 'common/decorators';
 import { State } from './state.dto';
 import { StateEntity } from './state.entity';
 
 @EntityRepository(StateEntity)
+@classTransformToDto(State)
 export class StateRepository extends Repository<StateEntity> {
   private readonly logger = new Logger(StateRepository.name);
 
-  getCurrentState = async (user_id: number): Promise<State> => {
+  async getCurrentState(user_id: number) {
     const state = await this.findOne({ where: { user_id } });
     if (!state) return null;
 
-    return plainToClass(State, state);
-  };
+    return state;
+  }
 
-  initializeState = async (user_id: number): Promise<State> => {
+  async initializeState(user_id: number): Promise<StateEntity> {
     const state = await this.findOne({ where: { user_id } });
-    if (state) {
-      this.logger.log(`State for user ${user_id} is already initialized`);
-      return plainToClass(State, state);
-    }
+    if (!state) return this.save({ user_id });
 
-    const newState = await this.save({ user_id });
-    return plainToClass(State, newState);
-  };
+    this.logger.log(`State for user ${user_id} is already initialized`);
+    return state;
+  }
 
-  resetState = async (user_id: number): Promise<State> => {
+  async resetState(user_id: number) {
     const state = await this.findOne({ where: { user_id } });
     if (!state) return this.initializeState(user_id);
 
-    const updatedState = await this.save({
+    return this.save({
       ...state,
       current_state: null,
       activity_type: null,
@@ -41,19 +39,15 @@ export class StateRepository extends Repository<StateEntity> {
       price_value: null,
       remaining_vacancies: null,
     });
+  }
 
-    return plainToClass(State, updatedState);
-  };
-
-  updateState = async (user_id: number, stateDto: State): Promise<State> => {
+  async updateState(user_id: number, stateDto: State) {
     const state = await this.findOne({ where: { user_id } });
     if (!state) throw new Error('State is not initialized');
 
-    const updatedState = await this.save({
+    return this.save({
       ...state,
       ...stateDto,
     });
-
-    return plainToClass(State, updatedState);
-  };
+  }
 }

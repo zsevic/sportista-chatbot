@@ -1,4 +1,3 @@
-import { plainToClass } from 'class-transformer';
 import {
   EntityRepository,
   MoreThan,
@@ -6,6 +5,7 @@ import {
   SelectQueryBuilder,
 } from 'typeorm';
 import { FIRST_PAGE, PAGE_SIZE } from 'common/config/constants';
+import { methodTransformToDto } from 'common/decorators';
 import { PaginatedResponse } from 'common/dtos';
 import { getSkip } from 'common/utils';
 import { ParticipationEntity } from 'modules/participation/participation.entity';
@@ -14,10 +14,11 @@ import { ActivityEntity } from './activity.entity';
 
 @EntityRepository(ActivityEntity)
 export class ActivityRepository extends Repository<ActivityEntity> {
-  addRemainingVacancies = async (
+  @methodTransformToDto(Activity)
+  async addRemainingVacancies(
     activityId: string,
     organizerId?: number,
-  ): Promise<Activity> => {
+  ): Promise<ActivityEntity> {
     const activity = await this.findOne({
       where: {
         id: activityId,
@@ -26,13 +27,11 @@ export class ActivityRepository extends Repository<ActivityEntity> {
     });
     if (!activity) throw new Error('Activity is not valid');
 
-    const updatedActivity = await this.save({
+    return this.save({
       ...activity,
       remaining_vacancies: activity.remaining_vacancies + 1,
     });
-
-    return plainToClass(Activity, updatedActivity);
-  };
+  }
 
   cancelActivity = async (id: string, organizer_id: number): Promise<void> => {
     const activity = await this.findOne({
@@ -47,16 +46,16 @@ export class ActivityRepository extends Repository<ActivityEntity> {
     return Promise.resolve();
   };
 
-  createActivity = async (activity: Activity): Promise<Activity> => {
-    const newActivity = await this.save(activity);
+  @methodTransformToDto(Activity)
+  async createActivity(activity: Activity): Promise<ActivityEntity> {
+    return this.save(activity);
+  }
 
-    return plainToClass(Activity, newActivity);
-  };
-
-  getCreatedActivities = async (
+  @methodTransformToDto(Activity, true)
+  async getCreatedActivities(
     organizer_id: number,
     page = FIRST_PAGE,
-  ): Promise<PaginatedResponse<Activity>> => {
+  ): Promise<PaginatedResponse<ActivityEntity>> {
     const skip = getSkip(page);
     const [results, total] = await this.createQueryBuilder('activity')
       .leftJoinAndSelect('activity.location', 'location')
@@ -69,15 +68,16 @@ export class ActivityRepository extends Repository<ActivityEntity> {
 
     return {
       page,
-      results: plainToClass(Activity, results),
+      results,
       total,
     };
-  };
+  }
 
-  getJoinedActivities = async (
+  @methodTransformToDto(Activity, true)
+  async getJoinedActivities(
     user_id: number,
     page = FIRST_PAGE,
-  ): Promise<PaginatedResponse<Activity>> => {
+  ): Promise<PaginatedResponse<ActivityEntity>> {
     const skip = getSkip(page);
     const [results, total] = await this.createQueryBuilder('activity')
       .leftJoinAndSelect('activity.location', 'location')
@@ -103,15 +103,16 @@ export class ActivityRepository extends Repository<ActivityEntity> {
 
     return {
       page,
-      results: plainToClass(Activity, results),
+      results,
       total,
     };
-  };
+  }
 
-  getUpcomingActivities = async (
+  @methodTransformToDto(Activity, true)
+  async getUpcomingActivities(
     user_id: number,
     page = FIRST_PAGE,
-  ): Promise<PaginatedResponse<Activity>> => {
+  ): Promise<PaginatedResponse<ActivityEntity>> {
     const skip = getSkip(page);
     const [results, total] = await this.createQueryBuilder('activity')
       .leftJoinAndSelect('activity.location', 'location')
@@ -139,15 +140,16 @@ export class ActivityRepository extends Repository<ActivityEntity> {
 
     return {
       page,
-      results: plainToClass(Activity, results),
+      results,
       total,
     };
-  };
+  }
 
-  resetRemainingVacancies = async (
+  @methodTransformToDto(Activity)
+  async resetRemainingVacancies(
     activityId: string,
     organizerId: number,
-  ): Promise<Activity> => {
+  ): Promise<ActivityEntity> {
     const activity = await this.findOne({
       where: {
         id: activityId,
@@ -156,18 +158,17 @@ export class ActivityRepository extends Repository<ActivityEntity> {
     });
     if (!activity) throw new Error('Activity is not valid');
 
-    const updatedActivity = await this.save({
+    return this.save({
       ...activity,
       remaining_vacancies: 0,
     });
+  }
 
-    return plainToClass(Activity, updatedActivity);
-  };
-
-  subtractRemainingVacancies = async (
+  @methodTransformToDto(Activity)
+  async subtractRemainingVacancies(
     activityId: string,
     organizerId?: number,
-  ): Promise<Activity> => {
+  ): Promise<ActivityEntity> {
     const activity = await this.findOne({
       where: {
         id: activityId,
@@ -177,13 +178,11 @@ export class ActivityRepository extends Repository<ActivityEntity> {
     });
     if (!activity) throw new Error('Activity is not valid');
 
-    const updatedActivity = await this.save({
+    return this.save({
       ...activity,
       remaining_vacancies: activity.remaining_vacancies - 1,
     });
-
-    return plainToClass(Activity, updatedActivity);
-  };
+  }
 
   validateRemainingVacancies = async (activityId: string): Promise<void> => {
     const activity = await this.findOne({
