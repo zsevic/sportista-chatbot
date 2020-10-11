@@ -1,6 +1,6 @@
 export const ACTIVITY_TYPES = {
   '🏀': 'basketball',
-  '⚽️': 'soccer',
+  '⚽': 'soccer',
   '🎾': 'tennis',
   '🏓': 'table-tennis',
 };

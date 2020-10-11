@@ -38,6 +38,12 @@ export const PARTICIPANT_LIST_TEXT = 'Vidi ko se sve prijavio';
 export const NO_PARTICIPANTS_TEXT = 'Još se niko nije prijavio';
 
 export const ACTIVITY_TYPE_QUESTION_TEXT = 'Za koji sport tražiš igrače?';
+export const ACTIVITY_TYPES_TEXT = {
+  '🏀': 'košarka',
+  '⚽': 'fudbal',
+  '🎾': 'tenis',
+  '🏓': 'stoni tenis',
+};
 export const INVALID_ACTIVITY_TYPE_TEXT =
   'Izabrani sport nije ispravan, izaberi jedan od ponuđenih';
 export const DATETIME_QUESTION_TEXT = 'Kad se igra?';

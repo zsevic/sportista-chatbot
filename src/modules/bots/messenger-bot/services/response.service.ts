@@ -17,6 +17,7 @@ import {
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import {
   ACTIVITY_OPTIONS_TEXT,
+  ACTIVITY_TYPES_TEXT,
   ACTIVITY_TYPE_QUESTION_TEXT,
   CANCEL_TEXT,
   CREATE_ACTIVITY_CLOSING_TEXT,
@@ -96,6 +97,12 @@ export class ResponseService {
     ],
   });
 
+  getActivityTypeQuestion = () =>
+    Object.keys(ACTIVITY_TYPES).map((type) => ({
+      title: `${type} ${ACTIVITY_TYPES_TEXT[type]}`,
+      payload: `type=activity_type&activity_type=${type}`,
+    }));
+
   getCreatedActivitiesResponse = (
     activityListData: PaginatedResponse<Activity>,
   ) =>
@@ -130,12 +137,12 @@ export class ResponseService {
 
   getInitializeActivityResponse = () => ({
     text: this.messages[this.stateService.states.activity_type],
-    quickReplies: Object.keys(ACTIVITY_TYPES),
+    quickReplies: this.getActivityTypeQuestion(),
   });
 
   getInvalidActivityTypeResponse = () => ({
     text: INVALID_ACTIVITY_TYPE_TEXT,
-    quickReplies: Object.keys(ACTIVITY_TYPES),
+    quickReplies: this.getActivityTypeQuestion(),
   });
 
   getJoinedActivitiesResponse = (

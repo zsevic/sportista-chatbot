@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { isAfter, isValid, parseISO } from 'date-fns';
+import emojiRegex from 'emoji-regex';
 import {
   ACTIVITY_TYPES,
   MIN_REMAINING_VACANCIES,
@@ -36,9 +37,13 @@ export class MessageService {
 
     const { text } = message;
     const updatedState = {
-      ...(state.current_state === this.stateService.states.price
-        ? { price_value: +text }
-        : { [state.current_state]: text }),
+      [state.current_state]: text,
+      ...(state.current_state === this.stateService.states.price && {
+        price_value: +text,
+      }),
+      ...(state.current_state === this.stateService.states.activity_type && {
+        activity_type: text[0],
+      }),
       current_state: this.stateService.nextStates[state.current_state] || null,
     };
 
@@ -66,18 +71,22 @@ export class MessageService {
   validateMessage = (message: any, state: State) => {
     const { quick_reply, text } = message;
     if (!state || !state.current_state) {
-      if (quick_reply?.payload) {
-        if (SKIPPED_QUICK_REPLY_PAYLOADS.includes(quick_reply?.payload)) return;
+      if (
+        quick_reply?.payload &&
+        SKIPPED_QUICK_REPLY_PAYLOADS.includes(quick_reply.payload)
+      )
+        return;
+      else {
+        return DEFAULT_ANSWER;
       }
-
-      return DEFAULT_ANSWER;
     }
 
-    if (
-      state.current_state === this.stateService.states.activity_type &&
-      !Object.keys(ACTIVITY_TYPES).includes(text)
-    ) {
-      return this.responseService.getInvalidActivityTypeResponse();
+    if (state.current_state === this.stateService.states.activity_type) {
+      const regex = emojiRegex();
+      const match = regex.exec(text.slice(0, 2));
+      if (!match || !ACTIVITY_TYPES.hasOwnProperty(match[0])) {
+        return this.responseService.getInvalidActivityTypeResponse();
+      }
     }
 
     if (state.current_state === this.stateService.states.location) {
