@@ -5,6 +5,8 @@ import {
   CREATE_ACTIVITY_TEXT,
   CREATE_ACTIVITY_TEXT_EN,
   DEFAULT_MESSAGE_TEXT,
+  JOINED_ACTIVITIES_TEXT,
+  JOINED_ACTIVITIES_TEXT_EN,
   UPCOMING_ACTIVITIES_TEXT,
   UPCOMING_ACTIVITIES_TEXT_EN,
 } from './messenger-bot.texts';
@@ -56,6 +58,11 @@ export const PERSISTENT_MENU = [
       },
       {
         type: 'postback',
+        title: JOINED_ACTIVITIES_TEXT_EN,
+        payload: JOINED_ACTIVITIES_PAYLOAD,
+      },
+      {
+        type: 'postback',
         title: CREATED_ACTIVITIES_TEXT_EN,
         payload: CREATED_ACTIVITIES_PAYLOAD,
       },
@@ -73,6 +80,11 @@ export const PERSISTENT_MENU = [
         type: 'postback',
         title: UPCOMING_ACTIVITIES_TEXT,
         payload: UPCOMING_ACTIVITIES_PAYLOAD,
+      },
+      {
+        type: 'postback',
+        title: JOINED_ACTIVITIES_TEXT,
+        payload: JOINED_ACTIVITIES_PAYLOAD,
       },
       {
         type: 'postback',
@@ -94,6 +106,10 @@ export const DEFAULT_ANSWER = {
     {
       title: UPCOMING_ACTIVITIES_TEXT,
       payload: UPCOMING_ACTIVITIES_PAYLOAD,
+    },
+    {
+      title: JOINED_ACTIVITIES_TEXT,
+      payload: JOINED_ACTIVITIES_PAYLOAD,
     },
     {
       title: CREATED_ACTIVITIES_TEXT,
