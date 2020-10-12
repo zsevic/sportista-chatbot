@@ -1,6 +1,6 @@
+import { parse } from 'querystring';
 import { Injectable } from '@nestjs/common';
 import { isAfter, isValid, parseISO } from 'date-fns';
-import emojiRegex from 'emoji-regex';
 import {
   ACTIVITY_TYPES,
   MIN_REMAINING_VACANCIES,
@@ -42,7 +42,9 @@ export class MessageService {
         price_value: +text,
       }),
       ...(state.current_state === this.stateService.states.activity_type && {
-        activity_type: text[0],
+        activity_type: parse(
+          message.quick_reply.payload,
+        ).activity_type.toString(),
       }),
       current_state: this.stateService.nextStates[state.current_state] || null,
     };
@@ -93,9 +95,11 @@ export class MessageService {
     }
 
     if (state.current_state === this.stateService.states.activity_type) {
-      const regex = emojiRegex();
-      const match = regex.exec(text.slice(0, 2));
-      if (!match || !ACTIVITY_TYPES.hasOwnProperty(match[0])) {
+      const { activity_type } = parse(quick_reply?.payload);
+      if (
+        !activity_type ||
+        !ACTIVITY_TYPES.hasOwnProperty(activity_type.toString())
+      ) {
         return this.responseService.getInvalidActivityTypeResponse();
       }
     }
