@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { I18nService } from 'nestjs-i18n';
 import { PaginatedResponse } from 'common/dtos';
 import { formatDatetime } from 'common/utils';
 import { ACTIVITY_TYPES } from 'modules/activity/activity.constants';
@@ -15,6 +16,8 @@ import {
   PARTICIPANT_LIST_TYPE,
   UPCOMING_ACTIVITIES_TYPE,
   UPDATE_REMAINING_VACANCIES_TYPE,
+  USER_REGISTRATION,
+  USER_REGISTRATION_FAILURE,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import {
   ACTIVITY_OPTIONS_TEXT,
@@ -37,8 +40,6 @@ import {
   OPTIONS_TEXT,
   PARTICIPANT_LIST_TEXT,
   PRICE_QUESTION_TEXT,
-  REGISTRATION_FAILURE_TEXT,
-  REGISTRATION_TEXT,
   REMAINING_VACANCIES_QUESTION_TEXT,
   UPDATED_REMAINING_VACANCIES_TEXT,
   UPDATE_REMAINING_VACANCIES_TEXT,
@@ -70,6 +71,7 @@ export class ResponseService {
 
   constructor(
     private readonly configService: ConfigService,
+    private readonly i18nService: I18nService,
     private readonly stateService: StateService,
   ) {
     this.messages[this.stateService.states.datetime] = this.getDatetimeQuestion(
@@ -185,16 +187,25 @@ export class ResponseService {
     return response;
   };
 
-  getRegistrationFailureResponse = async () => ({
-    text: REGISTRATION_FAILURE_TEXT,
-    buttons: [
-      {
-        type: 'postback',
-        title: REGISTRATION_TEXT,
-        payload: GET_STARTED_PAYLOAD,
-      },
-    ],
-  });
+  getRegistrationFailureResponse = async (lang: string) => {
+    const text = await this.i18nService.translate(USER_REGISTRATION_FAILURE, {
+      lang,
+    });
+    const title = await this.i18nService.translate(USER_REGISTRATION, {
+      lang,
+    });
+
+    return {
+      text,
+      buttons: [
+        {
+          type: 'postback',
+          title,
+          payload: GET_STARTED_PAYLOAD,
+        },
+      ],
+    };
+  };
 
   getUpcomingActivitiesResponse = (
     activityListData: PaginatedResponse<Activity>,

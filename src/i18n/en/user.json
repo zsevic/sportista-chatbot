@@ -1,3 +1,5 @@
 {
+  "REGISTRATION": "📝 Register me",
+  "REGISTRATION_FAILURE": "Registration failed",
   "REGISTRATION_SUCCESS": "Registration succeeded"
 }

@@ -161,7 +161,9 @@ export class ResolverService {
       });
     } catch (err) {
       this.logger.error(err);
-      return this.responseService.getRegistrationFailureResponse();
+      return this.responseService.getRegistrationFailureResponse(
+        userDto.locale,
+      );
     }
   };
 
