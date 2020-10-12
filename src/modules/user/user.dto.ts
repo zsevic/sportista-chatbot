@@ -8,4 +8,6 @@ export class User {
   image_url: string;
 
   last_name: string;
+
+  locale: string;
 }

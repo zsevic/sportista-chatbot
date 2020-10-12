@@ -30,6 +30,9 @@ export class UserEntity {
   @Column()
   last_name: string;
 
+  @Column()
+  locale: string;
+
   @CreateDateColumn()
   created_at: Date;
 

@@ -41,6 +41,7 @@ export class MessengerBotController {
       first_name,
       gender,
       last_name,
+      locale,
       profile_pic: image_url,
     } = await chat.getUserProfile();
     const response = await this.resolverService.registerUser({
@@ -49,6 +50,7 @@ export class MessengerBotController {
       gender,
       image_url,
       last_name,
+      locale,
     });
 
     return chat.say(response);
