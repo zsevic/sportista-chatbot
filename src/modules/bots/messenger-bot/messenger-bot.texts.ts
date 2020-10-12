@@ -64,7 +64,6 @@ export const CREATE_ACTIVITY_CLOSING_TEXT =
   'Hvala na informacijama, stići će ti poruka kad se neko bude prijavio';
 
 export const REGISTRATION_FAILURE_TEXT = 'Registracija nije uspela';
-export const REGISTRATION_SUCCESS_TEXT = 'Registracija je uspela';
 export const REGISTRATION_TEXT = '📝 Registruj se';
 
 export const ADD_REMAINING_VACANCIES_TEXT = 'Fali još jedan';

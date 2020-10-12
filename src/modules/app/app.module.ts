@@ -1,3 +1,4 @@
+import path from 'path';
 import {
   Injectable,
   Logger,
@@ -6,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService, ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { I18nModule, I18nJsonParser } from 'nestjs-i18n';
 import { Subject } from 'rxjs';
 import { Connection } from 'typeorm';
 import {
@@ -50,6 +52,17 @@ const typeOrmConfig = {
         graphApiVersion: configService.get('GRAPH_API_VERSION'),
         verifyToken: configService.get('WEBHOOK_VERIFY_TOKEN'),
       }),
+    }),
+    I18nModule.forRoot({
+      fallbackLanguage: 'sr',
+      fallbacks: {
+        en_GB: 'en',
+        sr_RS: 'sr',
+      },
+      parser: I18nJsonParser,
+      parserOptions: {
+        path: path.join(__dirname, '../../../i18n/'),
+      },
     }),
     NodeGeocoderModule.registerAsync({
       useFactory: () => ({

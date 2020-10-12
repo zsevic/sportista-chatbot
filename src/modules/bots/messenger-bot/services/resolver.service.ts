@@ -1,6 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { I18nService } from 'nestjs-i18n';
 import { ActivityService } from 'modules/activity/activity.service';
-import { FIRST_PAGE } from 'modules/bots/messenger-bot/messenger-bot.constants';
+import {
+  FIRST_PAGE,
+  USER_REGISTRATION_SUCCESS,
+} from 'modules/bots/messenger-bot/messenger-bot.constants';
 import {
   CANCEL_ACTIVITY_FAILURE_TEXT,
   CANCEL_ACTIVITY_SUCCESS_TEXT,
@@ -10,7 +14,6 @@ import {
   JOIN_ACTIVITY_SUCCESS_TEXT,
   NOTIFY_ORGANIZER_TEXT,
   NOTIFY_PARTICIPANTS_TEXT,
-  REGISTRATION_SUCCESS_TEXT,
   RESET_REMAINING_VACANCIES_TEXT,
   UPDATE_REMAINING_VACANCIES_FAILURE_TEXT,
 } from 'modules/bots/messenger-bot/messenger-bot.texts';
@@ -27,6 +30,7 @@ export class ResolverService {
 
   constructor(
     private readonly activityService: ActivityService,
+    private readonly i18nService: I18nService,
     private readonly participationService: ParticipationService,
     private readonly responseService: ResponseService,
     private readonly stateService: StateService,
@@ -152,7 +156,9 @@ export class ResolverService {
   registerUser = async (userDto: User) => {
     try {
       await this.userService.registerUser(userDto);
-      return REGISTRATION_SUCCESS_TEXT;
+      return this.i18nService.translate(USER_REGISTRATION_SUCCESS, {
+        lang: userDto.locale,
+      });
     } catch (err) {
       this.logger.error(err);
       return this.responseService.getRegistrationFailureResponse();

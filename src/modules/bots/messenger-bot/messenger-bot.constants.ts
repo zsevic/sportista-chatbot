@@ -35,21 +35,21 @@ export const PARTICIPANT_LIST_TYPE = 'PARTICIPANT_LIST_TYPE';
 export const UPCOMING_ACTIVITIES_TYPE = 'UPCOMING_ACTIVITIES_TYPE';
 
 const DEFAULT_LOCALE = 'default';
-const SERBIAN_LOCALE = 'sr_RS';
+const ENGLISH_LOCALE = 'en_GB';
 export const GREETING_TEXT = [
   {
-    locale: DEFAULT_LOCALE,
+    locale: ENGLISH_LOCALE,
     text: `Hi! With ${PROJECT_NAME} you can find missing players or join some game`,
   },
   {
-    locale: SERBIAN_LOCALE,
+    locale: DEFAULT_LOCALE,
     text: `Zdravo! ${PROJECT_NAME} ti pomaže da lakše nađeš igrače ili da se pridružiš timu u zakazanom terminu!`,
   },
 ];
 
 export const PERSISTENT_MENU = [
   {
-    locale: DEFAULT_LOCALE,
+    locale: ENGLISH_LOCALE,
     call_to_actions: [
       {
         type: 'postback',
@@ -74,7 +74,7 @@ export const PERSISTENT_MENU = [
     ],
   },
   {
-    locale: SERBIAN_LOCALE,
+    locale: DEFAULT_LOCALE,
     call_to_actions: [
       {
         type: 'postback',
@@ -136,3 +136,5 @@ export const SKIPPED_QUICK_REPLY_PAYLOADS = [
   JOINED_ACTIVITIES_PAYLOAD,
   UPCOMING_ACTIVITIES_PAYLOAD,
 ];
+
+export const USER_REGISTRATION_SUCCESS = 'user.REGISTRATION_SUCCESS';

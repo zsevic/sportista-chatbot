@@ -1,8 +1,8 @@
 {
   "collection": "@nestjs/schematics",
   "entryFile": "src/main",
-  "sourceRoot": "src/modules",
   "compilerOptions": {
+    "assets": ["i18n/**/*"],
     "plugins": ["@nestjs/swagger/plugin"]
   }
 }
