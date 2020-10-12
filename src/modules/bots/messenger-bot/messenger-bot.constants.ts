@@ -1,10 +1,12 @@
+import { PROJECT_NAME } from 'common/config/constants';
 import {
   CREATED_ACTIVITIES_TEXT,
+  CREATED_ACTIVITIES_TEXT_EN,
   CREATE_ACTIVITY_TEXT,
+  CREATE_ACTIVITY_TEXT_EN,
   DEFAULT_MESSAGE_TEXT,
-  ACTIVITY_LIST_TEXT,
-  JOINED_ACTIVITIES_TEXT,
   UPCOMING_ACTIVITIES_TEXT,
+  UPCOMING_ACTIVITIES_TEXT_EN,
 } from './messenger-bot.texts';
 
 export const CREATED_ACTIVITIES_PAYLOAD = 'CREATED_ACTIVITIES_PAYLOAD';
@@ -30,10 +32,42 @@ export const ORGANIZER_TYPE = 'ORGANIZER_TYPE';
 export const PARTICIPANT_LIST_TYPE = 'PARTICIPANT_LIST_TYPE';
 export const UPCOMING_ACTIVITIES_TYPE = 'UPCOMING_ACTIVITIES_TYPE';
 
+const DEFAULT_LOCALE = 'default';
+const SERBIAN_LOCALE = 'sr_RS';
+export const GREETING_TEXT = [
+  {
+    locale: DEFAULT_LOCALE,
+    text: `Hi! With ${PROJECT_NAME} you can find missing players or join some game`,
+  },
+  {
+    locale: SERBIAN_LOCALE,
+    text: `Zdravo! ${PROJECT_NAME} ti pomaže da lakše nađeš igrače ili da se pridružiš timu u zakazanom terminu!`,
+  },
+];
+
 export const PERSISTENT_MENU = [
   {
-    title: ACTIVITY_LIST_TEXT,
-    type: 'nested',
+    locale: DEFAULT_LOCALE,
+    call_to_actions: [
+      {
+        type: 'postback',
+        title: UPCOMING_ACTIVITIES_TEXT_EN,
+        payload: UPCOMING_ACTIVITIES_PAYLOAD,
+      },
+      {
+        type: 'postback',
+        title: CREATED_ACTIVITIES_TEXT_EN,
+        payload: CREATED_ACTIVITIES_PAYLOAD,
+      },
+      {
+        type: 'postback',
+        title: CREATE_ACTIVITY_TEXT_EN,
+        payload: INITIALIZE_ACTIVITY_PAYLOAD,
+      },
+    ],
+  },
+  {
+    locale: SERBIAN_LOCALE,
     call_to_actions: [
       {
         type: 'postback',
@@ -42,20 +76,15 @@ export const PERSISTENT_MENU = [
       },
       {
         type: 'postback',
-        title: JOINED_ACTIVITIES_TEXT,
-        payload: JOINED_ACTIVITIES_PAYLOAD,
-      },
-      {
-        type: 'postback',
         title: CREATED_ACTIVITIES_TEXT,
         payload: CREATED_ACTIVITIES_PAYLOAD,
       },
+      {
+        type: 'postback',
+        title: CREATE_ACTIVITY_TEXT,
+        payload: INITIALIZE_ACTIVITY_PAYLOAD,
+      },
     ],
-  },
-  {
-    type: 'postback',
-    title: CREATE_ACTIVITY_TEXT,
-    payload: INITIALIZE_ACTIVITY_PAYLOAD,
   },
 ];
 
@@ -65,10 +94,6 @@ export const DEFAULT_ANSWER = {
     {
       title: UPCOMING_ACTIVITIES_TEXT,
       payload: UPCOMING_ACTIVITIES_PAYLOAD,
-    },
-    {
-      title: JOINED_ACTIVITIES_TEXT,
-      payload: JOINED_ACTIVITIES_PAYLOAD,
     },
     {
       title: CREATED_ACTIVITIES_TEXT,

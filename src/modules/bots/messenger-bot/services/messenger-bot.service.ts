@@ -7,7 +7,7 @@ import {
   UPCOMING_ACTIVITIES_PAYLOAD,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { MessengerBotController } from 'modules/bots/messenger-bot/messenger-bot.controller';
-import { GREETING_TEXT } from 'modules/bots/messenger-bot/messenger-bot.texts';
+import { GREETING_TEXT } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { BOOTBOT_OPTIONS_FACTORY } from 'modules/external/bootbot';
 
 @Injectable()
