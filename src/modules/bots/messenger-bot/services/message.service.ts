@@ -10,8 +10,6 @@ import {
   SKIPPED_QUICK_REPLY_PAYLOADS,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import {
-  DATETIME_TEXT,
-  INVALID_DATETIME_TEXT,
   INVALID_PRICE_TEXT,
   INVALID_REMAINING_VACANCIES_TEXT,
 } from 'modules/bots/messenger-bot/messenger-bot.texts';
@@ -115,10 +113,8 @@ export class MessageService {
       state.current_state === this.stateService.states.datetime &&
       (!isValid(parseISO(text)) || !isAfter(new Date(text), new Date()))
     ) {
-      return this.responseService.getDatetimeQuestion(
-        INVALID_DATETIME_TEXT,
-        DATETIME_TEXT,
-      );
+      const locale = await this.userService.getLocale(state.user_id);
+      return this.responseService.getDatetimeQuestionI18n(locale);
     }
 
     if (

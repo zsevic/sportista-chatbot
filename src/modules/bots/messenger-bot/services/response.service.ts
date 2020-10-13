@@ -21,6 +21,7 @@ import {
   DATETIME,
   DATETIME_QUESTION,
   GET_STARTED_PAYLOAD,
+  INVALID_DATETIME,
   JOINED_ACTIVITIES_TYPE,
   JOIN_ACTIVITY_SUCCESS,
   JOIN_ACTIVITY_TYPE,
@@ -176,7 +177,15 @@ export class ResponseService {
       isOrganizerShown: false,
     });
 
-  getDatetimeQuestion = (text: string, title: string) => {
+  getDatetimeQuestionI18n = async (lang: string) => {
+    const stateI18n = await this.i18nService.translate('state', { lang });
+    return this.getDatetimeQuestion(
+      stateI18n[INVALID_DATETIME],
+      stateI18n[DATETIME],
+    );
+  };
+
+  getDatetimeQuestion = (text: string, buttonTitle: string) => {
     const url = `${this.configService.get(
       'EXTENSIONS_URL',
     )}/extensions/datetime`;
@@ -186,7 +195,7 @@ export class ResponseService {
       buttons: [
         {
           type: 'web_url',
-          title,
+          title: buttonTitle,
           url,
           messenger_extensions: true,
           webview_height_ratio: 'compact',
