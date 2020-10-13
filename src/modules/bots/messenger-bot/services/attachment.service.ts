@@ -38,5 +38,8 @@ export class AttachmentService {
 
       return this.resolverService.updateState(userId, updatedState, locale);
     }
+
+    await this.stateService.resetState(userId);
+    return this.resolverService.getDefaultResponse(locale);
   };
 }

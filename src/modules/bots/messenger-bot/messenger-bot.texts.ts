@@ -15,8 +15,6 @@ export const NO_UPCOMING_ACTIVITIES_TEXT = 'Nema ništa u blizini';
 
 export const CANCEL_TEXT = 'Otkaži';
 
-export const DEFAULT_MESSAGE_TEXT = 'Izaberi neku od opcija';
-
 export const LOCATION_TEXT = 'Vidi lokaciju na mapi';
 
 export const JOIN_ACTIVITY_TEXT = 'Prijavi se';
