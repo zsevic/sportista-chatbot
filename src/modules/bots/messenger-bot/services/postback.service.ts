@@ -45,18 +45,21 @@ export class PostbackService {
         return this.resolverService.addRemainingVacancies(
           activity_id.toString(),
           userId,
+          locale,
         );
       }
       case CANCEL_ACTIVITY_TYPE: {
         return this.resolverService.cancelActivity(
           activity_id.toString(),
           userId,
+          locale,
         );
       }
       case CANCEL_PARTICIPATION_TYPE: {
         return this.resolverService.cancelParticipation(
           activity_id.toString(),
           userId,
+          locale,
         );
       }
       case CREATED_ACTIVITIES_TYPE: {
@@ -66,6 +69,7 @@ export class PostbackService {
         return this.resolverService.joinActivity(
           activity_id.toString(),
           userId,
+          locale,
         );
       }
       case JOINED_ACTIVITIES_TYPE: {
@@ -81,12 +85,14 @@ export class PostbackService {
         return this.resolverService.resetRemainingVacancies(
           activity_id.toString(),
           userId,
+          locale,
         );
       }
       case SUBTRACT_REMAINING_VACANCIES_TYPE: {
         return this.resolverService.subtractRemainingVacancies(
           activity_id.toString(),
           userId,
+          locale,
         );
       }
       case UPCOMING_ACTIVITIES_TYPE: {
@@ -96,6 +102,7 @@ export class PostbackService {
         return this.resolverService.updateRemainingVacancies(
           activity_id.toString(),
           userId,
+          locale,
         );
       }
       default:

@@ -20,9 +20,12 @@ export class ResolverService {
     private readonly userService: UserService,
   ) {}
 
-  addRemainingVacancies = async (activityId: string, organizerId: number) => {
+  addRemainingVacancies = async (
+    activityId: string,
+    organizerId: number,
+    locale: string,
+  ) => {
     try {
-      const locale = await this.userService.getLocale(organizerId);
       const updatedActivity = await this.activityService.addRemainingVacancies(
         activityId,
         organizerId,
@@ -32,7 +35,6 @@ export class ResolverService {
         locale,
       );
     } catch {
-      const locale = await this.userService.getLocale(organizerId);
       return this.responseService.getUpdateRemainingVacanciesFailureResponse(
         locale,
       );
@@ -42,13 +44,12 @@ export class ResolverService {
   cancelActivity = async (
     activityId: string,
     organizerId: number,
+    locale: string,
   ): Promise<string | string[]> => {
     try {
-      const locale = await this.userService.getLocale(organizerId);
       await this.activityService.cancelActivity(activityId, organizerId);
       return this.responseService.getCancelActivitySuccessResponse(locale);
     } catch {
-      const locale = await this.userService.getLocale(organizerId);
       return this.responseService.getCancelActivityFailureResponse(locale);
     }
   };
@@ -56,19 +57,17 @@ export class ResolverService {
   cancelParticipation = async (
     activityId: string,
     userId: number,
+    locale: string,
   ): Promise<string | string[]> => {
     try {
-      const locale = await this.userService.getLocale(userId);
       await this.participationService.cancelParticipation(activityId, userId);
       return this.responseService.getCancelParticipationSuccessResponse(locale);
     } catch {
-      const locale = await this.userService.getLocale(userId);
       return this.responseService.getCancelParticipationFailureResponse(locale);
     }
   };
 
-  createActivity = async (newActivity: any) => {
-    const locale = await this.userService.getLocale(newActivity.organizer_id);
+  createActivity = async (newActivity: any, locale: string) => {
     await this.activityService.createActivity(newActivity);
 
     return this.responseService.getCreateActivityResponse(locale);
@@ -138,13 +137,12 @@ export class ResolverService {
   joinActivity = async (
     activityId: string,
     userId: number,
+    locale: string,
   ): Promise<string | string[]> => {
     try {
-      const locale = await this.userService.getLocale(userId);
       await this.activityService.joinActivity(activityId, userId);
       return this.responseService.getJoinActivitySuccessResponse(locale);
     } catch {
-      const locale = await this.userService.getLocale(userId);
       return this.responseService.getJoinActivityFailureResponse(locale);
     }
   };
@@ -166,9 +164,9 @@ export class ResolverService {
   resetRemainingVacancies = async (
     activityId: string,
     organizerId: number,
+    locale: string,
   ): Promise<string> => {
     try {
-      const locale = await this.userService.getLocale(organizerId);
       await this.activityService.resetRemainingVacancies(
         activityId,
         organizerId,
@@ -177,7 +175,6 @@ export class ResolverService {
         locale,
       );
     } catch {
-      const locale = await this.userService.getLocale(organizerId);
       return this.responseService.getUpdateRemainingVacanciesFailureResponse(
         locale,
       );
@@ -190,9 +187,9 @@ export class ResolverService {
   subtractRemainingVacancies = async (
     activityId: string,
     organizerId: number,
+    locale: string,
   ) => {
     try {
-      const locale = await this.userService.getLocale(organizerId);
       const updatedActivity = await this.activityService.subtractRemainingVacancies(
         activityId,
         organizerId,
@@ -203,23 +200,24 @@ export class ResolverService {
         locale,
       );
     } catch {
-      const locale = await this.userService.getLocale(organizerId);
       return this.responseService.getUpdateRemainingVacanciesFailureResponse(
         locale,
       );
     }
   };
 
-  updateRemainingVacancies = async (activityId: string, userId: number) => {
-    const locale = await this.userService.getLocale(userId);
+  updateRemainingVacancies = async (
+    activityId: string,
+    userId: number,
+    locale: string,
+  ) => {
     return this.responseService.getUpdateRemainingVacanciesResponse(
       activityId,
       locale,
     );
   };
 
-  updateState = async (userId: number, updatedState: State) => {
-    const locale = await this.userService.getLocale(userId);
+  updateState = async (userId: number, updatedState: State, locale: string) => {
     await this.stateService.updateState(userId, updatedState);
 
     return this.responseService.getUpdateStateResponse(

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DEFAULT_ANSWER } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { StateService } from 'modules/state/state.service';
+import { UserService } from 'modules/user/user.service';
 import { ResolverService } from './resolver.service';
 
 @Injectable()
@@ -8,10 +9,12 @@ export class AttachmentService {
   constructor(
     private readonly resolverService: ResolverService,
     private readonly stateService: StateService,
+    private readonly userService: UserService,
   ) {}
 
   handleAttachment = async (message: any, userId: number) => {
     const { type, title } = message.attachments[0];
+    const locale = await this.userService.getLocale(userId);
 
     const state = await this.resolverService.getCurrentState(userId);
     if (!state || !state.current_state) {
@@ -34,7 +37,7 @@ export class AttachmentService {
           this.stateService.nextStates[state.current_state] || null,
       };
 
-      return this.resolverService.updateState(userId, updatedState);
+      return this.resolverService.updateState(userId, updatedState, locale);
     }
   };
 }

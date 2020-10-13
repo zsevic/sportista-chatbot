@@ -26,8 +26,13 @@ export class MessageService {
 
   handleMessage = async (message: any, userId: number) => {
     const state = await this.resolverService.getCurrentState(userId);
+    const locale = await this.userService.getLocale(userId);
 
-    let validationResponse: any = await this.validateMessage(message, state);
+    let validationResponse: any = await this.validateMessage(
+      message,
+      state,
+      locale,
+    );
     if (validationResponse) return validationResponse;
 
     const { text } = message;
@@ -49,10 +54,7 @@ export class MessageService {
     };
 
     if (updatedState.current_state === this.stateService.states.closing) {
-      validationResponse = await this.validateRemainingVacancies(
-        +text,
-        state.user_id,
-      );
+      validationResponse = await this.validateRemainingVacancies(+text, locale);
       if (validationResponse) return validationResponse;
 
       const newActivity = {
@@ -66,12 +68,13 @@ export class MessageService {
         type: state.activity_type,
       };
 
-      return this.resolverService.createActivity(newActivity);
+      return this.resolverService.createActivity(newActivity, locale);
     }
 
     const response = await this.resolverService.updateState(
       userId,
       updatedState,
+      locale,
     );
     if (state.current_state === this.stateService.states.datetime) {
       const datetimeConfirmationResponse = this.responseService.getDatetimeConfirmationResponse(
@@ -83,8 +86,9 @@ export class MessageService {
     return response;
   };
 
-  validateMessage = async (message: any, state: State) => {
+  validateMessage = async (message: any, state: State, locale: string) => {
     const { quick_reply, text } = message;
+
     if (!state || !state.current_state) {
       if (
         quick_reply?.payload &&
@@ -102,13 +106,11 @@ export class MessageService {
         !activity_type ||
         !ACTIVITY_TYPES.hasOwnProperty(activity_type.toString())
       ) {
-        const locale = await this.userService.getLocale(state.user_id);
         return this.responseService.getInvalidActivityTypeResponse(locale);
       }
     }
 
     if (state.current_state === this.stateService.states.location) {
-      const locale = await this.userService.getLocale(state.user_id);
       return this.responseService.getInvalidLocationResponse(locale);
     }
 
@@ -116,7 +118,6 @@ export class MessageService {
       state.current_state === this.stateService.states.datetime &&
       (!isValid(parseISO(text)) || !isAfter(new Date(text), new Date()))
     ) {
-      const locale = await this.userService.getLocale(state.user_id);
       return this.responseService.getDatetimeQuestionI18n(locale);
     }
 
@@ -124,17 +125,15 @@ export class MessageService {
       state.current_state === this.stateService.states.price &&
       (Number.isNaN(text) || Math.sign(+text) !== 1)
     ) {
-      const locale = await this.userService.getLocale(state.user_id);
       return this.responseService.getInvalidPriceResponse(locale);
     }
   };
 
   validateRemainingVacancies = async (
     text: number,
-    userId: number,
+    locale: string,
   ): Promise<string> => {
     if (!Number.isInteger(text) || text <= MIN_REMAINING_VACANCIES) {
-      const locale = await this.userService.getLocale(userId);
       return this.responseService.getInvalidRemainingVacanciesResponse(locale);
     }
   };
