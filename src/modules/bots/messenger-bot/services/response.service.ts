@@ -52,7 +52,6 @@ import {
   USER_REGISTRATION_SUCCESS,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import {
-  ACTIVITY_TYPES_TEXT,
   CANCEL_TEXT,
   DATETIME_CONFIRMATION_TEXT,
   INVALID_ACTIVITY_TYPE_TEXT,
@@ -120,11 +119,13 @@ export class ResponseService {
     };
   };
 
-  getActivityTypeQuestion = async (lang: string) =>
-    Object.keys(ACTIVITY_TYPES).map((type) => ({
-      title: `${type} ${ACTIVITY_TYPES_TEXT[type]}`,
+  getActivityTypeOptions = async (lang: string) => {
+    const activityI18n = await this.i18nService.translate('activity', { lang });
+    return Object.keys(ACTIVITY_TYPES).map((type) => ({
+      title: `${type} ${activityI18n[type]}`,
       payload: `type=activity_type&activity_type=${type}`,
     }));
+  };
 
   getCancelActivitySuccessResponse = async (
     lang: string,
@@ -216,7 +217,7 @@ export class ResponseService {
   };
 
   getInitializeActivityResponse = async (lang: string) => {
-    const quickReplies = await this.getActivityTypeQuestion(lang);
+    const quickReplies = await this.getActivityTypeOptions(lang);
     const activityTypeMessage = await this.i18nService.translate(
       STATE_ACTIVITY_TYPE_QUESTION,
       {
@@ -231,7 +232,7 @@ export class ResponseService {
   };
 
   getInvalidActivityTypeResponse = async (lang: string) => {
-    const quickReplies = await this.getActivityTypeQuestion(lang);
+    const quickReplies = await this.getActivityTypeOptions(lang);
 
     return {
       text: INVALID_ACTIVITY_TYPE_TEXT,

@@ -1,4 +1,8 @@
 {
+  "🏀": "basketball",
+  "⚽": "soccer",
+  "🏓": "table tennis",
+  "🎾": "tennis",
   "ACTIVITY_OPTIONS": "Choose some of the options",
   "ADD_REMAINING_VACANCIES": "One more needed",
   "CANCEL_ACTIVITY": "Cancel",
