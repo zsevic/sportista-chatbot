@@ -19,6 +19,7 @@ import {
   REMAINING_VACANCIES_TEXT,
   VIEW_MORE_TEXT,
 } from './messenger-bot.texts';
+import { I18n } from './messenger-bot.types';
 
 const getLocationUrl = (latitude: number, longitude: number): string =>
   `http://www.google.com/maps/place/${latitude},${longitude}`;
@@ -114,7 +115,7 @@ export const getActivitiesResponse = ({
 
 export const getRemainingVacanciesButtons = (
   activityId: string,
-  activityI18n: any,
+  activityI18n: I18n,
 ) => [
   {
     type: 'postback',
