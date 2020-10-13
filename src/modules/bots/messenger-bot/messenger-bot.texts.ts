@@ -40,7 +40,6 @@ export const INVALID_ACTIVITY_TYPE_TEXT =
 export const DATETIME_TEXT = '📆 Unesi datum i vreme';
 export const DATETIME_CONFIRMATION_TEXT = 'Izabrani datum i vreme su';
 export const INVALID_DATETIME_TEXT = 'Vreme nije dobro, pokušaj ponovo';
-export const INVALID_LOCATION_TEXT = 'Lokacija nije dobra, pokušaj ponovo';
 export const INVALID_PRICE_TEXT = 'Cena nije dobra, pokušaj ponovo';
 export const INVALID_REMAINING_VACANCIES_TEXT = 'Unesi broj potrebnih igrača';
 

@@ -38,6 +38,7 @@ import {
   REMAINING_VACANCIES_QUESTION,
   STATE_ACTIVITY_TYPE_QUESTION,
   STATE_CREATE_ACTIVITY_CLOSING,
+  STATE_INVALID_LOCATION,
   UPCOMING_ACTIVITIES_TYPE,
   UPDATED_REMAINING_VACANCIES,
   UPDATE_REMAINING_VACANCIES,
@@ -224,11 +225,13 @@ export class ResponseService {
     };
   };
 
-  getJoinActivityFailureResponse = async (lang: string): Promise<string> => {
-    return this.i18nService.translate(ACTIVITY_JOIN_ACTIVITY_FAILURE, {
+  getInvalidLocationResponse = async (lang: string) =>
+    this.i18nService.translate(STATE_INVALID_LOCATION, { lang });
+
+  getJoinActivityFailureResponse = async (lang: string): Promise<string> =>
+    this.i18nService.translate(ACTIVITY_JOIN_ACTIVITY_FAILURE, {
       lang,
     });
-  };
 
   getJoinActivitySuccessResponse = async (lang: string): Promise<string[]> => {
     const activityI18n = await this.i18nService.translate('activity', {

@@ -12,7 +12,6 @@ import {
 import {
   DATETIME_TEXT,
   INVALID_DATETIME_TEXT,
-  INVALID_LOCATION_TEXT,
   INVALID_PRICE_TEXT,
   INVALID_REMAINING_VACANCIES_TEXT,
 } from 'modules/bots/messenger-bot/messenger-bot.texts';
@@ -108,7 +107,8 @@ export class MessageService {
     }
 
     if (state.current_state === this.stateService.states.location) {
-      return INVALID_LOCATION_TEXT;
+      const locale = await this.userService.getLocale(state.user_id);
+      return this.responseService.getInvalidLocationResponse(locale);
     }
 
     if (

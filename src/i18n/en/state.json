@@ -3,6 +3,7 @@
   "CREATE_ACTIVITY_CLOSING": "Thanks for the info, you're receive a message when someone applies",
   "DATETIME_QUESTION": "What is a planned datetime?",
   "DATETIME": "Fill out the datetime",
+  "INVALID_LOCATION": "Sending location failed, try again",
   "LOCATION_INSTRUCTION": "Click on 4 dots on the right side and choose location",
   "LOCATION_QUESTION": "Where is the activity hoster? Send location",
   "PRICE_QUESTION": "How much does it cost per player?",
