@@ -9,10 +9,7 @@ import {
   DEFAULT_ANSWER,
   SKIPPED_QUICK_REPLY_PAYLOADS,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
-import {
-  INVALID_PRICE_TEXT,
-  INVALID_REMAINING_VACANCIES_TEXT,
-} from 'modules/bots/messenger-bot/messenger-bot.texts';
+import { INVALID_REMAINING_VACANCIES_TEXT } from 'modules/bots/messenger-bot/messenger-bot.texts';
 import { State } from 'modules/state/state.dto';
 import { StateService } from 'modules/state/state.service';
 import { UserService } from 'modules/user/user.service';
@@ -120,8 +117,10 @@ export class MessageService {
     if (
       state.current_state === this.stateService.states.price &&
       (Number.isNaN(text) || Math.sign(+text) !== 1)
-    )
-      return INVALID_PRICE_TEXT;
+    ) {
+      const locale = await this.userService.getLocale(state.user_id);
+      return this.responseService.getInvalidPriceResponse(locale);
+    }
   };
 
   validateRemainingVacancies = (text: number): string => {

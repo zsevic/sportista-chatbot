@@ -40,6 +40,7 @@ import {
   STATE_ACTIVITY_TYPE_QUESTION,
   STATE_CREATE_ACTIVITY_CLOSING,
   STATE_INVALID_LOCATION,
+  STATE_INVALID_PRICE,
   UPCOMING_ACTIVITIES_TYPE,
   UPDATED_REMAINING_VACANCIES,
   UPDATE_REMAINING_VACANCIES,
@@ -177,6 +178,12 @@ export class ResponseService {
       isOrganizerShown: false,
     });
 
+  getDatetimeConfirmationResponse = (datetime: string): string => {
+    const formattedDatetime = formatDatetime(datetime);
+
+    return `${DATETIME_CONFIRMATION_TEXT} ${formattedDatetime}`;
+  };
+
   getDatetimeQuestionI18n = async (lang: string) => {
     const stateI18n = await this.i18nService.translate('state', { lang });
     return this.getDatetimeQuestion(
@@ -204,12 +211,6 @@ export class ResponseService {
     };
   };
 
-  getDatetimeConfirmationResponse = (datetime: string): string => {
-    const formattedDatetime = formatDatetime(datetime);
-
-    return `${DATETIME_CONFIRMATION_TEXT} ${formattedDatetime}`;
-  };
-
   getInitializeActivityResponse = async (lang: string) => {
     const quickReplies = await this.getActivityTypeQuestion(lang);
     const activityTypeMessage = await this.i18nService.translate(
@@ -234,8 +235,11 @@ export class ResponseService {
     };
   };
 
-  getInvalidLocationResponse = async (lang: string) =>
+  getInvalidLocationResponse = async (lang: string): Promise<string> =>
     this.i18nService.translate(STATE_INVALID_LOCATION, { lang });
+
+  getInvalidPriceResponse = async (lang: string): Promise<string> =>
+    this.i18nService.translate(STATE_INVALID_PRICE, { lang });
 
   getJoinActivityFailureResponse = async (lang: string): Promise<string> =>
     this.i18nService.translate(ACTIVITY_JOIN_ACTIVITY_FAILURE, {
