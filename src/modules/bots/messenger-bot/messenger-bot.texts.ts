@@ -63,18 +63,10 @@ export const INVALID_REMAINING_VACANCIES_TEXT = 'Unesi broj potrebnih igrača';
 export const CREATE_ACTIVITY_CLOSING_TEXT =
   'Hvala na informacijama, stići će ti poruka kad se neko bude prijavio';
 
-export const REGISTRATION_FAILURE_TEXT = 'Registracija nije uspela';
-export const REGISTRATION_TEXT = '📝 Registruj se';
-
-export const ADD_REMAINING_VACANCIES_TEXT = 'Fali još jedan';
 export const NO_REMAINING_VACANCIES_TEXT = 'Skupili smo se';
-export const RESET_REMAINING_VACANCIES_TEXT = 'Super, srećno!';
 export const REMAINING_VACANCIES_TEXT = 'Fali još';
-export const SUBTRACT_REMAINING_VACANCIES_TEXT = 'Prijavio se jedan';
-export const UPDATED_REMAINING_VACANCIES_TEXT = 'Fali još';
 
 export const UPDATE_REMAINING_VACANCIES_TEXT = 'Promeni broj igrača';
-export const UPDATE_REMAINING_VACANCIES_FAILURE_TEXT = 'Promena nije uspela';
 
 export const VIEW_MORE_TEXT = 'Prikaži još';
 export const VIEW_MORE_CREATED_ACTIVITIES_TEXT =

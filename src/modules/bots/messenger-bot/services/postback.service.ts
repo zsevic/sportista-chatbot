@@ -89,8 +89,9 @@ export class PostbackService {
         return this.resolverService.getUpcomingActivities(userId, +page);
       }
       case UPDATE_REMAINING_VACANCIES_TYPE: {
-        return this.responseService.getUpdateRemainingVacanciesResponse(
+        return this.resolverService.updateRemainingVacancies(
           activity_id.toString(),
+          userId,
         );
       }
       default:

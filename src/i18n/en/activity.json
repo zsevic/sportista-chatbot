@@ -1,0 +1,9 @@
+{
+  "ADD_REMAINING_VACANCIES": "One more needed",
+  "NO_REMAINING_VACANCIES": "No remaining vacancies",
+  "RESET_REMAINING_VACANCIES": "None remaining",
+  "SUBTRACT_REMAINING_VACANCIES": "One more joined",
+  "UPDATE_REMAINING_VACANCIES": "Update remaining vacancies",
+  "UPDATE_REMAINING_VACANCIES_FAILURE": "Update failed",
+  "UPDATED_REMAINING_VACANCIES": "Fali još"
+}

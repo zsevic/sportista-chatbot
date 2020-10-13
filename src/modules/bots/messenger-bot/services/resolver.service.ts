@@ -2,6 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { I18nService } from 'nestjs-i18n';
 import { ActivityService } from 'modules/activity/activity.service';
 import {
+  ACTIVITY_RESET_REMAINING_VACANCIES,
+  ACTIVITY_UPDATE_REMAINING_VACANCIES_FAILURE,
   FIRST_PAGE,
   USER_REGISTRATION_SUCCESS,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
@@ -14,8 +16,6 @@ import {
   JOIN_ACTIVITY_SUCCESS_TEXT,
   NOTIFY_ORGANIZER_TEXT,
   NOTIFY_PARTICIPANTS_TEXT,
-  RESET_REMAINING_VACANCIES_TEXT,
-  UPDATE_REMAINING_VACANCIES_FAILURE_TEXT,
 } from 'modules/bots/messenger-bot/messenger-bot.texts';
 import { ParticipationService } from 'modules/participation/participation.service';
 import { State } from 'modules/state/state.dto';
@@ -38,16 +38,27 @@ export class ResolverService {
   ) {}
 
   addRemainingVacancies = async (activityId: string, organizerId: number) => {
+    let locale: string;
     try {
       const updatedActivity = await this.activityService.addRemainingVacancies(
         activityId,
         organizerId,
       );
+      locale = await this.userService.getLocale(organizerId);
       return this.responseService.getUpdatedRemainingVacanciesResponse(
         updatedActivity,
+        locale,
       );
     } catch {
-      return UPDATE_REMAINING_VACANCIES_FAILURE_TEXT;
+      const lang = locale
+        ? locale
+        : await this.userService.getLocale(organizerId);
+      return this.i18nService.translate(
+        ACTIVITY_UPDATE_REMAINING_VACANCIES_FAILURE,
+        {
+          lang,
+        },
+      );
     }
   };
 
@@ -171,14 +182,26 @@ export class ResolverService {
     activityId: string,
     organizerId: number,
   ): Promise<string> => {
+    let locale: string;
     try {
+      locale = await this.userService.getLocale(organizerId);
       await this.activityService.resetRemainingVacancies(
         activityId,
         organizerId,
       );
-      return RESET_REMAINING_VACANCIES_TEXT;
+      return this.i18nService.translate(ACTIVITY_RESET_REMAINING_VACANCIES, {
+        lang: locale,
+      });
     } catch {
-      return UPDATE_REMAINING_VACANCIES_FAILURE_TEXT;
+      const lang = locale
+        ? locale
+        : await this.userService.getLocale(organizerId);
+      return this.i18nService.translate(
+        ACTIVITY_UPDATE_REMAINING_VACANCIES_FAILURE,
+        {
+          lang,
+        },
+      );
     }
   };
 
@@ -189,18 +212,37 @@ export class ResolverService {
     activityId: string,
     organizerId: number,
   ) => {
+    let locale: string;
     try {
       const updatedActivity = await this.activityService.subtractRemainingVacancies(
         activityId,
         organizerId,
       );
 
+      const locale = await this.userService.getLocale(organizerId);
       return this.responseService.getUpdatedRemainingVacanciesResponse(
         updatedActivity,
+        locale,
       );
     } catch {
-      return UPDATE_REMAINING_VACANCIES_FAILURE_TEXT;
+      const lang = locale
+        ? locale
+        : await this.userService.getLocale(organizerId);
+      return this.i18nService.translate(
+        ACTIVITY_UPDATE_REMAINING_VACANCIES_FAILURE,
+        {
+          lang,
+        },
+      );
     }
+  };
+
+  updateRemainingVacancies = async (activityId: string, userId: number) => {
+    const locale = await this.userService.getLocale(userId);
+    return this.responseService.getUpdateRemainingVacanciesResponse(
+      activityId,
+      locale,
+    );
   };
 
   updateState = async (userId: number, updatedState: State) => {

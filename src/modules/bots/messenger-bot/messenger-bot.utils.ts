@@ -3,19 +3,20 @@ import { ACTIVITY_TYPES } from 'modules/activity/activity.constants';
 import { Activity } from 'modules/activity/activity.dto';
 import { User } from 'modules/user/user.dto';
 import {
+  ADD_REMAINING_VACANCIES,
   ADD_REMAINING_VACANCIES_TYPE,
+  NO_REMAINING_VACANCIES,
   ORGANIZER_TYPE,
   PAGE_SIZE,
   RESET_REMAINING_VACANCIES_TYPE,
+  SUBTRACT_REMAINING_VACANCIES,
   SUBTRACT_REMAINING_VACANCIES_TYPE,
 } from './messenger-bot.constants';
 import {
-  ADD_REMAINING_VACANCIES_TEXT,
   LOCATION_TEXT,
   NO_REMAINING_VACANCIES_TEXT,
   ORGANIZER_TEXT,
   REMAINING_VACANCIES_TEXT,
-  SUBTRACT_REMAINING_VACANCIES_TEXT,
   VIEW_MORE_TEXT,
 } from './messenger-bot.texts';
 
@@ -111,20 +112,23 @@ export const getActivitiesResponse = ({
   return response;
 };
 
-export const getRemainingVacanciesButtons = (activityId: string) => [
+export const getRemainingVacanciesButtons = (
+  activityId: string,
+  activityI18n: any,
+) => [
   {
     type: 'postback',
-    title: ADD_REMAINING_VACANCIES_TEXT,
+    title: activityI18n[ADD_REMAINING_VACANCIES],
     payload: `type=${ADD_REMAINING_VACANCIES_TYPE}&activity_id=${activityId}`,
   },
   {
     type: 'postback',
-    title: SUBTRACT_REMAINING_VACANCIES_TEXT,
+    title: activityI18n[SUBTRACT_REMAINING_VACANCIES],
     payload: `type=${SUBTRACT_REMAINING_VACANCIES_TYPE}&activity_id=${activityId}`,
   },
   {
     type: 'postback',
-    title: NO_REMAINING_VACANCIES_TEXT,
+    title: activityI18n[NO_REMAINING_VACANCIES],
     payload: `type=${RESET_REMAINING_VACANCIES_TYPE}&activity_id=${activityId}`,
   },
 ];

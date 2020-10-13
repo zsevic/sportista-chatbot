@@ -13,11 +13,14 @@ import {
   GET_STARTED_PAYLOAD,
   JOINED_ACTIVITIES_TYPE,
   JOIN_ACTIVITY_TYPE,
+  NO_REMAINING_VACANCIES,
   PARTICIPANT_LIST_TYPE,
+  REGISTRATION,
+  REGISTRATION_FAILURE,
   UPCOMING_ACTIVITIES_TYPE,
+  UPDATED_REMAINING_VACANCIES,
+  UPDATE_REMAINING_VACANCIES,
   UPDATE_REMAINING_VACANCIES_TYPE,
-  USER_REGISTRATION,
-  USER_REGISTRATION_FAILURE,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import {
   ACTIVITY_OPTIONS_TEXT,
@@ -35,13 +38,11 @@ import {
   NO_CREATED_ACTIVITIES_TEXT,
   NO_JOINED_ACTIVITIES_TEXT,
   NO_PARTICIPANTS_TEXT,
-  NO_REMAINING_VACANCIES_TEXT,
   NO_UPCOMING_ACTIVITIES_TEXT,
   OPTIONS_TEXT,
   PARTICIPANT_LIST_TEXT,
   PRICE_QUESTION_TEXT,
   REMAINING_VACANCIES_QUESTION_TEXT,
-  UPDATED_REMAINING_VACANCIES_TEXT,
   UPDATE_REMAINING_VACANCIES_TEXT,
   VIEW_MORE_CREATED_ACTIVITIES_TEXT,
   VIEW_MORE_JOINED_ACTIVITIES_TEXT,
@@ -188,19 +189,16 @@ export class ResponseService {
   };
 
   getRegistrationFailureResponse = async (lang: string) => {
-    const text = await this.i18nService.translate(USER_REGISTRATION_FAILURE, {
-      lang,
-    });
-    const title = await this.i18nService.translate(USER_REGISTRATION, {
+    const userI18n = await this.i18nService.translate('user', {
       lang,
     });
 
     return {
-      text,
+      text: userI18n[REGISTRATION_FAILURE],
       buttons: [
         {
           type: 'postback',
-          title,
+          title: userI18n[REGISTRATION],
           payload: GET_STARTED_PAYLOAD,
         },
       ],
@@ -220,18 +218,32 @@ export class ResponseService {
       isOrganizerShown: true,
     });
 
-  getUpdatedRemainingVacanciesResponse = (activity: Activity) => {
+  getUpdatedRemainingVacanciesResponse = async (
+    activity: Activity,
+    lang: string,
+  ) => {
+    const activityI18n = await this.i18nService.translate('activity', {
+      lang,
+    });
     if (!activity || activity.remaining_vacancies === 0)
-      return NO_REMAINING_VACANCIES_TEXT;
+      return activityI18n[NO_REMAINING_VACANCIES];
 
     return {
-      text: `${UPDATED_REMAINING_VACANCIES_TEXT} ${activity.remaining_vacancies}`,
-      buttons: getRemainingVacanciesButtons(activity.id),
+      text: `${activityI18n[UPDATED_REMAINING_VACANCIES]} ${activity.remaining_vacancies}`,
+      buttons: getRemainingVacanciesButtons(activity.id, activityI18n),
     };
   };
 
-  getUpdateRemainingVacanciesResponse = (activityId: string) => ({
-    text: UPDATE_REMAINING_VACANCIES_TEXT,
-    buttons: getRemainingVacanciesButtons(activityId),
-  });
+  getUpdateRemainingVacanciesResponse = async (
+    activityId: string,
+    lang: string,
+  ) => {
+    const activityI18n = await this.i18nService.translate('activity', {
+      lang,
+    });
+    return {
+      text: activityI18n[UPDATE_REMAINING_VACANCIES],
+      buttons: getRemainingVacanciesButtons(activityId, activityI18n),
+    };
+  };
 }

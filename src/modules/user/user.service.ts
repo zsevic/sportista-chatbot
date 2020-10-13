@@ -11,6 +11,14 @@ export class UserService {
     private readonly userRepository: UserRepository,
   ) {}
 
+  getLocale = async (userId: number): Promise<string> => {
+    const user = await this.userRepository.findOne(userId, {
+      select: ['locale'],
+    });
+
+    return user.locale;
+  };
+
   getOrganizer = async (id: number): Promise<User> =>
     this.userRepository.getUser(id);
 

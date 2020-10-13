@@ -1,0 +1,9 @@
+{
+  "ADD_REMAINING_VACANCIES": "Fali još jedan",
+  "NO_REMAINING_VACANCIES": "Skupili smo se",
+  "RESET_REMAINING_VACANCIES": "Super, srećno",
+  "SUBTRACT_REMAINING_VACANCIES": "Prijavio se jedan",
+  "UPDATE_REMAINING_VACANCIES": "Promeni broj igrača",
+  "UPDATE_REMAINING_VACANCIES_FAILURE": "Promena nije uspela",
+  "UPDATED_REMAINING_VACANCIES": "Fali još"
+}
