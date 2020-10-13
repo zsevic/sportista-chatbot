@@ -5,10 +5,7 @@ import {
   ACTIVITY_TYPES,
   MIN_REMAINING_VACANCIES,
 } from 'modules/activity/activity.constants';
-import {
-  DEFAULT_ANSWER,
-  SKIPPED_QUICK_REPLY_PAYLOADS,
-} from 'modules/bots/messenger-bot/messenger-bot.constants';
+import { SKIPPED_QUICK_REPLY_PAYLOADS } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { State } from 'modules/state/state.dto';
 import { StateService } from 'modules/state/state.service';
 import { UserService } from 'modules/user/user.service';
@@ -97,7 +94,7 @@ export class MessageService {
       )
         return;
       else {
-        return DEFAULT_ANSWER;
+        return this.responseService.getDefaultResponse(locale);
       }
     }
 

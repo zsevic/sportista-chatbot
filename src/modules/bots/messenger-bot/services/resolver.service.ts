@@ -88,6 +88,9 @@ export class ResolverService {
   getCurrentState = async (userId: number): Promise<State> =>
     this.stateService.getCurrentState(userId);
 
+  getDefaultResponse = async (locale: string) =>
+    this.responseService.getDefaultResponse(locale);
+
   getJoinedActivities = async (userId: number, page = FIRST_PAGE) => {
     const activityListData = await this.activityService.getJoinedActivities(
       userId,

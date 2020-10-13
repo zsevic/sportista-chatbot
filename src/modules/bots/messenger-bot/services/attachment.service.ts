@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { DEFAULT_ANSWER } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { StateService } from 'modules/state/state.service';
 import { UserService } from 'modules/user/user.service';
 import { ResolverService } from './resolver.service';
@@ -18,7 +17,7 @@ export class AttachmentService {
 
     const state = await this.resolverService.getCurrentState(userId);
     if (!state || !state.current_state) {
-      return DEFAULT_ANSWER;
+      return this.resolverService.getDefaultResponse(locale);
     }
 
     if (

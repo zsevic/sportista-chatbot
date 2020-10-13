@@ -14,16 +14,23 @@ import {
   ACTIVITY_RESET_REMAINING_VACANCIES,
   ACTIVITY_TYPE_QUESTION,
   ACTIVITY_UPDATE_REMAINING_VACANCIES_FAILURE,
+  BOT_DEFAULT_MESSAGE,
   CANCEL_ACTIVITY,
   CANCEL_ACTIVITY_SUCCESS,
   CANCEL_ACTIVITY_TYPE,
   CANCEL_PARTICIPATION_TYPE,
+  CREATED_ACTIVITIES,
+  CREATED_ACTIVITIES_PAYLOAD,
   CREATED_ACTIVITIES_TYPE,
+  CREATE_ACTIVITY,
   CREATE_ACTIVITY_CLOSING,
   DATETIME,
   DATETIME_QUESTION,
   GET_STARTED_PAYLOAD,
+  INITIALIZE_ACTIVITY_PAYLOAD,
   INVALID_DATETIME,
+  JOINED_ACTIVITIES,
+  JOINED_ACTIVITIES_PAYLOAD,
   JOINED_ACTIVITIES_TYPE,
   JOIN_ACTIVITY_SUCCESS,
   JOIN_ACTIVITY_TYPE,
@@ -47,6 +54,8 @@ import {
   STATE_INVALID_LOCATION,
   STATE_INVALID_PRICE,
   STATE_INVALID_REMAINING_VACANCIES,
+  UPCOMING_ACTIVITIES,
+  UPCOMING_ACTIVITIES_PAYLOAD,
   UPCOMING_ACTIVITIES_TYPE,
   UPDATED_REMAINING_VACANCIES,
   UPDATE_REMAINING_VACANCIES,
@@ -221,6 +230,46 @@ export class ResponseService {
         },
       ],
     };
+  };
+
+  getDefaultResponse = async (lang: string) => {
+    const defaultMessage = await this.i18nService.translate(
+      BOT_DEFAULT_MESSAGE,
+      { lang },
+    );
+    const quickReplies = await this.getDefaultResponseQuickReplies(lang);
+
+    return {
+      text: defaultMessage,
+      quickReplies,
+    };
+  };
+
+  getDefaultResponseQuickReplies = async (lang: string) => {
+    const activityI18n = await this.i18nService.translate('activity', { lang });
+
+    return [
+      {
+        title: activityI18n[UPCOMING_ACTIVITIES],
+        payload: UPCOMING_ACTIVITIES_PAYLOAD,
+        content_type: 'text',
+      },
+      {
+        title: activityI18n[JOINED_ACTIVITIES],
+        payload: JOINED_ACTIVITIES_PAYLOAD,
+        content_type: 'text',
+      },
+      {
+        title: activityI18n[CREATED_ACTIVITIES],
+        payload: CREATED_ACTIVITIES_PAYLOAD,
+        content_type: 'text',
+      },
+      {
+        title: activityI18n[CREATE_ACTIVITY],
+        payload: INITIALIZE_ACTIVITY_PAYLOAD,
+        content_type: 'text',
+      },
+    ];
   };
 
   getInitializeActivityResponse = async (lang: string) => {
