@@ -1,6 +1,9 @@
-import { PAGE_SIZE } from 'common/config/constants';
+import { DEFAULT_DATETIME_LOCALE, PAGE_SIZE } from 'common/config/constants';
 
-export const formatDatetime = (datetime: string): string => {
+export const formatDatetime = (
+  datetime: string,
+  lang = DEFAULT_DATETIME_LOCALE,
+): string => {
   const options = {
     weekday: 'long',
     year: 'numeric',
@@ -9,8 +12,15 @@ export const formatDatetime = (datetime: string): string => {
     hour: '2-digit',
     minute: '2-digit',
   };
+  const locale = {
+    sr_RS: 'sr-Latn-RS',
+    en_GB: 'en-GB',
+  };
 
-  return new Date(datetime).toLocaleDateString('sr-Latn-RS', options);
+  return new Date(datetime).toLocaleDateString(
+    locale[lang] || locale[DEFAULT_DATETIME_LOCALE],
+    options,
+  );
 };
 
 export const getSkip = (page: number): number => (page - 1) * PAGE_SIZE;

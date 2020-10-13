@@ -1,6 +1,7 @@
 {
   "ACTIVITY_TYPE_QUESTION": "For which activity type you need players?",
   "CREATE_ACTIVITY_CLOSING": "Thanks for the info, you'll receive a message when someone applies",
+  "DATETIME_CONFIRMATION": "Chosen datetime is",
   "DATETIME_QUESTION": "What is a planned datetime?",
   "DATETIME": "📆 Fill out the datetime",
   "INVALID_ACTIVITY_TYPE": "Activity type is not valid, try again",

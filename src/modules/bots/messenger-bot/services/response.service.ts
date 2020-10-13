@@ -42,6 +42,7 @@ import {
   REMAINING_VACANCIES_QUESTION,
   STATE_ACTIVITY_TYPE_QUESTION,
   STATE_CREATE_ACTIVITY_CLOSING,
+  STATE_DATETIME_CONFIRMATION,
   STATE_INVALID_ACTIVITY_TYPE,
   STATE_INVALID_LOCATION,
   STATE_INVALID_PRICE,
@@ -54,7 +55,6 @@ import {
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import {
   CANCEL_TEXT,
-  DATETIME_CONFIRMATION_TEXT,
   JOIN_ACTIVITY_TEXT,
   NO_CREATED_ACTIVITIES_TEXT,
   NO_JOINED_ACTIVITIES_TEXT,
@@ -183,10 +183,17 @@ export class ResponseService {
       isOrganizerShown: false,
     });
 
-  getDatetimeConfirmationResponse = (datetime: string): string => {
-    const formattedDatetime = formatDatetime(datetime);
+  getDatetimeConfirmationResponse = async (
+    datetime: string,
+    lang: string,
+  ): Promise<string> => {
+    const formattedDatetime = formatDatetime(datetime, lang);
+    const datetimeConfirmation = await this.i18nService.translate(
+      STATE_DATETIME_CONFIRMATION,
+      { lang },
+    );
 
-    return `${DATETIME_CONFIRMATION_TEXT} ${formattedDatetime}`;
+    return `${datetimeConfirmation} ${formattedDatetime}`;
   };
 
   getDatetimeQuestionI18n = async (lang: string) => {

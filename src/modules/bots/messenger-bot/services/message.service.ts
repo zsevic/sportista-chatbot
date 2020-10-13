@@ -77,8 +77,9 @@ export class MessageService {
       locale,
     );
     if (state.current_state === this.stateService.states.datetime) {
-      const datetimeConfirmationResponse = this.responseService.getDatetimeConfirmationResponse(
+      const datetimeConfirmationResponse = await this.responseService.getDatetimeConfirmationResponse(
         text,
+        locale,
       );
       return [datetimeConfirmationResponse, response];
     }
