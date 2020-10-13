@@ -9,10 +9,12 @@ import {
   ACTIVITY_CANCEL_ACTIVITY_FAILURE,
   ACTIVITY_JOIN_ACTIVITY_FAILURE,
   ACTIVITY_NOTIFY_ORGANIZER,
+  ACTIVITY_OPTIONS,
   ACTIVITY_OPTIONS_TYPE,
   ACTIVITY_RESET_REMAINING_VACANCIES,
   ACTIVITY_TYPE_QUESTION,
   ACTIVITY_UPDATE_REMAINING_VACANCIES_FAILURE,
+  CANCEL_ACTIVITY,
   CANCEL_ACTIVITY_SUCCESS,
   CANCEL_ACTIVITY_TYPE,
   CANCEL_PARTICIPATION_TYPE,
@@ -30,6 +32,7 @@ import {
   NOTIFY_ORGANIZER,
   NOTIFY_PARTICIPANTS,
   NO_REMAINING_VACANCIES,
+  PARTICIPANT_LIST,
   PARTICIPANT_LIST_TYPE,
   PARTICIPATION_CANCEL_PARTICIPATION_FAILURE,
   PARTICIPATION_CANCEL_PARTICIPATION_SUCCESS,
@@ -49,7 +52,6 @@ import {
   USER_REGISTRATION_SUCCESS,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import {
-  ACTIVITY_OPTIONS_TEXT,
   ACTIVITY_TYPES_TEXT,
   CANCEL_TEXT,
   DATETIME_CONFIRMATION_TEXT,
@@ -60,8 +62,6 @@ import {
   NO_PARTICIPANTS_TEXT,
   NO_UPCOMING_ACTIVITIES_TEXT,
   OPTIONS_TEXT,
-  PARTICIPANT_LIST_TEXT,
-  UPDATE_REMAINING_VACANCIES_TEXT,
   VIEW_MORE_CREATED_ACTIVITIES_TEXT,
   VIEW_MORE_JOINED_ACTIVITIES_TEXT,
   VIEW_MORE_UPCOMING_ACTIVITIES_TEXT,
@@ -96,26 +96,29 @@ export class ResponseService {
     private readonly stateService: StateService,
   ) {}
 
-  getActivityOptionsResponse = (activityId: string) => ({
-    text: ACTIVITY_OPTIONS_TEXT,
-    buttons: [
-      {
-        type: 'postback',
-        title: CANCEL_TEXT,
-        payload: `type=${CANCEL_ACTIVITY_TYPE}&activity_id=${activityId}`,
-      },
-      {
-        type: 'postback',
-        title: PARTICIPANT_LIST_TEXT,
-        payload: `type=${PARTICIPANT_LIST_TYPE}&activity_id=${activityId}`,
-      },
-      {
-        type: 'postback',
-        title: UPDATE_REMAINING_VACANCIES_TEXT,
-        payload: `type=${UPDATE_REMAINING_VACANCIES_TYPE}&activity_id=${activityId}`,
-      },
-    ],
-  });
+  getActivityOptionsResponse = async (activityId: string, lang: string) => {
+    const activityI18n = await this.i18nService.translate('activity', { lang });
+    return {
+      text: activityI18n[ACTIVITY_OPTIONS],
+      buttons: [
+        {
+          type: 'postback',
+          title: activityI18n[CANCEL_ACTIVITY],
+          payload: `type=${CANCEL_ACTIVITY_TYPE}&activity_id=${activityId}`,
+        },
+        {
+          type: 'postback',
+          title: activityI18n[PARTICIPANT_LIST],
+          payload: `type=${PARTICIPANT_LIST_TYPE}&activity_id=${activityId}`,
+        },
+        {
+          type: 'postback',
+          title: activityI18n[UPDATE_REMAINING_VACANCIES],
+          payload: `type=${UPDATE_REMAINING_VACANCIES_TYPE}&activity_id=${activityId}`,
+        },
+      ],
+    };
+  };
 
   getActivityTypeQuestion = async (lang: string) =>
     Object.keys(ACTIVITY_TYPES).map((type) => ({

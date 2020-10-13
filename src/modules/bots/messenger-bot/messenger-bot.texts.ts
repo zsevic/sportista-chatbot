@@ -21,11 +21,9 @@ export const LOCATION_TEXT = 'Vidi lokaciju na mapi';
 
 export const JOIN_ACTIVITY_TEXT = 'Prijavi se';
 
-export const ACTIVITY_OPTIONS_TEXT = 'Izaberi neke od opcija';
 export const OPTIONS_TEXT = 'Prikaži opcije';
 export const ORGANIZER_TEXT = 'Ko je organizator?';
 
-export const PARTICIPANT_LIST_TEXT = 'Vidi ko se sve prijavio';
 export const NO_PARTICIPANTS_TEXT = 'Još se niko nije prijavio';
 
 export const ACTIVITY_TYPE_QUESTION_TEXT = 'Za koji sport tražiš igrače?';
@@ -41,8 +39,6 @@ export const DATETIME_CONFIRMATION_TEXT = 'Izabrani datum i vreme su';
 
 export const NO_REMAINING_VACANCIES_TEXT = 'Skupili smo se';
 export const REMAINING_VACANCIES_TEXT = 'Fali još';
-
-export const UPDATE_REMAINING_VACANCIES_TEXT = 'Promeni broj igrača';
 
 export const VIEW_MORE_TEXT = 'Prikaži još';
 export const VIEW_MORE_CREATED_ACTIVITIES_TEXT =
