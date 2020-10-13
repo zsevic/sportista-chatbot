@@ -1,6 +1,12 @@
 {
   "ADD_REMAINING_VACANCIES": "Fali još jedan",
+  "CANCEL_ACTIVITY_FAILURE": "Otkazivanje termina nije uspelo",
+  "CANCEL_ACTIVITY_SUCCESS": "Termin je uspešno otkazan",
+  "JOIN_ACTIVITY_SUCCESS": "Uspešno si se prijavio",
+  "JOIN_ACTIVITY_FAILURE": "Prijava nije uspela",
   "NO_REMAINING_VACANCIES": "Skupili smo se",
+  "NOTIFY_ORGANIZER": "Organizator je obavešten",
+  "NOTIFY_PARTICIPANTS": "Učesnici su obavešteni",
   "RESET_REMAINING_VACANCIES": "Super, srećno",
   "SUBTRACT_REMAINING_VACANCIES": "Prijavio se jedan",
   "UPDATE_REMAINING_VACANCIES": "Promeni broj igrača",

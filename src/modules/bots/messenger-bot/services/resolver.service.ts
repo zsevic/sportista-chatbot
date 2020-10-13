@@ -1,22 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { I18nService } from 'nestjs-i18n';
 import { ActivityService } from 'modules/activity/activity.service';
-import {
-  ACTIVITY_RESET_REMAINING_VACANCIES,
-  ACTIVITY_UPDATE_REMAINING_VACANCIES_FAILURE,
-  FIRST_PAGE,
-  USER_REGISTRATION_SUCCESS,
-} from 'modules/bots/messenger-bot/messenger-bot.constants';
-import {
-  CANCEL_ACTIVITY_FAILURE_TEXT,
-  CANCEL_ACTIVITY_SUCCESS_TEXT,
-  CANCEL_PARTICIPATION_FAILURE_TEXT,
-  CANCEL_PARTICIPATION_SUCCESS_TEXT,
-  JOIN_ACTIVITY_FAILURE_TEXT,
-  JOIN_ACTIVITY_SUCCESS_TEXT,
-  NOTIFY_ORGANIZER_TEXT,
-  NOTIFY_PARTICIPANTS_TEXT,
-} from 'modules/bots/messenger-bot/messenger-bot.texts';
+import { FIRST_PAGE } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { ParticipationService } from 'modules/participation/participation.service';
 import { State } from 'modules/state/state.dto';
 import { StateService } from 'modules/state/state.service';
@@ -30,7 +14,6 @@ export class ResolverService {
 
   constructor(
     private readonly activityService: ActivityService,
-    private readonly i18nService: I18nService,
     private readonly participationService: ParticipationService,
     private readonly responseService: ResponseService,
     private readonly stateService: StateService,
@@ -38,26 +21,20 @@ export class ResolverService {
   ) {}
 
   addRemainingVacancies = async (activityId: string, organizerId: number) => {
-    let locale: string;
     try {
+      const locale = await this.userService.getLocale(organizerId);
       const updatedActivity = await this.activityService.addRemainingVacancies(
         activityId,
         organizerId,
       );
-      locale = await this.userService.getLocale(organizerId);
-      return this.responseService.getUpdatedRemainingVacanciesResponse(
+      return this.responseService.getUpdateRemainingVacanciesSuccessResponse(
         updatedActivity,
         locale,
       );
     } catch {
-      const lang = locale
-        ? locale
-        : await this.userService.getLocale(organizerId);
-      return this.i18nService.translate(
-        ACTIVITY_UPDATE_REMAINING_VACANCIES_FAILURE,
-        {
-          lang,
-        },
+      const locale = await this.userService.getLocale(organizerId);
+      return this.responseService.getUpdateRemainingVacanciesFailureResponse(
+        locale,
       );
     }
   };
@@ -67,10 +44,12 @@ export class ResolverService {
     organizerId: number,
   ): Promise<string | string[]> => {
     try {
+      const locale = await this.userService.getLocale(organizerId);
       await this.activityService.cancelActivity(activityId, organizerId);
-      return [CANCEL_ACTIVITY_SUCCESS_TEXT, NOTIFY_PARTICIPANTS_TEXT];
+      return this.responseService.getCancelActivitySuccessResponse(locale);
     } catch {
-      return CANCEL_ACTIVITY_FAILURE_TEXT;
+      const locale = await this.userService.getLocale(organizerId);
+      return this.responseService.getCancelActivityFailureResponse(locale);
     }
   };
 
@@ -79,10 +58,12 @@ export class ResolverService {
     userId: number,
   ): Promise<string | string[]> => {
     try {
+      const locale = await this.userService.getLocale(userId);
       await this.participationService.cancelParticipation(activityId, userId);
-      return [CANCEL_PARTICIPATION_SUCCESS_TEXT, NOTIFY_ORGANIZER_TEXT];
+      return this.responseService.getCancelParticipationSuccessResponse(locale);
     } catch {
-      return CANCEL_PARTICIPATION_FAILURE_TEXT;
+      const locale = await this.userService.getLocale(userId);
+      return this.responseService.getCancelParticipationFailureResponse(locale);
     }
   };
 
@@ -157,22 +138,24 @@ export class ResolverService {
     userId: number,
   ): Promise<string | string[]> => {
     try {
+      const locale = await this.userService.getLocale(userId);
       await this.activityService.joinActivity(activityId, userId);
-      return [JOIN_ACTIVITY_SUCCESS_TEXT, NOTIFY_ORGANIZER_TEXT];
+      return this.responseService.getJoinActivitySuccessResponse(locale);
     } catch {
-      return JOIN_ACTIVITY_FAILURE_TEXT;
+      const locale = await this.userService.getLocale(userId);
+      return this.responseService.getJoinActivityFailureResponse(locale);
     }
   };
 
   registerUser = async (userDto: User) => {
     try {
       await this.userService.registerUser(userDto);
-      return this.i18nService.translate(USER_REGISTRATION_SUCCESS, {
-        lang: userDto.locale,
-      });
+      return this.responseService.getRegisterUserSuccessResponse(
+        userDto.locale,
+      );
     } catch (err) {
       this.logger.error(err);
-      return this.responseService.getRegistrationFailureResponse(
+      return this.responseService.getRegisterUserFailureResponse(
         userDto.locale,
       );
     }
@@ -182,25 +165,19 @@ export class ResolverService {
     activityId: string,
     organizerId: number,
   ): Promise<string> => {
-    let locale: string;
     try {
-      locale = await this.userService.getLocale(organizerId);
+      const locale = await this.userService.getLocale(organizerId);
       await this.activityService.resetRemainingVacancies(
         activityId,
         organizerId,
       );
-      return this.i18nService.translate(ACTIVITY_RESET_REMAINING_VACANCIES, {
-        lang: locale,
-      });
+      return this.responseService.getResetRemainingVacanciesSuccessResponse(
+        locale,
+      );
     } catch {
-      const lang = locale
-        ? locale
-        : await this.userService.getLocale(organizerId);
-      return this.i18nService.translate(
-        ACTIVITY_UPDATE_REMAINING_VACANCIES_FAILURE,
-        {
-          lang,
-        },
+      const locale = await this.userService.getLocale(organizerId);
+      return this.responseService.getUpdateRemainingVacanciesFailureResponse(
+        locale,
       );
     }
   };
@@ -212,27 +189,21 @@ export class ResolverService {
     activityId: string,
     organizerId: number,
   ) => {
-    let locale: string;
     try {
+      const locale = await this.userService.getLocale(organizerId);
       const updatedActivity = await this.activityService.subtractRemainingVacancies(
         activityId,
         organizerId,
       );
 
-      const locale = await this.userService.getLocale(organizerId);
-      return this.responseService.getUpdatedRemainingVacanciesResponse(
+      return this.responseService.getUpdateRemainingVacanciesSuccessResponse(
         updatedActivity,
         locale,
       );
     } catch {
-      const lang = locale
-        ? locale
-        : await this.userService.getLocale(organizerId);
-      return this.i18nService.translate(
-        ACTIVITY_UPDATE_REMAINING_VACANCIES_FAILURE,
-        {
-          lang,
-        },
+      const locale = await this.userService.getLocale(organizerId);
+      return this.responseService.getUpdateRemainingVacanciesFailureResponse(
+        locale,
       );
     }
   };

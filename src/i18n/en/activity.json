@@ -1,6 +1,12 @@
 {
   "ADD_REMAINING_VACANCIES": "One more needed",
+  "CANCEL_ACTIVITY_FAILURE": "Canceling activity failed",
+  "CANCEL_ACTIVITY_SUCCESS": "Canceling activity succeeded",
+  "JOIN_ACTIVITY_SUCCESS": "Joining succeeded",
+  "JOIN_ACTIVITY_FAILURE": "Joining failed",
   "NO_REMAINING_VACANCIES": "No remaining vacancies",
+  "NOTIFY_ORGANIZER": "Organizer is notified",
+  "NOTIFY_PARTICIPANTS": "Participants are notified",
   "RESET_REMAINING_VACANCIES": "None remaining",
   "SUBTRACT_REMAINING_VACANCIES": "One more joined",
   "UPDATE_REMAINING_VACANCIES": "Update remaining vacancies",

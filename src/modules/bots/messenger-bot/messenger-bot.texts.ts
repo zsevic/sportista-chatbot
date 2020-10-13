@@ -15,22 +15,11 @@ export const NO_UPCOMING_ACTIVITIES_TEXT = 'Nema ništa u blizini';
 
 export const CANCEL_TEXT = 'Otkaži';
 
-export const CANCEL_ACTIVITY_FAILURE_TEXT = 'Otkazivanje termina nije uspelo';
-export const CANCEL_ACTIVITY_SUCCESS_TEXT = 'Termin je uspešno otkazan';
-
-export const CANCEL_PARTICIPATION_FAILURE_TEXT = 'Otkazivanje nije uspelo';
-export const CANCEL_PARTICIPATION_SUCCESS_TEXT = 'Uspešno si otkazao';
-
 export const DEFAULT_MESSAGE_TEXT = 'Izaberi neku od opcija';
 
 export const LOCATION_TEXT = 'Vidi lokaciju na mapi';
 
 export const JOIN_ACTIVITY_TEXT = 'Prijavi se';
-export const JOIN_ACTIVITY_FAILURE_TEXT = 'Prijava nije uspela';
-export const JOIN_ACTIVITY_SUCCESS_TEXT = 'Uspešno si se prijavio';
-
-export const NOTIFY_ORGANIZER_TEXT = 'Organizator je obavešten';
-export const NOTIFY_PARTICIPANTS_TEXT = 'Učesnici su obavešteni';
 
 export const ACTIVITY_OPTIONS_TEXT = 'Izaberi neke od opcija';
 export const OPTIONS_TEXT = 'Prikaži opcije';

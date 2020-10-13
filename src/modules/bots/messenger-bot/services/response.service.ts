@@ -6,21 +6,33 @@ import { formatDatetime } from 'common/utils';
 import { ACTIVITY_TYPES } from 'modules/activity/activity.constants';
 import { Activity } from 'modules/activity/activity.dto';
 import {
+  ACTIVITY_CANCEL_ACTIVITY_FAILURE,
+  ACTIVITY_JOIN_ACTIVITY_FAILURE,
+  ACTIVITY_NOTIFY_ORGANIZER,
   ACTIVITY_OPTIONS_TYPE,
+  ACTIVITY_RESET_REMAINING_VACANCIES,
+  ACTIVITY_UPDATE_REMAINING_VACANCIES_FAILURE,
+  CANCEL_ACTIVITY_SUCCESS,
   CANCEL_ACTIVITY_TYPE,
   CANCEL_PARTICIPATION_TYPE,
   CREATED_ACTIVITIES_TYPE,
   GET_STARTED_PAYLOAD,
   JOINED_ACTIVITIES_TYPE,
+  JOIN_ACTIVITY_SUCCESS,
   JOIN_ACTIVITY_TYPE,
+  NOTIFY_ORGANIZER,
+  NOTIFY_PARTICIPANTS,
   NO_REMAINING_VACANCIES,
   PARTICIPANT_LIST_TYPE,
+  PARTICIPATION_CANCEL_PARTICIPATION_FAILURE,
+  PARTICIPATION_CANCEL_PARTICIPATION_SUCCESS,
   REGISTRATION,
   REGISTRATION_FAILURE,
   UPCOMING_ACTIVITIES_TYPE,
   UPDATED_REMAINING_VACANCIES,
   UPDATE_REMAINING_VACANCIES,
   UPDATE_REMAINING_VACANCIES_TYPE,
+  USER_REGISTRATION_SUCCESS,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import {
   ACTIVITY_OPTIONS_TEXT,
@@ -108,6 +120,46 @@ export class ResponseService {
       payload: `type=activity_type&activity_type=${type}`,
     }));
 
+  getCancelActivitySuccessResponse = async (
+    lang: string,
+  ): Promise<string[]> => {
+    const activityI18n = await this.i18nService.translate('activity', {
+      lang,
+    });
+    return [
+      activityI18n[CANCEL_ACTIVITY_SUCCESS],
+      activityI18n[NOTIFY_PARTICIPANTS],
+    ];
+  };
+
+  getCancelActivityFailureResponse = async (lang: string): Promise<string> =>
+    this.i18nService.translate(ACTIVITY_CANCEL_ACTIVITY_FAILURE, { lang });
+
+  getCancelParticipationFailureResponse = async (
+    lang: string,
+  ): Promise<string> =>
+    this.i18nService.translate(PARTICIPATION_CANCEL_PARTICIPATION_FAILURE, {
+      lang,
+    });
+
+  getCancelParticipationSuccessResponse = async (
+    lang: string,
+  ): Promise<string[]> => {
+    const cancelParticipationSuccessMessage = await this.i18nService.translate(
+      PARTICIPATION_CANCEL_PARTICIPATION_SUCCESS,
+      {
+        lang,
+      },
+    );
+    const notifyOrganizerMessage = await this.i18nService.translate(
+      ACTIVITY_NOTIFY_ORGANIZER,
+      {
+        lang,
+      },
+    );
+    return [cancelParticipationSuccessMessage, notifyOrganizerMessage];
+  };
+
   getCreatedActivitiesResponse = (
     activityListData: PaginatedResponse<Activity>,
   ) =>
@@ -156,6 +208,22 @@ export class ResponseService {
     quickReplies: this.getActivityTypeQuestion(),
   });
 
+  getJoinActivityFailureResponse = async (lang: string): Promise<string> => {
+    return this.i18nService.translate(ACTIVITY_JOIN_ACTIVITY_FAILURE, {
+      lang,
+    });
+  };
+
+  getJoinActivitySuccessResponse = async (lang: string): Promise<string[]> => {
+    const activityI18n = await this.i18nService.translate('activity', {
+      lang,
+    });
+    return [
+      activityI18n[JOIN_ACTIVITY_SUCCESS],
+      activityI18n[NOTIFY_ORGANIZER],
+    ];
+  };
+
   getJoinedActivitiesResponse = (
     activityListData: PaginatedResponse<Activity>,
   ) =>
@@ -188,7 +256,13 @@ export class ResponseService {
     return response;
   };
 
-  getRegistrationFailureResponse = async (lang: string) => {
+  getRegisterUserSuccessResponse = async (lang: string): Promise<string> => {
+    return this.i18nService.translate(USER_REGISTRATION_SUCCESS, {
+      lang,
+    });
+  };
+
+  getRegisterUserFailureResponse = async (lang: string) => {
     const userI18n = await this.i18nService.translate('user', {
       lang,
     });
@@ -205,6 +279,13 @@ export class ResponseService {
     };
   };
 
+  getResetRemainingVacanciesSuccessResponse = async (
+    lang: string,
+  ): Promise<string> =>
+    this.i18nService.translate(ACTIVITY_RESET_REMAINING_VACANCIES, {
+      lang,
+    });
+
   getUpcomingActivitiesResponse = (
     activityListData: PaginatedResponse<Activity>,
   ) =>
@@ -218,7 +299,31 @@ export class ResponseService {
       isOrganizerShown: true,
     });
 
-  getUpdatedRemainingVacanciesResponse = async (
+  getUpdateRemainingVacanciesResponse = async (
+    activityId: string,
+    lang: string,
+  ) => {
+    const activityI18n = await this.i18nService.translate('activity', {
+      lang,
+    });
+    return {
+      text: activityI18n[UPDATE_REMAINING_VACANCIES],
+      buttons: getRemainingVacanciesButtons(activityId, activityI18n),
+    };
+  };
+
+  getUpdateRemainingVacanciesFailureResponse = async (
+    lang: string,
+  ): Promise<string> => {
+    return this.i18nService.translate(
+      ACTIVITY_UPDATE_REMAINING_VACANCIES_FAILURE,
+      {
+        lang,
+      },
+    );
+  };
+
+  getUpdateRemainingVacanciesSuccessResponse = async (
     activity: Activity,
     lang: string,
   ) => {
@@ -231,19 +336,6 @@ export class ResponseService {
     return {
       text: `${activityI18n[UPDATED_REMAINING_VACANCIES]} ${activity.remaining_vacancies}`,
       buttons: getRemainingVacanciesButtons(activity.id, activityI18n),
-    };
-  };
-
-  getUpdateRemainingVacanciesResponse = async (
-    activityId: string,
-    lang: string,
-  ) => {
-    const activityI18n = await this.i18nService.translate('activity', {
-      lang,
-    });
-    return {
-      text: activityI18n[UPDATE_REMAINING_VACANCIES],
-      buttons: getRemainingVacanciesButtons(activityId, activityI18n),
     };
   };
 }
