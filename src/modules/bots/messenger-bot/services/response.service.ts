@@ -42,6 +42,7 @@ import {
   REMAINING_VACANCIES_QUESTION,
   STATE_ACTIVITY_TYPE_QUESTION,
   STATE_CREATE_ACTIVITY_CLOSING,
+  STATE_INVALID_ACTIVITY_TYPE,
   STATE_INVALID_LOCATION,
   STATE_INVALID_PRICE,
   STATE_INVALID_REMAINING_VACANCIES,
@@ -54,7 +55,6 @@ import {
 import {
   CANCEL_TEXT,
   DATETIME_CONFIRMATION_TEXT,
-  INVALID_ACTIVITY_TYPE_TEXT,
   JOIN_ACTIVITY_TEXT,
   NO_CREATED_ACTIVITIES_TEXT,
   NO_JOINED_ACTIVITIES_TEXT,
@@ -233,9 +233,12 @@ export class ResponseService {
 
   getInvalidActivityTypeResponse = async (lang: string) => {
     const quickReplies = await this.getActivityTypeOptions(lang);
+    const text = await this.i18nService.translate(STATE_INVALID_ACTIVITY_TYPE, {
+      lang,
+    });
 
     return {
-      text: INVALID_ACTIVITY_TYPE_TEXT,
+      text,
       quickReplies,
     };
   };

@@ -3,6 +3,7 @@
   "CREATE_ACTIVITY_CLOSING": "Hvala na informacija, stići će ti poruka kad se neko bude prijavio",
   "DATETIME_QUESTION": "Kad se igra?",
   "DATETIME": "📆 Unesi datum i vreme",
+  "INVALID_ACTIVITY_TYPE": "Izabrani sport nije ispravan, izaberi jedan od ponuđenih",
   "INVALID_DATETIME": "Vreme nije dobro, pokušaj ponovo",
   "INVALID_LOCATION": "Lokacija nije dobra, probaj ponovo",
   "INVALID_PRICE": "Cena nije dobra, pokušaj ponovo",

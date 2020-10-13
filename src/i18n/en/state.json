@@ -3,6 +3,7 @@
   "CREATE_ACTIVITY_CLOSING": "Thanks for the info, you'll receive a message when someone applies",
   "DATETIME_QUESTION": "What is a planned datetime?",
   "DATETIME": "📆 Fill out the datetime",
+  "INVALID_ACTIVITY_TYPE": "Activity type is not valid, try again",
   "INVALID_DATETIME": "Datetime is not good, try again",
   "INVALID_LOCATION": "Sending location failed, try again",
   "INVALID_PRICE": "Price is not good, try again",
