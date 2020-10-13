@@ -109,10 +109,13 @@ export class ResolverService {
     return this.responseService.getOrganizerResponse(organizer);
   };
 
-  getParticipantList = async (id: string) => {
+  getParticipantList = async (id: string, locale: string) => {
     const participantList = await this.userService.getParticipantList(id);
 
-    return this.responseService.getParticipantListResponse(participantList);
+    return this.responseService.getParticipantListResponse(
+      participantList,
+      locale,
+    );
   };
 
   getUpcomingActivities = async (userId: number, page = FIRST_PAGE) => {

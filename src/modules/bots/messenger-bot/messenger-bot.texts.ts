@@ -22,8 +22,6 @@ export const JOIN_ACTIVITY_TEXT = 'Prijavi se';
 export const OPTIONS_TEXT = 'Prikaži opcije';
 export const ORGANIZER_TEXT = 'Ko je organizator?';
 
-export const NO_PARTICIPANTS_TEXT = 'Još se niko nije prijavio';
-
 export const ACTIVITY_TYPE_QUESTION_TEXT = 'Za koji sport tražiš igrače?';
 export const INVALID_ACTIVITY_TYPE_TEXT =
   'Izabrani sport nije ispravan, izaberi jedan od ponuđenih';

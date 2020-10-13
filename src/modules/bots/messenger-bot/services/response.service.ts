@@ -9,6 +9,7 @@ import {
   ACTIVITY_CANCEL_ACTIVITY_FAILURE,
   ACTIVITY_JOIN_ACTIVITY_FAILURE,
   ACTIVITY_NOTIFY_ORGANIZER,
+  ACTIVITY_NO_PARTICIPANTS,
   ACTIVITY_OPTIONS,
   ACTIVITY_OPTIONS_TYPE,
   ACTIVITY_RESET_REMAINING_VACANCIES,
@@ -67,7 +68,6 @@ import {
   JOIN_ACTIVITY_TEXT,
   NO_CREATED_ACTIVITIES_TEXT,
   NO_JOINED_ACTIVITIES_TEXT,
-  NO_PARTICIPANTS_TEXT,
   NO_UPCOMING_ACTIVITIES_TEXT,
   OPTIONS_TEXT,
   VIEW_MORE_CREATED_ACTIVITIES_TEXT,
@@ -346,8 +346,15 @@ export class ResponseService {
     return response;
   };
 
-  getParticipantListResponse = (participantList: User[]) => {
-    if (participantList.length === 0) return NO_PARTICIPANTS_TEXT;
+  getParticipantListResponse = async (
+    participantList: User[],
+    lang: string,
+  ) => {
+    const noParticipantsMessage = await this.i18nService.translate(
+      ACTIVITY_NO_PARTICIPANTS,
+      { lang },
+    );
+    if (participantList.length === 0) return noParticipantsMessage;
 
     const elements = participantList.map((participant: User) =>
       getElementFromUser(participant),

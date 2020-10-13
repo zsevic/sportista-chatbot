@@ -79,7 +79,10 @@ export class PostbackService {
         return this.resolverService.getOrganizer(+user_id);
       }
       case PARTICIPANT_LIST_TYPE: {
-        return this.resolverService.getParticipantList(activity_id.toString());
+        return this.resolverService.getParticipantList(
+          activity_id.toString(),
+          locale,
+        );
       }
       case RESET_REMAINING_VACANCIES_TYPE: {
         return this.resolverService.resetRemainingVacancies(

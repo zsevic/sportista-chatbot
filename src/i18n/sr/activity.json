@@ -12,6 +12,7 @@
   "CREATED_ACTIVITIES": "📑 Pregled prijava",
   "JOIN_ACTIVITY_SUCCESS": "Uspešno si se prijavio",
   "JOIN_ACTIVITY_FAILURE": "Prijava nije uspela",
+  "NO_PARTICIPANTS": "Još se niko nije prijavio",
   "JOINED_ACTIVITIES": "🕗 Podsetnik",
   "NO_REMAINING_VACANCIES": "Skupili smo se",
   "NOTIFY_ORGANIZER": "Organizator je obavešten",
