@@ -18,6 +18,7 @@ import {
 } from 'modules/bots/messenger-bot/messenger-bot.texts';
 import { State } from 'modules/state/state.dto';
 import { StateService } from 'modules/state/state.service';
+import { UserService } from 'modules/user/user.service';
 import { ResolverService } from './resolver.service';
 import { ResponseService } from './response.service';
 
@@ -27,12 +28,13 @@ export class MessageService {
     private readonly responseService: ResponseService,
     private readonly resolverService: ResolverService,
     private readonly stateService: StateService,
+    private readonly userService: UserService,
   ) {}
 
   handleMessage = async (message: any, userId: number) => {
     const state = await this.resolverService.getCurrentState(userId);
 
-    let validationResponse = this.validateMessage(message, state);
+    let validationResponse: any = await this.validateMessage(message, state);
     if (validationResponse) return validationResponse;
 
     const { text } = message;
@@ -81,7 +83,7 @@ export class MessageService {
     return response;
   };
 
-  validateMessage = (message: any, state: State) => {
+  validateMessage = async (message: any, state: State) => {
     const { quick_reply, text } = message;
     if (!state || !state.current_state) {
       if (
@@ -100,7 +102,8 @@ export class MessageService {
         !activity_type ||
         !ACTIVITY_TYPES.hasOwnProperty(activity_type.toString())
       ) {
-        return this.responseService.getInvalidActivityTypeResponse();
+        const locale = await this.userService.getLocale(state.user_id);
+        return this.responseService.getInvalidActivityTypeResponse(locale);
       }
     }
 

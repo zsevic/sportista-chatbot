@@ -11,23 +11,33 @@ import {
   ACTIVITY_NOTIFY_ORGANIZER,
   ACTIVITY_OPTIONS_TYPE,
   ACTIVITY_RESET_REMAINING_VACANCIES,
+  ACTIVITY_TYPE_QUESTION,
   ACTIVITY_UPDATE_REMAINING_VACANCIES_FAILURE,
   CANCEL_ACTIVITY_SUCCESS,
   CANCEL_ACTIVITY_TYPE,
   CANCEL_PARTICIPATION_TYPE,
   CREATED_ACTIVITIES_TYPE,
+  CREATE_ACTIVITY_CLOSING,
+  DATETIME,
+  DATETIME_QUESTION,
   GET_STARTED_PAYLOAD,
   JOINED_ACTIVITIES_TYPE,
   JOIN_ACTIVITY_SUCCESS,
   JOIN_ACTIVITY_TYPE,
+  LOCATION_INSTRUCTION,
+  LOCATION_QUESTION,
   NOTIFY_ORGANIZER,
   NOTIFY_PARTICIPANTS,
   NO_REMAINING_VACANCIES,
   PARTICIPANT_LIST_TYPE,
   PARTICIPATION_CANCEL_PARTICIPATION_FAILURE,
   PARTICIPATION_CANCEL_PARTICIPATION_SUCCESS,
+  PRICE_QUESTION,
   REGISTRATION,
   REGISTRATION_FAILURE,
+  REMAINING_VACANCIES_QUESTION,
+  STATE_ACTIVITY_TYPE_QUESTION,
+  STATE_CREATE_ACTIVITY_CLOSING,
   UPCOMING_ACTIVITIES_TYPE,
   UPDATED_REMAINING_VACANCIES,
   UPDATE_REMAINING_VACANCIES,
@@ -37,24 +47,16 @@ import {
 import {
   ACTIVITY_OPTIONS_TEXT,
   ACTIVITY_TYPES_TEXT,
-  ACTIVITY_TYPE_QUESTION_TEXT,
   CANCEL_TEXT,
-  CREATE_ACTIVITY_CLOSING_TEXT,
   DATETIME_CONFIRMATION_TEXT,
-  DATETIME_QUESTION_TEXT,
-  DATETIME_TEXT,
   INVALID_ACTIVITY_TYPE_TEXT,
   JOIN_ACTIVITY_TEXT,
-  LOCATION_INSTRUCTION_TEXT,
-  LOCATION_QUESTION_TEXT,
   NO_CREATED_ACTIVITIES_TEXT,
   NO_JOINED_ACTIVITIES_TEXT,
   NO_PARTICIPANTS_TEXT,
   NO_UPCOMING_ACTIVITIES_TEXT,
   OPTIONS_TEXT,
   PARTICIPANT_LIST_TEXT,
-  PRICE_QUESTION_TEXT,
-  REMAINING_VACANCIES_QUESTION_TEXT,
   UPDATE_REMAINING_VACANCIES_TEXT,
   VIEW_MORE_CREATED_ACTIVITIES_TEXT,
   VIEW_MORE_JOINED_ACTIVITIES_TEXT,
@@ -71,27 +73,24 @@ import { User } from 'modules/user/user.dto';
 @Injectable()
 export class ResponseService {
   messages: any = {
-    [this.stateService.states.activity_type]: ACTIVITY_TYPE_QUESTION_TEXT,
+    [this.stateService.states.activity_type]: [ACTIVITY_TYPE_QUESTION],
+    [this.stateService.states.datetime]: [DATETIME_QUESTION, DATETIME],
     [this.stateService.states.location]: [
-      LOCATION_QUESTION_TEXT,
-      LOCATION_INSTRUCTION_TEXT,
+      LOCATION_QUESTION,
+      LOCATION_INSTRUCTION,
     ],
-    [this.stateService.states.price]: PRICE_QUESTION_TEXT,
-    [this.stateService.states
-      .remaining_vacancies]: REMAINING_VACANCIES_QUESTION_TEXT,
-    [this.stateService.states.closing]: CREATE_ACTIVITY_CLOSING_TEXT,
+    [this.stateService.states.price]: [PRICE_QUESTION],
+    [this.stateService.states.remaining_vacancies]: [
+      REMAINING_VACANCIES_QUESTION,
+    ],
+    [this.stateService.states.closing]: [CREATE_ACTIVITY_CLOSING],
   };
 
   constructor(
     private readonly configService: ConfigService,
     private readonly i18nService: I18nService,
     private readonly stateService: StateService,
-  ) {
-    this.messages[this.stateService.states.datetime] = this.getDatetimeQuestion(
-      DATETIME_QUESTION_TEXT,
-      DATETIME_TEXT,
-    );
-  }
+  ) {}
 
   getActivityOptionsResponse = (activityId: string) => ({
     text: ACTIVITY_OPTIONS_TEXT,
@@ -114,7 +113,7 @@ export class ResponseService {
     ],
   });
 
-  getActivityTypeQuestion = () =>
+  getActivityTypeQuestion = async (lang: string) =>
     Object.keys(ACTIVITY_TYPES).map((type) => ({
       title: `${type} ${ACTIVITY_TYPES_TEXT[type]}`,
       payload: `type=activity_type&activity_type=${type}`,
@@ -160,6 +159,9 @@ export class ResponseService {
     return [cancelParticipationSuccessMessage, notifyOrganizerMessage];
   };
 
+  getCreateActivityResponse = async (lang: string): Promise<string> =>
+    this.i18nService.translate(STATE_CREATE_ACTIVITY_CLOSING, { lang });
+
   getCreatedActivitiesResponse = (
     activityListData: PaginatedResponse<Activity>,
   ) =>
@@ -198,15 +200,29 @@ export class ResponseService {
     return `${DATETIME_CONFIRMATION_TEXT} ${formattedDatetime}`;
   };
 
-  getInitializeActivityResponse = () => ({
-    text: this.messages[this.stateService.states.activity_type],
-    quickReplies: this.getActivityTypeQuestion(),
-  });
+  getInitializeActivityResponse = async (lang: string) => {
+    const quickReplies = await this.getActivityTypeQuestion(lang);
+    const activityTypeMessage = await this.i18nService.translate(
+      STATE_ACTIVITY_TYPE_QUESTION,
+      {
+        lang,
+      },
+    );
 
-  getInvalidActivityTypeResponse = () => ({
-    text: INVALID_ACTIVITY_TYPE_TEXT,
-    quickReplies: this.getActivityTypeQuestion(),
-  });
+    return {
+      text: activityTypeMessage,
+      quickReplies,
+    };
+  };
+
+  getInvalidActivityTypeResponse = async (lang: string) => {
+    const quickReplies = await this.getActivityTypeQuestion(lang);
+
+    return {
+      text: INVALID_ACTIVITY_TYPE_TEXT,
+      quickReplies,
+    };
+  };
 
   getJoinActivityFailureResponse = async (lang: string): Promise<string> => {
     return this.i18nService.translate(ACTIVITY_JOIN_ACTIVITY_FAILURE, {
@@ -337,5 +353,22 @@ export class ResponseService {
       text: `${activityI18n[UPDATED_REMAINING_VACANCIES]} ${activity.remaining_vacancies}`,
       buttons: getRemainingVacanciesButtons(activity.id, activityI18n),
     };
+  };
+
+  getUpdateStateResponse = async (currentState: string, lang: string) => {
+    if (!this.messages[currentState]) return;
+
+    const stateI18n = await this.i18nService.translate('state', {
+      lang,
+    });
+    if (currentState === this.stateService.states.datetime) {
+      return this.getDatetimeQuestion(
+        stateI18n[DATETIME_QUESTION],
+        stateI18n[DATETIME],
+      );
+    }
+    return this.messages[currentState].map(
+      (message: string): string => stateI18n[message],
+    );
   };
 }

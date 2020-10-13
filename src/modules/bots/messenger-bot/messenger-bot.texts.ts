@@ -37,20 +37,12 @@ export const ACTIVITY_TYPES_TEXT = {
 };
 export const INVALID_ACTIVITY_TYPE_TEXT =
   'Izabrani sport nije ispravan, izaberi jedan od ponuđenih';
-export const DATETIME_QUESTION_TEXT = 'Kad se igra?';
 export const DATETIME_TEXT = '📆 Unesi datum i vreme';
 export const DATETIME_CONFIRMATION_TEXT = 'Izabrani datum i vreme su';
 export const INVALID_DATETIME_TEXT = 'Vreme nije dobro, pokušaj ponovo';
-export const LOCATION_QUESTION_TEXT = 'Gde se igra? Pošalji lokaciju';
-export const LOCATION_INSTRUCTION_TEXT =
-  'Sa leve strane klikni na 4 tačkice i izaberi lokaciju';
 export const INVALID_LOCATION_TEXT = 'Lokacija nije dobra, pokušaj ponovo';
-export const PRICE_QUESTION_TEXT = 'Koliko plaća svaki igrač?';
 export const INVALID_PRICE_TEXT = 'Cena nije dobra, pokušaj ponovo';
-export const REMAINING_VACANCIES_QUESTION_TEXT = 'Koliko fali igrača?';
 export const INVALID_REMAINING_VACANCIES_TEXT = 'Unesi broj potrebnih igrača';
-export const CREATE_ACTIVITY_CLOSING_TEXT =
-  'Hvala na informacijama, stići će ti poruka kad se neko bude prijavio';
 
 export const NO_REMAINING_VACANCIES_TEXT = 'Skupili smo se';
 export const REMAINING_VACANCIES_TEXT = 'Fali još';

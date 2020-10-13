@@ -1,0 +1,10 @@
+{
+  "ACTIVITY_TYPE_QUESTION": "Za koji sport tražiš igrače?",
+  "CREATE_ACTIVITY_CLOSING": "Hvala na informacija, stići će ti poruka kad se neko bude prijavio",
+  "DATETIME_QUESTION": "Kad se igra?",
+  "DATETIME": "Unesi datum i vreme",
+  "LOCATION_INSTRUCTION": "Sa leve strane klikni na 4 tačkice i izaberi lokaciju",
+  "LOCATION_QUESTION": "Gde se igra? Pošalji lokaciju",
+  "PRICE_QUESTION": "Koliko plaća svaki igrač?",
+  "REMAINING_VACANCIES_QUESTION": "Koliko ima slobodnih mesta?"
+}

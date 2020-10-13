@@ -68,9 +68,10 @@ export class ResolverService {
   };
 
   createActivity = async (newActivity: any) => {
+    const locale = await this.userService.getLocale(newActivity.organizer_id);
     await this.activityService.createActivity(newActivity);
 
-    return this.responseService.messages[this.stateService.states.closing];
+    return this.responseService.getCreateActivityResponse(locale);
   };
 
   getCreatedActivities = async (userId: number, page = FIRST_PAGE) => {
@@ -128,9 +129,10 @@ export class ResolverService {
     const initialState = {
       current_state: this.stateService.states.activity_type,
     };
+    const locale = await this.userService.getLocale(userId);
     await this.stateService.updateState(userId, initialState);
 
-    return this.responseService.getInitializeActivityResponse();
+    return this.responseService.getInitializeActivityResponse(locale);
   };
 
   joinActivity = async (
@@ -217,8 +219,12 @@ export class ResolverService {
   };
 
   updateState = async (userId: number, updatedState: State) => {
+    const locale = await this.userService.getLocale(userId);
     await this.stateService.updateState(userId, updatedState);
 
-    return this.responseService.messages[updatedState.current_state];
+    return this.responseService.getUpdateStateResponse(
+      updatedState.current_state,
+      locale,
+    );
   };
 }
