@@ -41,6 +41,7 @@ import {
   STATE_CREATE_ACTIVITY_CLOSING,
   STATE_INVALID_LOCATION,
   STATE_INVALID_PRICE,
+  STATE_INVALID_REMAINING_VACANCIES,
   UPCOMING_ACTIVITIES_TYPE,
   UPDATED_REMAINING_VACANCIES,
   UPDATE_REMAINING_VACANCIES,
@@ -240,6 +241,11 @@ export class ResponseService {
 
   getInvalidPriceResponse = async (lang: string): Promise<string> =>
     this.i18nService.translate(STATE_INVALID_PRICE, { lang });
+
+  getInvalidRemainingVacanciesResponse = async (
+    lang: string,
+  ): Promise<string> =>
+    this.i18nService.translate(STATE_INVALID_REMAINING_VACANCIES, { lang });
 
   getJoinActivityFailureResponse = async (lang: string): Promise<string> =>
     this.i18nService.translate(ACTIVITY_JOIN_ACTIVITY_FAILURE, {

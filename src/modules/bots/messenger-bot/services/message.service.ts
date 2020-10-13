@@ -9,7 +9,6 @@ import {
   DEFAULT_ANSWER,
   SKIPPED_QUICK_REPLY_PAYLOADS,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
-import { INVALID_REMAINING_VACANCIES_TEXT } from 'modules/bots/messenger-bot/messenger-bot.texts';
 import { State } from 'modules/state/state.dto';
 import { StateService } from 'modules/state/state.service';
 import { UserService } from 'modules/user/user.service';
@@ -37,6 +36,10 @@ export class MessageService {
       ...(state.current_state === this.stateService.states.price && {
         price_value: +text,
       }),
+      ...(state.current_state ===
+        this.stateService.states.remaining_vacancies && {
+        remaining_vacancies: +text,
+      }),
       ...(state.current_state === this.stateService.states.activity_type && {
         activity_type: parse(
           message.quick_reply.payload,
@@ -46,7 +49,10 @@ export class MessageService {
     };
 
     if (updatedState.current_state === this.stateService.states.closing) {
-      validationResponse = this.validateRemainingVacancies(+text);
+      validationResponse = await this.validateRemainingVacancies(
+        +text,
+        state.user_id,
+      );
       if (validationResponse) return validationResponse;
 
       const newActivity = {
@@ -123,8 +129,13 @@ export class MessageService {
     }
   };
 
-  validateRemainingVacancies = (text: number): string => {
-    if (!Number.isInteger(text) || text <= MIN_REMAINING_VACANCIES)
-      return INVALID_REMAINING_VACANCIES_TEXT;
+  validateRemainingVacancies = async (
+    text: number,
+    userId: number,
+  ): Promise<string> => {
+    if (!Number.isInteger(text) || text <= MIN_REMAINING_VACANCIES) {
+      const locale = await this.userService.getLocale(userId);
+      return this.responseService.getInvalidRemainingVacanciesResponse(locale);
+    }
   };
 }

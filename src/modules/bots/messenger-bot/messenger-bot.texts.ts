@@ -38,7 +38,6 @@ export const ACTIVITY_TYPES_TEXT = {
 export const INVALID_ACTIVITY_TYPE_TEXT =
   'Izabrani sport nije ispravan, izaberi jedan od ponuđenih';
 export const DATETIME_CONFIRMATION_TEXT = 'Izabrani datum i vreme su';
-export const INVALID_REMAINING_VACANCIES_TEXT = 'Unesi broj potrebnih igrača';
 
 export const NO_REMAINING_VACANCIES_TEXT = 'Skupili smo se';
 export const REMAINING_VACANCIES_TEXT = 'Fali još';
