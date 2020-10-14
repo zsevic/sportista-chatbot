@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { I18nService } from 'nestjs-i18n';
+import { PAGE_SIZE } from 'common/config/constants';
 import { PaginatedResponse } from 'common/dtos';
 import { formatDatetime } from 'common/utils';
 import { ACTIVITY_TYPES } from 'modules/activity/activity.constants';
@@ -12,9 +13,13 @@ import {
   ACTIVITY_NO_PARTICIPANTS,
   ACTIVITY_OPTIONS,
   ACTIVITY_OPTIONS_TYPE,
+  ACTIVITY_REMAINING_VACANCIES,
   ACTIVITY_RESET_REMAINING_VACANCIES,
   ACTIVITY_TYPE_QUESTION,
   ACTIVITY_UPDATE_REMAINING_VACANCIES_FAILURE,
+  ACTIVITY_VIEW_MORE,
+  ADD_REMAINING_VACANCIES,
+  ADD_REMAINING_VACANCIES_TYPE,
   BOT_DEFAULT_MESSAGE,
   CANCEL_ACTIVITY,
   CANCEL_ACTIVITY_SUCCESS,
@@ -38,6 +43,7 @@ import {
   JOIN_ACTIVITY,
   JOIN_ACTIVITY_SUCCESS,
   JOIN_ACTIVITY_TYPE,
+  LOCATION,
   LOCATION_INSTRUCTION,
   LOCATION_QUESTION,
   NOTIFY_ORGANIZER,
@@ -47,12 +53,15 @@ import {
   NO_REMAINING_VACANCIES,
   NO_UPCOMING_ACTIVITIES,
   OPTIONS,
+  ORGANIZER,
+  ORGANIZER_TYPE,
   PARTICIPANT_LIST,
   PARTICIPANT_LIST_TYPE,
   PRICE_QUESTION,
   REGISTRATION,
   REGISTRATION_FAILURE,
   REMAINING_VACANCIES_QUESTION,
+  RESET_REMAINING_VACANCIES_TYPE,
   STATE_ACTIVITY_TYPE_QUESTION,
   STATE_CREATE_ACTIVITY_CLOSING,
   STATE_DATETIME_CONFIRMATION,
@@ -60,6 +69,8 @@ import {
   STATE_INVALID_LOCATION,
   STATE_INVALID_PRICE,
   STATE_INVALID_REMAINING_VACANCIES,
+  SUBTRACT_REMAINING_VACANCIES,
+  SUBTRACT_REMAINING_VACANCIES_TYPE,
   UPCOMING_ACTIVITIES,
   UPCOMING_ACTIVITIES_PAYLOAD,
   UPCOMING_ACTIVITIES_TYPE,
@@ -71,11 +82,8 @@ import {
   VIEW_MORE_JOINED_ACTIVITIES,
   VIEW_MORE_UPCOMING_ACTIVITIES,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
-import {
-  getActivitiesResponse,
-  getElementFromUser,
-  getRemainingVacanciesButtons,
-} from 'modules/bots/messenger-bot/messenger-bot.utils';
+import { I18n } from 'modules/bots/messenger-bot/messenger-bot.types';
+import { getLocationUrl } from 'modules/bots/messenger-bot/messenger-bot.utils';
 import { StateService } from 'modules/state/state.service';
 import { User } from 'modules/user/user.dto';
 
@@ -100,6 +108,55 @@ export class ResponseService {
     private readonly i18nService: I18nService,
     private readonly stateService: StateService,
   ) {}
+
+  private async getActivitiesResponse({
+    activityListData,
+    activityTypeText,
+    activityType,
+    noActivitiesText,
+    viewMoreActivitiesText,
+    buttonPayloadActivityType,
+    isOrganizerShown,
+    lang,
+  }) {
+    const { results, page, total } = activityListData;
+
+    if (results.length === 0) return noActivitiesText;
+
+    const elements = results.map((activity: Activity) =>
+      this.getElementFromActivity({
+        activity,
+        buttonTitle: activityTypeText,
+        buttonPayload: `type=${activityType}&activity_id=${activity.id}`,
+        isOrganizerShown,
+        lang,
+      }),
+    );
+
+    const hasNextPage = PAGE_SIZE * page < total;
+    const nextPage = page + 1;
+
+    const response: any = [{ cards: elements }];
+
+    if (hasNextPage) {
+      const viewMoreTitle = await this.i18nService.translate(
+        ACTIVITY_VIEW_MORE,
+        { lang },
+      );
+      response.push({
+        text: viewMoreActivitiesText,
+        buttons: [
+          {
+            type: 'postback',
+            title: viewMoreTitle,
+            payload: `type=${buttonPayloadActivityType}&page=${nextPage}`,
+          },
+        ],
+      });
+    }
+
+    return response;
+  }
 
   getActivityOptionsResponse = async (activityId: string, lang: string) => {
     const activityI18n = await this.i18nService.translate('activity', { lang });
@@ -174,7 +231,7 @@ export class ResponseService {
   ) => {
     const activityI18n = await this.i18nService.translate('activity', { lang });
 
-    return getActivitiesResponse({
+    return this.getActivitiesResponse({
       activityListData,
       noActivitiesText: activityI18n[NO_CREATED_ACTIVITIES],
       activityTypeText: activityI18n[OPTIONS],
@@ -182,6 +239,7 @@ export class ResponseService {
       viewMoreActivitiesText: activityI18n[VIEW_MORE_CREATED_ACTIVITIES],
       buttonPayloadActivityType: CREATED_ACTIVITIES_TYPE,
       isOrganizerShown: false,
+      lang,
     });
   };
 
@@ -263,6 +321,63 @@ export class ResponseService {
     ];
   };
 
+  private async getElementFromActivity({
+    activity,
+    buttonTitle,
+    buttonPayload,
+    isOrganizerShown = true,
+    lang,
+  }) {
+    const activityI18n = await this.i18nService.translate('activity', {
+      lang,
+    });
+    const title =
+      activity.remaining_vacancies > 0
+        ? await this.i18nService.translate(ACTIVITY_REMAINING_VACANCIES, {
+            lang,
+            args: {
+              remainingVacancies: activity.remaining_vacancies,
+              type: activity.type,
+            },
+          })
+        : activityI18n[NO_REMAINING_VACANCIES];
+    const url = getLocationUrl(
+      activity.location.latitude,
+      activity.location.longitude,
+    );
+
+    const buttons = [
+      { type: 'postback', title: buttonTitle, payload: buttonPayload },
+      { type: 'web_url', title: activityI18n[LOCATION], url },
+    ];
+    if (isOrganizerShown) {
+      buttons.push({
+        type: 'postback',
+        title: activityI18n[ORGANIZER],
+        payload: `type=${ORGANIZER_TYPE}&user_id=${activity.organizer_id}`,
+      });
+    }
+    const datetime = formatDatetime(activity.datetime);
+
+    return {
+      title,
+      subtitle: `${datetime}, ${activity.location.title}, ${activity.price.value} ${activity.price.currency}`,
+      ...(ACTIVITY_TYPES[activity.type] && {
+        image_url: `https://loremflickr.com/320/240/${
+          ACTIVITY_TYPES[activity.type]
+        }`,
+      }),
+      buttons,
+    };
+  }
+
+  private getElementFromUser(user: User) {
+    return {
+      title: `${user.first_name} ${user.last_name}`,
+      image_url: user.image_url,
+    };
+  }
+
   getInitializeActivityResponse = async (lang: string) => {
     const quickReplies = await this.getActivityTypeOptions(lang);
     const activityTypeMessage = await this.i18nService.translate(
@@ -322,7 +437,7 @@ export class ResponseService {
   ) => {
     const activityI18n = await this.i18nService.translate('activity', { lang });
 
-    return getActivitiesResponse({
+    return this.getActivitiesResponse({
       activityListData,
       noActivitiesText: activityI18n[NO_JOINED_ACTIVITIES],
       activityTypeText: activityI18n[CANCEL_PARTICIPATION],
@@ -330,11 +445,12 @@ export class ResponseService {
       viewMoreActivitiesText: activityI18n[VIEW_MORE_JOINED_ACTIVITIES],
       buttonPayloadActivityType: JOINED_ACTIVITIES_TYPE,
       isOrganizerShown: true,
+      lang,
     });
   };
 
   getOrganizerResponse = (organizer: User) => {
-    const elements = [getElementFromUser(organizer)];
+    const elements = [this.getElementFromUser(organizer)];
 
     const response = [{ cards: elements }];
 
@@ -352,7 +468,7 @@ export class ResponseService {
     if (participantList.length === 0) return noParticipantsMessage;
 
     const elements = participantList.map((participant: User) =>
-      getElementFromUser(participant),
+      this.getElementFromUser(participant),
     );
     const response = [{ cards: elements }];
 
@@ -382,6 +498,27 @@ export class ResponseService {
     };
   };
 
+  private getRemainingVacanciesButtons = (
+    activityId: string,
+    activityI18n: I18n,
+  ) => [
+    {
+      type: 'postback',
+      title: activityI18n[ADD_REMAINING_VACANCIES],
+      payload: `type=${ADD_REMAINING_VACANCIES_TYPE}&activity_id=${activityId}`,
+    },
+    {
+      type: 'postback',
+      title: activityI18n[SUBTRACT_REMAINING_VACANCIES],
+      payload: `type=${SUBTRACT_REMAINING_VACANCIES_TYPE}&activity_id=${activityId}`,
+    },
+    {
+      type: 'postback',
+      title: activityI18n[NO_REMAINING_VACANCIES],
+      payload: `type=${RESET_REMAINING_VACANCIES_TYPE}&activity_id=${activityId}`,
+    },
+  ];
+
   getResetRemainingVacanciesSuccessResponse = async (
     lang: string,
   ): Promise<string> =>
@@ -395,7 +532,7 @@ export class ResponseService {
   ) => {
     const activityI18n = await this.i18nService.translate('activity', { lang });
 
-    return getActivitiesResponse({
+    return this.getActivitiesResponse({
       activityListData,
       noActivitiesText: activityI18n[NO_UPCOMING_ACTIVITIES],
       activityTypeText: activityI18n[JOIN_ACTIVITY],
@@ -403,6 +540,7 @@ export class ResponseService {
       viewMoreActivitiesText: activityI18n[VIEW_MORE_UPCOMING_ACTIVITIES],
       buttonPayloadActivityType: UPCOMING_ACTIVITIES_TYPE,
       isOrganizerShown: true,
+      lang,
     });
   };
 
@@ -415,7 +553,7 @@ export class ResponseService {
     });
     return {
       text: activityI18n[UPDATE_REMAINING_VACANCIES],
-      buttons: getRemainingVacanciesButtons(activityId, activityI18n),
+      buttons: this.getRemainingVacanciesButtons(activityId, activityI18n),
     };
   };
 
@@ -442,7 +580,7 @@ export class ResponseService {
 
     return {
       text: `${activityI18n[UPDATED_REMAINING_VACANCIES]} ${activity.remaining_vacancies}`,
-      buttons: getRemainingVacanciesButtons(activity.id, activityI18n),
+      buttons: this.getRemainingVacanciesButtons(activity.id, activityI18n),
     };
   };
 
