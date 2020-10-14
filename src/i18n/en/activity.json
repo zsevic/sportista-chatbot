@@ -8,6 +8,7 @@
   "CANCEL_ACTIVITY": "Cancel",
   "CANCEL_ACTIVITY_FAILURE": "Canceling activity failed",
   "CANCEL_ACTIVITY_SUCCESS": "Canceling activity succeeded",
+  "CANCEL_PARTICIPATION": "Cancel",
   "CANCEL_PARTICIPATION_FAILURE": "Canceling participation failed",
   "CANCEL_PARTICIPATION_SUCCESS": "Canceling participation succeeded",
   "CREATED_ACTIVITIES": "📑 Check who registered",
@@ -16,6 +17,7 @@
   "JOIN_ACTIVITY_FAILURE": "Joining failed",
   "JOINED_ACTIVITIES": "🕗 Reminder",
   "NO_CREATED_ACTIVITIES": "There are no created activities",
+  "NO_JOINED_ACTIVITIES": "There are no joined activities",
   "NO_PARTICIPANTS": "No one applied yet",
   "NO_REMAINING_VACANCIES": "No remaining vacancies",
   "NOTIFY_ORGANIZER": "Organizer is notified",
@@ -28,5 +30,6 @@
   "UPDATE_REMAINING_VACANCIES": "Update remaining vacancies",
   "UPDATE_REMAINING_VACANCIES_FAILURE": "Update failed",
   "UPDATED_REMAINING_VACANCIES": "Missing",
-  "VIEW_MORE_CREATED_ACTIVITIES": "Check who applied for other activities"
+  "VIEW_MORE_CREATED_ACTIVITIES": "Check who applied for other activities",
+  "VIEW_MORE_JOINED_ACTIVITIES": "Check other joined activities"
 }

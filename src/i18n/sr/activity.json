@@ -8,6 +8,7 @@
   "CANCEL_ACTIVITY": "Otkaži",
   "CANCEL_ACTIVITY_FAILURE": "Otkazivanje termina nije uspelo",
   "CANCEL_ACTIVITY_SUCCESS": "Termin je uspešno otkazan",
+  "CANCEL_PARTICIPATION": "Otkaži",
   "CANCEL_PARTICIPATION_FAILURE": "Otkazivanje nije uspelo",
   "CANCEL_PARTICIPATION_SUCCESS": "Uspešno si otkazao",
   "CREATED_ACTIVITIES": "📑 Pregled prijava",
@@ -16,6 +17,7 @@
   "JOIN_ACTIVITY_FAILURE": "Prijava nije uspela",
   "JOINED_ACTIVITIES": "🕗 Podsetnik",
   "NO_CREATED_ACTIVITIES": "Nema kreiranih termina",
+  "NO_JOINED_ACTIVITIES": "Nema pridruženih termina",
   "NO_PARTICIPANTS": "Još se niko nije prijavio",
   "NO_REMAINING_VACANCIES": "Skupili smo se",
   "NOTIFY_ORGANIZER": "Organizator je obavešten",
@@ -28,5 +30,6 @@
   "UPDATE_REMAINING_VACANCIES": "Promeni broj igrača",
   "UPDATE_REMAINING_VACANCIES_FAILURE": "Promena nije uspela",
   "UPDATED_REMAINING_VACANCIES": "Fali još",
-  "VIEW_MORE_CREATED_ACTIVITIES": "Proveri prijave i za ostale termine"
+  "VIEW_MORE_CREATED_ACTIVITIES": "Proveri prijave i za ostale termine",
+  "VIEW_MORE_JOINED_ACTIVITIES": "Ima još zakazanih termina"
 }

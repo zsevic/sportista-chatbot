@@ -19,6 +19,7 @@ import {
   CANCEL_ACTIVITY,
   CANCEL_ACTIVITY_SUCCESS,
   CANCEL_ACTIVITY_TYPE,
+  CANCEL_PARTICIPATION,
   CANCEL_PARTICIPATION_SUCCESS,
   CANCEL_PARTICIPATION_TYPE,
   CREATED_ACTIVITIES,
@@ -41,6 +42,7 @@ import {
   NOTIFY_ORGANIZER,
   NOTIFY_PARTICIPANTS,
   NO_CREATED_ACTIVITIES,
+  NO_JOINED_ACTIVITIES,
   NO_REMAINING_VACANCIES,
   OPTIONS,
   PARTICIPANT_LIST,
@@ -64,13 +66,11 @@ import {
   UPDATE_REMAINING_VACANCIES_TYPE,
   USER_REGISTRATION_SUCCESS,
   VIEW_MORE_CREATED_ACTIVITIES,
+  VIEW_MORE_JOINED_ACTIVITIES,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import {
-  CANCEL_TEXT,
   JOIN_ACTIVITY_TEXT,
-  NO_JOINED_ACTIVITIES_TEXT,
   NO_UPCOMING_ACTIVITIES_TEXT,
-  VIEW_MORE_JOINED_ACTIVITIES_TEXT,
   VIEW_MORE_UPCOMING_ACTIVITIES_TEXT,
 } from 'modules/bots/messenger-bot/messenger-bot.texts';
 import {
@@ -320,18 +320,22 @@ export class ResponseService {
     ];
   };
 
-  getJoinedActivitiesResponse = (
+  getJoinedActivitiesResponse = async (
     activityListData: PaginatedResponse<Activity>,
-  ) =>
-    getActivitiesResponse({
+    lang: string,
+  ) => {
+    const activityI18n = await this.i18nService.translate('activity', { lang });
+
+    return getActivitiesResponse({
       activityListData,
-      noActivitiesText: NO_JOINED_ACTIVITIES_TEXT,
-      activityTypeText: CANCEL_TEXT,
+      noActivitiesText: activityI18n[NO_JOINED_ACTIVITIES],
+      activityTypeText: activityI18n[CANCEL_PARTICIPATION],
       activityType: CANCEL_PARTICIPATION_TYPE,
-      viewMoreActivitiesText: VIEW_MORE_JOINED_ACTIVITIES_TEXT,
+      viewMoreActivitiesText: activityI18n[VIEW_MORE_JOINED_ACTIVITIES],
       buttonPayloadActivityType: JOINED_ACTIVITIES_TYPE,
       isOrganizerShown: true,
     });
+  };
 
   getOrganizerResponse = (organizer: User) => {
     const elements = [getElementFromUser(organizer)];

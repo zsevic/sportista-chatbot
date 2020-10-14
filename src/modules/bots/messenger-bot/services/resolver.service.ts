@@ -96,15 +96,19 @@ export class ResolverService {
     this.responseService.getDefaultResponse(locale);
 
   getJoinedActivities = async (userId: number, page = FIRST_PAGE) => {
+    const locale = await this.userService.getLocale(userId);
     const activityListData = await this.activityService.getJoinedActivities(
       userId,
       page,
     );
 
-    return this.responseService.getJoinedActivitiesResponse({
-      ...activityListData,
-      page,
-    });
+    return this.responseService.getJoinedActivitiesResponse(
+      {
+        ...activityListData,
+        page,
+      },
+      locale,
+    );
   };
 
   getOrganizer = async (id: number) => {
