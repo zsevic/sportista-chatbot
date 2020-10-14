@@ -23,8 +23,6 @@ export const OPTIONS_TEXT = 'Prikaži opcije';
 export const ORGANIZER_TEXT = 'Ko je organizator?';
 
 export const ACTIVITY_TYPE_QUESTION_TEXT = 'Za koji sport tražiš igrače?';
-export const INVALID_ACTIVITY_TYPE_TEXT =
-  'Izabrani sport nije ispravan, izaberi jedan od ponuđenih';
 
 export const NO_REMAINING_VACANCIES_TEXT = 'Skupili smo se';
 export const REMAINING_VACANCIES_TEXT = 'Fali još';
