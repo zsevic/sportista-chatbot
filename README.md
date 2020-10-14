@@ -6,8 +6,8 @@
 
 ### Prerequisites
 
-* Node version 14
-* Local PostgreSQL database
+- Node version 14
+- Local PostgreSQL database
 
 ### Setup
 
@@ -17,7 +17,7 @@ cd sportista-chatbot
 cp .env.sample .env # change values after copying
 npm i
 pg_ctl -D /usr/local/var/postgres restart
-npm run dev
+npm run start:dev
 ```
 
 ### Build
