@@ -1,16 +1,7 @@
-export const CREATE_ACTIVITY_TEXT = '🗓 Nađi igrače';
-export const CREATE_ACTIVITY_TEXT_EN = '🗓 Find missing players';
-
-export const CREATED_ACTIVITIES_TEXT = '📑 Pregled prijava';
-export const CREATED_ACTIVITIES_TEXT_EN = '📑 Check who registered';
 export const NO_CREATED_ACTIVITIES_TEXT = 'Nema kreiranih termina';
 
-export const JOINED_ACTIVITIES_TEXT = '🕗 Podsetnik';
-export const JOINED_ACTIVITIES_TEXT_EN = '🕗 Reminder';
 export const NO_JOINED_ACTIVITIES_TEXT = 'Nema pridruženih termina';
 
-export const UPCOMING_ACTIVITIES_TEXT = '📆 Pridruži se';
-export const UPCOMING_ACTIVITIES_TEXT_EN = '📆 Join';
 export const NO_UPCOMING_ACTIVITIES_TEXT = 'Nema ništa u blizini';
 
 export const CANCEL_TEXT = 'Otkaži';

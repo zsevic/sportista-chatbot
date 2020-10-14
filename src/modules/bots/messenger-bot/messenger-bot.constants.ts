@@ -1,14 +1,6 @@
 import { PROJECT_NAME } from 'common/config/constants';
-import {
-  CREATED_ACTIVITIES_TEXT,
-  CREATED_ACTIVITIES_TEXT_EN,
-  CREATE_ACTIVITY_TEXT,
-  CREATE_ACTIVITY_TEXT_EN,
-  JOINED_ACTIVITIES_TEXT,
-  JOINED_ACTIVITIES_TEXT_EN,
-  UPCOMING_ACTIVITIES_TEXT,
-  UPCOMING_ACTIVITIES_TEXT_EN,
-} from './messenger-bot.texts';
+import activityI18nEn from 'i18n/en/activity.json';
+import activityI18nSr from 'i18n/sr/activity.json';
 
 export const CREATED_ACTIVITIES_PAYLOAD = 'CREATED_ACTIVITIES_PAYLOAD';
 export const INITIALIZE_ACTIVITY_PAYLOAD = 'INITIALIZE_ACTIVITY_PAYLOAD';
@@ -46,59 +38,6 @@ export const GREETING_TEXT = [
   },
 ];
 
-export const PERSISTENT_MENU = [
-  {
-    locale: ENGLISH_LOCALE,
-    call_to_actions: [
-      {
-        type: 'postback',
-        title: UPCOMING_ACTIVITIES_TEXT_EN,
-        payload: UPCOMING_ACTIVITIES_PAYLOAD,
-      },
-      {
-        type: 'postback',
-        title: JOINED_ACTIVITIES_TEXT_EN,
-        payload: JOINED_ACTIVITIES_PAYLOAD,
-      },
-      {
-        type: 'postback',
-        title: CREATED_ACTIVITIES_TEXT_EN,
-        payload: CREATED_ACTIVITIES_PAYLOAD,
-      },
-      {
-        type: 'postback',
-        title: CREATE_ACTIVITY_TEXT_EN,
-        payload: INITIALIZE_ACTIVITY_PAYLOAD,
-      },
-    ],
-  },
-  {
-    locale: DEFAULT_LOCALE,
-    call_to_actions: [
-      {
-        type: 'postback',
-        title: UPCOMING_ACTIVITIES_TEXT,
-        payload: UPCOMING_ACTIVITIES_PAYLOAD,
-      },
-      {
-        type: 'postback',
-        title: JOINED_ACTIVITIES_TEXT,
-        payload: JOINED_ACTIVITIES_PAYLOAD,
-      },
-      {
-        type: 'postback',
-        title: CREATED_ACTIVITIES_TEXT,
-        payload: CREATED_ACTIVITIES_PAYLOAD,
-      },
-      {
-        type: 'postback',
-        title: CREATE_ACTIVITY_TEXT,
-        payload: INITIALIZE_ACTIVITY_PAYLOAD,
-      },
-    ],
-  },
-];
-
 export const FIRST_PAGE = 1;
 export const PAGE_SIZE = 10;
 
@@ -132,8 +71,8 @@ export const ADD_REMAINING_VACANCIES = 'ADD_REMAINING_VACANCIES';
 export const CANCEL_ACTIVITY = 'CANCEL_ACTIVITY';
 export const CANCEL_ACTIVITY_SUCCESS = 'CANCEL_ACTIVITY_SUCCESS';
 export const CANCEL_PARTICIPATION_SUCCESS = 'CANCEL_PARTICIPATION_SUCCESS';
-export const CREATE_ACTIVITY = 'CREATE_ACTIVITY';
 export const CREATED_ACTIVITIES = 'CREATED_ACTIVITIES';
+export const INITIALIZE_ACTIVITY = 'INITIALIZE_ACTIVITY';
 export const JOIN_ACTIVITY_SUCCESS = 'JOIN_ACTIVITY_SUCCESS';
 export const JOINED_ACTIVITIES = 'JOINED_ACTIVITIES';
 export const NO_REMAINING_VACANCIES = 'NO_REMAINING_VACANCIES';
@@ -174,3 +113,56 @@ export const REGISTRATION = 'REGISTRATION';
 export const REGISTRATION_FAILURE = 'REGISTRATION_FAILURE';
 const REGISTRATION_SUCCESS = 'REGISTRATION_SUCCESS';
 export const USER_REGISTRATION_SUCCESS = `user.${REGISTRATION_SUCCESS}`;
+
+export const PERSISTENT_MENU = [
+  {
+    locale: ENGLISH_LOCALE,
+    call_to_actions: [
+      {
+        type: 'postback',
+        title: activityI18nEn[UPCOMING_ACTIVITIES],
+        payload: UPCOMING_ACTIVITIES_PAYLOAD,
+      },
+      {
+        type: 'postback',
+        title: activityI18nEn[JOINED_ACTIVITIES],
+        payload: JOINED_ACTIVITIES_PAYLOAD,
+      },
+      {
+        type: 'postback',
+        title: activityI18nEn[CREATED_ACTIVITIES],
+        payload: CREATED_ACTIVITIES_PAYLOAD,
+      },
+      {
+        type: 'postback',
+        title: activityI18nEn[INITIALIZE_ACTIVITY],
+        payload: INITIALIZE_ACTIVITY_PAYLOAD,
+      },
+    ],
+  },
+  {
+    locale: DEFAULT_LOCALE,
+    call_to_actions: [
+      {
+        type: 'postback',
+        title: activityI18nSr[UPCOMING_ACTIVITIES],
+        payload: UPCOMING_ACTIVITIES_PAYLOAD,
+      },
+      {
+        type: 'postback',
+        title: activityI18nSr[JOINED_ACTIVITIES],
+        payload: JOINED_ACTIVITIES_PAYLOAD,
+      },
+      {
+        type: 'postback',
+        title: activityI18nSr[CREATED_ACTIVITIES],
+        payload: CREATED_ACTIVITIES_PAYLOAD,
+      },
+      {
+        type: 'postback',
+        title: activityI18nSr[INITIALIZE_ACTIVITY],
+        payload: INITIALIZE_ACTIVITY_PAYLOAD,
+      },
+    ],
+  },
+];
