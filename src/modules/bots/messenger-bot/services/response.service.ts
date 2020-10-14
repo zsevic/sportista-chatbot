@@ -13,7 +13,6 @@ import {
   ACTIVITY_NO_PARTICIPANTS,
   ACTIVITY_OPTIONS,
   ACTIVITY_OPTIONS_TYPE,
-  ACTIVITY_REMAINING_VACANCIES,
   ACTIVITY_RESET_REMAINING_VACANCIES,
   ACTIVITY_TYPE_QUESTION,
   ACTIVITY_UPDATE_REMAINING_VACANCIES_FAILURE,
@@ -51,6 +50,7 @@ import {
   NO_CREATED_ACTIVITIES,
   NO_JOINED_ACTIVITIES,
   NO_REMAINING_VACANCIES,
+  NO_REMAINING_VACANCIES_BUTTON,
   NO_UPCOMING_ACTIVITIES,
   OPTIONS,
   ORGANIZER,
@@ -60,6 +60,7 @@ import {
   PRICE_QUESTION,
   REGISTRATION,
   REGISTRATION_FAILURE,
+  REMAINING_VACANCIES,
   REMAINING_VACANCIES_QUESTION,
   RESET_REMAINING_VACANCIES_TYPE,
   STATE_ACTIVITY_TYPE_QUESTION,
@@ -132,11 +133,12 @@ export class ResponseService {
         lang,
       }),
     );
+    const cards = await Promise.all(elements);
 
     const hasNextPage = PAGE_SIZE * page < total;
     const nextPage = page + 1;
 
-    const response: any = [{ cards: elements }];
+    const response: any = [{ cards }];
 
     if (hasNextPage) {
       const viewMoreTitle = await this.i18nService.translate(
@@ -330,16 +332,14 @@ export class ResponseService {
   }) {
     const activityI18n = await this.i18nService.translate('activity', {
       lang,
+      args: {
+        remainingVacancies: activity.remaining_vacancies,
+        type: activity.type,
+      },
     });
     const title =
       activity.remaining_vacancies > 0
-        ? await this.i18nService.translate(ACTIVITY_REMAINING_VACANCIES, {
-            lang,
-            args: {
-              remainingVacancies: activity.remaining_vacancies,
-              type: activity.type,
-            },
-          })
+        ? activityI18n[REMAINING_VACANCIES]
         : activityI18n[NO_REMAINING_VACANCIES];
     const url = getLocationUrl(
       activity.location.latitude,
@@ -514,7 +514,7 @@ export class ResponseService {
     },
     {
       type: 'postback',
-      title: activityI18n[NO_REMAINING_VACANCIES],
+      title: activityI18n[NO_REMAINING_VACANCIES_BUTTON],
       payload: `type=${RESET_REMAINING_VACANCIES_TYPE}&activity_id=${activityId}`,
     },
   ];
@@ -574,12 +574,16 @@ export class ResponseService {
   ) => {
     const activityI18n = await this.i18nService.translate('activity', {
       lang,
+      args: {
+        remainingVacancies: activity.remaining_vacancies,
+        type: activity.type,
+      },
     });
     if (!activity || activity.remaining_vacancies === 0)
       return activityI18n[NO_REMAINING_VACANCIES];
 
     return {
-      text: `${activityI18n[UPDATED_REMAINING_VACANCIES]} ${activity.remaining_vacancies}`,
+      text: activityI18n[UPDATED_REMAINING_VACANCIES],
       buttons: this.getRemainingVacanciesButtons(activity.id, activityI18n),
     };
   };
