@@ -28,5 +28,41 @@
     </main>
 
     <footer><%- include('../partials/footer'); %></footer>
+    <script>
+      window.extAsyncInit = async function () {
+        MessengerExtensions.getUserID(
+          function success(uids) {
+            const { psid: user_id } = uids;
+            if (!user_id) return;
+
+            document
+              .getElementById('form')
+              .addEventListener('submit', async (event) => {
+                event.preventDefault();
+
+                try {
+                  const datetime = document.getElementById('datetime').value;
+                  const response = await fetch('/extensions/datetime', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ datetime, user_id }),
+                  });
+                  if (response.status === 200) {
+                    MessengerExtensions.requestCloseBrowser(
+                      function success() {},
+                      function error(err) {},
+                    );
+                  }
+                } catch (error) {
+                  console.error(error);
+                }
+              });
+          },
+          function error(err) {},
+        );
+      };
+    </script>
   </body>
 </html>
