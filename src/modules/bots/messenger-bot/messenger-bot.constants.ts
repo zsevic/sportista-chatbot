@@ -26,11 +26,17 @@ export const PARTICIPANT_LIST_TYPE = 'PARTICIPANT_LIST_TYPE';
 export const UPCOMING_ACTIVITIES_TYPE = 'UPCOMING_ACTIVITIES_TYPE';
 
 const DEFAULT_LOCALE = 'default';
-const ENGLISH_LOCALE = 'en_GB';
+const EN_GB_LOCALE = 'en_GB';
+const EN_US_LOCALE = 'en_US';
+const EN_GREETING_TEXT = `Hi! With ${PROJECT_NAME} you can find missing players or join some game`;
 export const GREETING_TEXT = [
   {
-    locale: ENGLISH_LOCALE,
-    text: `Hi! With ${PROJECT_NAME} you can find missing players or join some game`,
+    locale: EN_GB_LOCALE,
+    text: EN_GREETING_TEXT,
+  },
+  {
+    locale: EN_US_LOCALE,
+    text: EN_GREETING_TEXT,
   },
   {
     locale: DEFAULT_LOCALE,
@@ -129,31 +135,37 @@ export const REGISTRATION_FAILURE = 'REGISTRATION_FAILURE';
 const REGISTRATION_SUCCESS = 'REGISTRATION_SUCCESS';
 export const USER_REGISTRATION_SUCCESS = `user.${REGISTRATION_SUCCESS}`;
 
+const EN_PERSISTENT_MENU = [
+  {
+    type: 'postback',
+    title: activityI18nEn[UPCOMING_ACTIVITIES],
+    payload: UPCOMING_ACTIVITIES_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: activityI18nEn[JOINED_ACTIVITIES],
+    payload: JOINED_ACTIVITIES_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: activityI18nEn[CREATED_ACTIVITIES],
+    payload: CREATED_ACTIVITIES_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: activityI18nEn[INITIALIZE_ACTIVITY],
+    payload: INITIALIZE_ACTIVITY_PAYLOAD,
+  },
+];
+
 export const PERSISTENT_MENU = [
   {
-    locale: ENGLISH_LOCALE,
-    call_to_actions: [
-      {
-        type: 'postback',
-        title: activityI18nEn[UPCOMING_ACTIVITIES],
-        payload: UPCOMING_ACTIVITIES_PAYLOAD,
-      },
-      {
-        type: 'postback',
-        title: activityI18nEn[JOINED_ACTIVITIES],
-        payload: JOINED_ACTIVITIES_PAYLOAD,
-      },
-      {
-        type: 'postback',
-        title: activityI18nEn[CREATED_ACTIVITIES],
-        payload: CREATED_ACTIVITIES_PAYLOAD,
-      },
-      {
-        type: 'postback',
-        title: activityI18nEn[INITIALIZE_ACTIVITY],
-        payload: INITIALIZE_ACTIVITY_PAYLOAD,
-      },
-    ],
+    locale: EN_GB_LOCALE,
+    call_to_actions: EN_PERSISTENT_MENU,
+  },
+  {
+    locale: EN_US_LOCALE,
+    call_to_actions: EN_PERSISTENT_MENU,
   },
   {
     locale: DEFAULT_LOCALE,

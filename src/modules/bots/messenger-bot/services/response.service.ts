@@ -357,7 +357,7 @@ export class ResponseService {
         payload: `type=${ORGANIZER_TYPE}&user_id=${activity.organizer_id}`,
       });
     }
-    const datetime = formatDatetime(activity.datetime);
+    const datetime = formatDatetime(activity.datetime, lang);
 
     return {
       title,

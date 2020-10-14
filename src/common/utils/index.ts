@@ -1,9 +1,10 @@
-import { DEFAULT_DATETIME_LOCALE, PAGE_SIZE } from 'common/config/constants';
+import {
+  DATE_LOCALES,
+  DEFAULT_DATETIME_LOCALE,
+  PAGE_SIZE,
+} from 'common/config/constants';
 
-export const formatDatetime = (
-  datetime: string,
-  lang = DEFAULT_DATETIME_LOCALE,
-): string => {
+export const formatDatetime = (datetime: string, lang: string): string => {
   const options = {
     weekday: 'long',
     year: 'numeric',
@@ -12,13 +13,9 @@ export const formatDatetime = (
     hour: '2-digit',
     minute: '2-digit',
   };
-  const locale = {
-    sr_RS: 'sr-Latn-RS',
-    en_GB: 'en-GB',
-  };
 
   return new Date(datetime).toLocaleDateString(
-    locale[lang] || locale[DEFAULT_DATETIME_LOCALE],
+    DATE_LOCALES[lang] || DATE_LOCALES[DEFAULT_DATETIME_LOCALE],
     options,
   );
 };

@@ -15,7 +15,11 @@ import {
   patchTypeORMRepositoryWithBaseRepository,
 } from 'typeorm-transactional-cls-hooked';
 import config from 'common/config';
-import { NODEGEOCODER_PROVIDER } from 'common/config/constants';
+import {
+  I18N_FALLBACKS,
+  I18N_FALLBACK_LANGUAGE,
+  NODEGEOCODER_PROVIDER,
+} from 'common/config/constants';
 import databaseConfig from 'common/config/database';
 import { BotsModule } from 'modules/bots/bots.module';
 import { ExtensionsModule } from 'modules/extensions/extensions.module';
@@ -54,11 +58,8 @@ const typeOrmConfig = {
       }),
     }),
     I18nModule.forRoot({
-      fallbackLanguage: 'sr',
-      fallbacks: {
-        en_GB: 'en',
-        sr_RS: 'sr',
-      },
+      fallbackLanguage: I18N_FALLBACK_LANGUAGE,
+      fallbacks: I18N_FALLBACKS,
       parser: I18nJsonParser,
       parserOptions: {
         path: path.join(__dirname, '../../../i18n/'),
