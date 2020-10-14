@@ -190,12 +190,10 @@ export class ResponseService {
     lang: string,
   ): Promise<string> => {
     const formattedDatetime = formatDatetime(datetime, lang);
-    const datetimeConfirmation = await this.i18nService.translate(
-      STATE_DATETIME_CONFIRMATION,
-      { lang },
-    );
-
-    return `${datetimeConfirmation} ${formattedDatetime}`;
+    return this.i18nService.translate(STATE_DATETIME_CONFIRMATION, {
+      lang,
+      args: { datetime: formattedDatetime },
+    });
   };
 
   getDatetimeQuestionI18n = async (lang: string) => {
