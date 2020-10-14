@@ -40,7 +40,9 @@ import {
   LOCATION_QUESTION,
   NOTIFY_ORGANIZER,
   NOTIFY_PARTICIPANTS,
+  NO_CREATED_ACTIVITIES,
   NO_REMAINING_VACANCIES,
+  OPTIONS,
   PARTICIPANT_LIST,
   PARTICIPANT_LIST_TYPE,
   PRICE_QUESTION,
@@ -61,15 +63,13 @@ import {
   UPDATE_REMAINING_VACANCIES,
   UPDATE_REMAINING_VACANCIES_TYPE,
   USER_REGISTRATION_SUCCESS,
+  VIEW_MORE_CREATED_ACTIVITIES,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import {
   CANCEL_TEXT,
   JOIN_ACTIVITY_TEXT,
-  NO_CREATED_ACTIVITIES_TEXT,
   NO_JOINED_ACTIVITIES_TEXT,
   NO_UPCOMING_ACTIVITIES_TEXT,
-  OPTIONS_TEXT,
-  VIEW_MORE_CREATED_ACTIVITIES_TEXT,
   VIEW_MORE_JOINED_ACTIVITIES_TEXT,
   VIEW_MORE_UPCOMING_ACTIVITIES_TEXT,
 } from 'modules/bots/messenger-bot/messenger-bot.texts';
@@ -170,18 +170,22 @@ export class ResponseService {
   getCreateActivityResponse = async (lang: string): Promise<string> =>
     this.i18nService.translate(STATE_CREATE_ACTIVITY_CLOSING, { lang });
 
-  getCreatedActivitiesResponse = (
+  getCreatedActivitiesResponse = async (
     activityListData: PaginatedResponse<Activity>,
-  ) =>
-    getActivitiesResponse({
+    lang: string,
+  ) => {
+    const activityI18n = await this.i18nService.translate('activity', { lang });
+
+    return getActivitiesResponse({
       activityListData,
-      noActivitiesText: NO_CREATED_ACTIVITIES_TEXT,
-      activityTypeText: OPTIONS_TEXT,
+      noActivitiesText: activityI18n[NO_CREATED_ACTIVITIES],
+      activityTypeText: activityI18n[OPTIONS],
       activityType: ACTIVITY_OPTIONS_TYPE,
-      viewMoreActivitiesText: VIEW_MORE_CREATED_ACTIVITIES_TEXT,
+      viewMoreActivitiesText: activityI18n[VIEW_MORE_CREATED_ACTIVITIES],
       buttonPayloadActivityType: CREATED_ACTIVITIES_TYPE,
       isOrganizerShown: false,
     });
+  };
 
   getDatetimeConfirmationResponse = async (
     datetime: string,

@@ -74,15 +74,19 @@ export class ResolverService {
   };
 
   getCreatedActivities = async (userId: number, page = FIRST_PAGE) => {
+    const locale = await this.userService.getLocale(userId);
     const activityListData = await this.activityService.getCreatedActivities(
       userId,
       page,
     );
 
-    return this.responseService.getCreatedActivitiesResponse({
-      ...activityListData,
-      page,
-    });
+    return this.responseService.getCreatedActivitiesResponse(
+      {
+        ...activityListData,
+        page,
+      },
+      locale,
+    );
   };
 
   getCurrentState = async (userId: number): Promise<State> =>
