@@ -8,6 +8,8 @@
   "CANCEL_ACTIVITY": "Cancel",
   "CANCEL_ACTIVITY_FAILURE": "Canceling activity failed",
   "CANCEL_ACTIVITY_SUCCESS": "Canceling activity succeeded",
+  "CANCEL_PARTICIPATION_FAILURE": "Canceling participation failed",
+  "CANCEL_PARTICIPATION_SUCCESS": "Canceling participation succeeded",
   "CREATE_ACTIVITY": "🗓 Find missing players",
   "CREATED_ACTIVITIES": "📑 Check who registered",
   "JOIN_ACTIVITY_SUCCESS": "Joining succeeded",
