@@ -35,6 +35,7 @@ import {
   JOINED_ACTIVITIES,
   JOINED_ACTIVITIES_PAYLOAD,
   JOINED_ACTIVITIES_TYPE,
+  JOIN_ACTIVITY,
   JOIN_ACTIVITY_SUCCESS,
   JOIN_ACTIVITY_TYPE,
   LOCATION_INSTRUCTION,
@@ -44,6 +45,7 @@ import {
   NO_CREATED_ACTIVITIES,
   NO_JOINED_ACTIVITIES,
   NO_REMAINING_VACANCIES,
+  NO_UPCOMING_ACTIVITIES,
   OPTIONS,
   PARTICIPANT_LIST,
   PARTICIPANT_LIST_TYPE,
@@ -67,12 +69,8 @@ import {
   USER_REGISTRATION_SUCCESS,
   VIEW_MORE_CREATED_ACTIVITIES,
   VIEW_MORE_JOINED_ACTIVITIES,
+  VIEW_MORE_UPCOMING_ACTIVITIES,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
-import {
-  JOIN_ACTIVITY_TEXT,
-  NO_UPCOMING_ACTIVITIES_TEXT,
-  VIEW_MORE_UPCOMING_ACTIVITIES_TEXT,
-} from 'modules/bots/messenger-bot/messenger-bot.texts';
 import {
   getActivitiesResponse,
   getElementFromUser,
@@ -393,18 +391,22 @@ export class ResponseService {
       lang,
     });
 
-  getUpcomingActivitiesResponse = (
+  getUpcomingActivitiesResponse = async (
     activityListData: PaginatedResponse<Activity>,
-  ) =>
-    getActivitiesResponse({
+    lang: string,
+  ) => {
+    const activityI18n = await this.i18nService.translate('activity', { lang });
+
+    return getActivitiesResponse({
       activityListData,
-      noActivitiesText: NO_UPCOMING_ACTIVITIES_TEXT,
-      activityTypeText: JOIN_ACTIVITY_TEXT,
+      noActivitiesText: activityI18n[NO_UPCOMING_ACTIVITIES],
+      activityTypeText: activityI18n[JOIN_ACTIVITY],
       activityType: JOIN_ACTIVITY_TYPE,
-      viewMoreActivitiesText: VIEW_MORE_UPCOMING_ACTIVITIES_TEXT,
+      viewMoreActivitiesText: activityI18n[VIEW_MORE_UPCOMING_ACTIVITIES],
       buttonPayloadActivityType: UPCOMING_ACTIVITIES_TYPE,
       isOrganizerShown: true,
     });
+  };
 
   getUpdateRemainingVacanciesResponse = async (
     activityId: string,

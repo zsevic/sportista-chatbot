@@ -127,15 +127,19 @@ export class ResolverService {
   };
 
   getUpcomingActivities = async (userId: number, page = FIRST_PAGE) => {
+    const locale = await this.userService.getLocale(userId);
     const activityListData = await this.activityService.getUpcomingActivities(
       userId,
       page,
     );
 
-    return this.responseService.getUpcomingActivitiesResponse({
-      ...activityListData,
-      page,
-    });
+    return this.responseService.getUpcomingActivitiesResponse(
+      {
+        ...activityListData,
+        page,
+      },
+      locale,
+    );
   };
 
   initializeActivity = async (userId: number) => {
