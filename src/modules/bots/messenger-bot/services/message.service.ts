@@ -15,6 +15,11 @@ import { FIRST_PAGE } from 'common/config/constants';
 
 @Injectable()
 export class MessageService {
+  private readonly LOCATION_STATES: string[] = [
+    this.stateService.states.initialize_activity,
+    this.stateService.states.user_location,
+  ];
+
   constructor(
     private readonly responseService: ResponseService,
     private readonly resolverService: ResolverService,
@@ -127,7 +132,7 @@ export class MessageService {
       return this.responseService.getInvalidLocationResponse(locale);
     }
 
-    if (state.current_state === this.stateService.states.user_location) {
+    if (this.LOCATION_STATES.includes(state.current_state)) {
       try {
         const [latitude, longitude] = text.split(',');
         const validationResponse = this.validateLocation([
@@ -143,6 +148,11 @@ export class MessageService {
           +latitude,
           +longitude,
         );
+        if (
+          state.current_state === this.stateService.states.initialize_activity
+        ) {
+          return this.resolverService.initializeActivity(state.user_id);
+        }
         return this.resolverService.getUpcomingActivities(
           state.user_id,
           FIRST_PAGE,

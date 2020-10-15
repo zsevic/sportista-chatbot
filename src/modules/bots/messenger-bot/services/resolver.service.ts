@@ -153,11 +153,20 @@ export class ResolverService {
   };
 
   initializeActivity = async (userId: number) => {
+    const locale = await this.userService.getLocale(userId);
+
+    const userLocation = await this.userService.getLocation(userId);
+    if (!userLocation) {
+      await this.stateService.updateState(userId, {
+        current_state: this.stateService.states.initialize_activity,
+      });
+      return this.responseService.getUserLocationI18n(locale);
+    }
+
     const state = {
       current_state: this.stateService.states.activity_type,
       ...RESET_STATE,
     };
-    const locale = await this.userService.getLocale(userId);
     await this.stateService.updateState(userId, state);
 
     return this.responseService.getInitializeActivityResponse(locale);

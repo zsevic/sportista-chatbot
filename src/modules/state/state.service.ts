@@ -5,6 +5,7 @@ import { StateRepository } from './state.repository';
 @Injectable()
 export class StateService {
   states = {
+    initialize_activity: 'initialize_activity',
     activity_type: 'activity_type',
     datetime: 'datetime',
     location: 'location',
