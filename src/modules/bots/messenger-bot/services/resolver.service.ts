@@ -243,7 +243,8 @@ export class ResolverService {
       await this.userService.updateLocale(userId, locale);
       return this.responseService.getUpdateLocaleSuccessResponse(locale);
     } catch {
-      return this.responseService.getUpdateLocaleFailureResponse(locale);
+      const userLocale = await this.userService.getLocale(userId);
+      return this.responseService.getUpdateLocaleFailureResponse(userLocale);
     }
   };
 

@@ -1,5 +1,8 @@
 import { EntityRepository, Repository, SelectQueryBuilder } from 'typeorm';
-import { LOCATION_RADIUS_METERS } from 'common/config/constants';
+import {
+  I18N_FALLBACKS,
+  LOCATION_RADIUS_METERS,
+} from 'common/config/constants';
 import { classTransformToDto } from 'common/decorators';
 import { ActivityEntity } from 'modules/activity/activity.entity';
 import { ParticipationEntity } from 'modules/participation/participation.entity';
@@ -58,7 +61,11 @@ export class UserRepository extends Repository<UserEntity> {
 
   async updateLocale(userId: number, locale: string): Promise<UserEntity> {
     const user = await this.findOne(userId);
-    if (!user || user.locale === locale) throw new Error('Update failed');
+    const isUpdated =
+      user &&
+      user.locale !== locale &&
+      Object.keys(I18N_FALLBACKS).includes(locale);
+    if (!isUpdated) throw new Error('Update failed');
 
     return this.save({
       ...user,
