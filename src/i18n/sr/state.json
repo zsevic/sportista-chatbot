@@ -6,7 +6,7 @@
   "DATETIME": "📆 Unesi datum i vreme",
   "INVALID_ACTIVITY_TYPE": "Izabrani sport nije ispravan, izaberi jedan od ponuđenih",
   "INVALID_DATETIME": "Vreme nije dobro, pokušaj ponovo",
-  "INVALID_LOCATION": "Lokacija nije dobra, probaj ponovo",
+  "INVALID_LOCATION": "Lokacija treba da bude u krugu od {distance}km, probaj ponovo",
   "INVALID_PRICE": "Cena nije dobra, pokušaj ponovo",
   "INVALID_REMAINING_VACANCIES": "Unesi broj potrebnih igrača",
   "INVALID_USER_LOCATION": "Lokacija nije dobra, probaj ponovo",

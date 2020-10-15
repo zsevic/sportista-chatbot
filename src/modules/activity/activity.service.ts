@@ -103,6 +103,13 @@ export class ActivityService {
   ): Promise<Activity> =>
     this.activityRepository.subtractRemainingVacancies(activityId, organizerId);
 
+  validateLocation = async (
+    userId: number,
+    latitude: number,
+    longitude: number,
+  ): Promise<boolean> =>
+    this.userRepository.validateActivityLocation(userId, latitude, longitude);
+
   validateRemainingVacancies = async (activityId: string): Promise<void> =>
     this.activityRepository.validateRemainingVacancies(activityId);
 }

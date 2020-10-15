@@ -1,4 +1,5 @@
 import { EntityRepository, Repository, SelectQueryBuilder } from 'typeorm';
+import { LOCATION_RADIUS_METERS } from 'common/config/constants';
 import { classTransformToDto } from 'common/decorators';
 import { ActivityEntity } from 'modules/activity/activity.entity';
 import { ParticipationEntity } from 'modules/participation/participation.entity';
@@ -53,5 +54,27 @@ export class UserRepository extends Repository<UserEntity> {
     if (!user) return this.save(userDto);
 
     return user;
+  }
+
+  async validateActivityLocation(
+    userId: number,
+    latitude: number,
+    longitude: number,
+  ): Promise<boolean> {
+    const user = await this.createQueryBuilder('user')
+      .leftJoinAndSelect('user.location', 'location')
+      .where('user.id = CAST(:user_id AS bigint)', { user_id: userId })
+      .andWhere(
+        'ST_Distance(ST_Point(location.longitude, location.latitude)::geography, ST_Point(:longitude, :latitude)::geography) < :distance',
+        {
+          latitude,
+          longitude,
+          distance: LOCATION_RADIUS_METERS,
+        },
+      )
+      .getOne();
+    if (!user) return false;
+
+    return true;
   }
 }

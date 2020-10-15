@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { I18nService } from 'nestjs-i18n';
-import { PAGE_SIZE } from 'common/config/constants';
+import { LOCATION_RADIUS_METERS, PAGE_SIZE } from 'common/config/constants';
 import { PaginatedResponse } from 'common/dtos';
 import { formatDatetime } from 'common/utils';
 import { ACTIVITY_TYPES } from 'modules/activity/activity.constants';
@@ -407,7 +407,12 @@ export class ResponseService {
   };
 
   getInvalidLocationResponse = async (lang: string): Promise<string> =>
-    this.i18nService.translate(STATE_INVALID_LOCATION, { lang });
+    this.i18nService.translate(STATE_INVALID_LOCATION, {
+      lang,
+      args: {
+        distance: LOCATION_RADIUS_METERS / 1000,
+      },
+    });
 
   getInvalidPriceResponse = async (lang: string): Promise<string> =>
     this.i18nService.translate(STATE_INVALID_PRICE, { lang });

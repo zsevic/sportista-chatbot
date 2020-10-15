@@ -6,7 +6,7 @@
   "DATETIME": "📆 Fill out the datetime",
   "INVALID_ACTIVITY_TYPE": "Activity type is not valid, try again",
   "INVALID_DATETIME": "Datetime is not good, try again",
-  "INVALID_LOCATION": "Sending location failed, try again",
+  "INVALID_LOCATION": "Location should be in radius of {distance}km, try again",
   "INVALID_PRICE": "Price is not good, try again",
   "INVALID_REMAINING_VACANCIES": "Fill out the number of remaining vacancies",
   "INVALID_USER_LOCATION": "Location is not good, try again",
