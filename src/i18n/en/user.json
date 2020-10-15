@@ -1,5 +1,8 @@
 {
   "REGISTRATION": "📝 Register me",
   "REGISTRATION_FAILURE": "Registration failed",
-  "REGISTRATION_SUCCESS": "Registration succeeded"
+  "REGISTRATION_SUCCESS": "Registration succeeded",
+  "UPDATE_LOCALE": "🗣 Update language",
+  "UPDATE_LOCALE_FAILURE": "Updating failed",
+  "UPDATE_LOCALE_SUCCESS": "Updating succeeded"
 }

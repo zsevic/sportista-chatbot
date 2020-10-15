@@ -5,6 +5,7 @@ import {
   JOINED_ACTIVITIES_PAYLOAD,
   PERSISTENT_MENU,
   UPCOMING_ACTIVITIES_PAYLOAD,
+  UPDATE_LOCALE_PAYLOAD,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { MessengerBotController } from 'modules/bots/messenger-bot/messenger-bot.controller';
 import { GREETING_TEXT } from 'modules/bots/messenger-bot/messenger-bot.constants';
@@ -39,6 +40,10 @@ export class MessengerBotService {
     this.bot.on(
       `postback:${UPCOMING_ACTIVITIES_PAYLOAD}`,
       this.controller.upcomingActivitiesHandler,
+    );
+    this.bot.on(
+      `postback:${UPDATE_LOCALE_PAYLOAD}`,
+      this.controller.updateLocaleHandler,
     );
     this.bot.on('postback', this.controller.postbackHandler);
 

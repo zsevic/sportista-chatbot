@@ -1,5 +1,8 @@
 {
   "REGISTRATION": "📝 Registruj me",
   "REGISTRATION_FAILURE": "Registracija nije uspela, pokušaj ponovo",
-  "REGISTRATION_SUCCESS": "Registracija je uspela"
+  "REGISTRATION_SUCCESS": "Registracija je uspela",
+  "UPDATE_LOCALE": "🗣 Ažuriraj jezik",
+  "UPDATE_LOCALE_FAILURE": "Ažuriranje nije uspelo",
+  "UPDATE_LOCALE_SUCCESS": "Ažuriranje je uspelo"
 }

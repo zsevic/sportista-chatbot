@@ -238,11 +238,16 @@ export class ResolverService {
     }
   };
 
-  updateRemainingVacancies = async (
-    activityId: string,
-    userId: number,
-    locale: string,
-  ) => {
+  updateLocale = async (userId: number, locale: string): Promise<string> => {
+    try {
+      await this.userService.updateLocale(userId, locale);
+      return this.responseService.getUpdateLocaleSuccessResponse(locale);
+    } catch {
+      return this.responseService.getUpdateLocaleFailureResponse(locale);
+    }
+  };
+
+  updateRemainingVacancies = async (activityId: string, locale: string) => {
     return this.responseService.getUpdateRemainingVacanciesResponse(
       activityId,
       locale,

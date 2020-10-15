@@ -80,6 +80,8 @@ import {
   UPDATE_REMAINING_VACANCIES,
   UPDATE_REMAINING_VACANCIES_TYPE,
   USER_REGISTRATION_SUCCESS,
+  USER_UPDATE_LOCALE_FAILURE,
+  USER_UPDATE_LOCALE_SUCCESS,
   VIEW_MORE_CREATED_ACTIVITIES,
   VIEW_MORE_JOINED_ACTIVITIES,
   VIEW_MORE_UPCOMING_ACTIVITIES,
@@ -552,6 +554,12 @@ export class ResponseService {
       lang,
     });
   };
+
+  getUpdateLocaleFailureResponse = async (lang: string): Promise<string> =>
+    this.i18nService.translate(USER_UPDATE_LOCALE_FAILURE, { lang });
+
+  getUpdateLocaleSuccessResponse = async (lang: string): Promise<string> =>
+    this.i18nService.translate(USER_UPDATE_LOCALE_SUCCESS, { lang });
 
   getUpdateRemainingVacanciesResponse = async (
     activityId: string,

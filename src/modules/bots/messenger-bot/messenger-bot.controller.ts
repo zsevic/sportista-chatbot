@@ -105,4 +105,14 @@ export class MessengerBotController {
     );
     return chat.say(response);
   };
+
+  updateLocaleHandler = async (payload, chat) => {
+    const { locale } = await chat.getUserProfile();
+    const response = await this.resolverService.updateLocale(
+      payload.sender.id,
+      locale,
+    );
+
+    return chat.say(response);
+  };
 }

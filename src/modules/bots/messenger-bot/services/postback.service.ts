@@ -104,7 +104,6 @@ export class PostbackService {
       case UPDATE_REMAINING_VACANCIES_TYPE: {
         return this.resolverService.updateRemainingVacancies(
           activity_id.toString(),
-          userId,
           locale,
         );
       }

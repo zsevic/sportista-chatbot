@@ -1,12 +1,15 @@
 import { PROJECT_NAME } from 'common/config/constants';
 import activityI18nEn from 'i18n/en/activity.json';
 import activityI18nSr from 'i18n/sr/activity.json';
+import userI18nEn from 'i18n/en/user.json';
+import userI18nSr from 'i18n/sr/user.json';
 
 export const CREATED_ACTIVITIES_PAYLOAD = 'CREATED_ACTIVITIES_PAYLOAD';
+export const GET_STARTED_PAYLOAD = 'BOOTBOT_GET_STARTED';
 export const INITIALIZE_ACTIVITY_PAYLOAD = 'INITIALIZE_ACTIVITY_PAYLOAD';
 export const JOINED_ACTIVITIES_PAYLOAD = 'JOINED_ACTIVITIES_PAYLOAD';
 export const UPCOMING_ACTIVITIES_PAYLOAD = 'UPCOMING_ACTIVITIES_PAYLOAD';
-export const GET_STARTED_PAYLOAD = 'BOOTBOT_GET_STARTED';
+export const UPDATE_LOCALE_PAYLOAD = 'UPDATE_LOCALE_PAYLOAD';
 
 export const ADD_REMAINING_VACANCIES_TYPE = 'ADD_REMAINING_VACANCIES_TYPE';
 export const RESET_REMAINING_VACANCIES_TYPE = 'RESET_REMAINING_VACANCIES_TYPE';
@@ -132,10 +135,15 @@ export const STATE_INVALID_REMAINING_VACANCIES = `state.${INVALID_REMAINING_VACA
 const INVALID_USER_LOCATION = 'INVALID_USER_LOCATION';
 export const STATE_INVALID_USER_LOCATION = `state.${INVALID_USER_LOCATION}`;
 
+export const UPDATE_LOCALE = 'UPDATE_LOCALE';
 export const REGISTRATION = 'REGISTRATION';
 export const REGISTRATION_FAILURE = 'REGISTRATION_FAILURE';
 const REGISTRATION_SUCCESS = 'REGISTRATION_SUCCESS';
 export const USER_REGISTRATION_SUCCESS = `user.${REGISTRATION_SUCCESS}`;
+const UPDATE_LOCALE_FAILURE = 'UPDATE_LOCALE_FAILURE';
+export const USER_UPDATE_LOCALE_FAILURE = `user.${UPDATE_LOCALE_FAILURE}`;
+const UPDATE_LOCALE_SUCCESS = 'UPDATE_LOCALE_SUCCESS';
+export const USER_UPDATE_LOCALE_SUCCESS = `user.${UPDATE_LOCALE_SUCCESS}`;
 
 const EN_PERSISTENT_MENU = [
   {
@@ -157,6 +165,11 @@ const EN_PERSISTENT_MENU = [
     type: 'postback',
     title: activityI18nEn[INITIALIZE_ACTIVITY],
     payload: INITIALIZE_ACTIVITY_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: userI18nEn[UPDATE_LOCALE],
+    payload: UPDATE_LOCALE_PAYLOAD,
   },
 ];
 
@@ -191,6 +204,11 @@ export const PERSISTENT_MENU = [
         type: 'postback',
         title: activityI18nSr[INITIALIZE_ACTIVITY],
         payload: INITIALIZE_ACTIVITY_PAYLOAD,
+      },
+      {
+        type: 'postback',
+        title: userI18nSr[UPDATE_LOCALE],
+        payload: UPDATE_LOCALE_PAYLOAD,
       },
     ],
   },

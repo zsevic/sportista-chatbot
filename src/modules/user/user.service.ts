@@ -56,4 +56,7 @@ export class UserService {
     await this.userRepository.registerUser(user);
     await this.stateRepository.initializeState(user.id);
   }
+
+  updateLocale = async (userId: number, locale: string): Promise<User> =>
+    this.userRepository.updateLocale(userId, locale);
 }
