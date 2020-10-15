@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
 import { classTransformToDto } from 'common/decorators';
+import { RESET_STATE } from './state.constants';
 import { State } from './state.dto';
 import { StateEntity } from './state.entity';
 
@@ -31,13 +32,7 @@ export class StateRepository extends Repository<StateEntity> {
     return this.save({
       ...state,
       current_state: null,
-      activity_type: null,
-      datetime: null,
-      location_title: null,
-      location_latitude: null,
-      location_longitude: null,
-      price_value: null,
-      remaining_vacancies: null,
+      ...RESET_STATE,
     });
   }
 
