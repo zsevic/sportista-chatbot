@@ -79,6 +79,8 @@ import {
   UPDATED_REMAINING_VACANCIES,
   UPDATE_REMAINING_VACANCIES,
   UPDATE_REMAINING_VACANCIES_TYPE,
+  USER_LOCATION_BUTTON,
+  USER_LOCATION_TEXT,
   USER_REGISTRATION_SUCCESS,
   USER_UPDATE_LOCALE_FAILURE,
   USER_UPDATE_LOCALE_SUCCESS,
@@ -622,7 +624,15 @@ export class ResponseService {
     );
   };
 
-  getUserLocationResponse = (text: string, buttonTitle: string) => {
+  getUserLocationI18n = async (lang: string) => {
+    const userI18n = await this.i18nService.translate('user', { lang });
+    return this.getUserLocationResponse(
+      userI18n[USER_LOCATION_TEXT],
+      userI18n[USER_LOCATION_BUTTON],
+    );
+  };
+
+  private getUserLocationResponse = (text: string, buttonTitle: string) => {
     const url = `${this.configService.get(
       'EXTENSIONS_URL',
     )}/extensions/location`;

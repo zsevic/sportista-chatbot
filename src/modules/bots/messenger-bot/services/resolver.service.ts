@@ -134,10 +134,7 @@ export class ResolverService {
       await this.stateService.updateState(userId, {
         current_state: this.stateService.states.user_location,
       });
-      return this.responseService.getUserLocationResponse(
-        'posalji lokaciju',
-        'unesi lokaciju',
-      );
+      return this.responseService.getUserLocationI18n(locale);
     }
 
     await this.stateService.resetState(userId);
