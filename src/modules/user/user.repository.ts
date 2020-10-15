@@ -30,8 +30,8 @@ export class UserRepository extends Repository<UserEntity> {
   ): Promise<UserEntity[]> {
     return this.createQueryBuilder('user')
       .leftJoin('user.participations', 'participations')
-      .where((qb: SelectQueryBuilder<ActivityEntity>) => {
-        const subQuery = qb
+      .where((queryBuilder: SelectQueryBuilder<ActivityEntity>) => {
+        const subQuery = queryBuilder
           .subQuery()
           .select('activity_id')
           .from(ParticipationEntity, 'participation')

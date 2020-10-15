@@ -20,15 +20,25 @@ import { ActivityEntity } from './activity.entity';
 export class ActivityRepository extends Repository<ActivityEntity> {
   @methodTransformToDto(Activity)
   async addRemainingVacancies(
-    activityId: string,
-    organizerId?: number,
+    activity_id: string,
+    organizer_id?: number,
   ): Promise<ActivityEntity> {
-    const activity = await this.findOne({
-      where: {
-        id: activityId,
-        ...(organizerId && { organizer_id: organizerId }),
-      },
-    });
+    let queryBuilder = this.createQueryBuilder('activity')
+      .where('activity.id = CAST(:activity_id as uuid)', { activity_id })
+      .andWhere('activity.datetime > :now', {
+        now: new Date().toDateString(),
+      });
+
+    if (organizer_id) {
+      queryBuilder = queryBuilder.andWhere(
+        'activity.organizer = CAST(:organizer_id AS bigint)',
+        {
+          organizer_id,
+        },
+      );
+    }
+
+    const activity = await queryBuilder.getOne();
     if (!activity) throw new Error('Activity is not valid');
 
     return this.save({
@@ -38,12 +48,16 @@ export class ActivityRepository extends Repository<ActivityEntity> {
   }
 
   cancelActivity = async (id: string, organizer_id: number): Promise<void> => {
-    const activity = await this.findOne({
-      where: {
-        id,
+    const activity = await this.createQueryBuilder('activity')
+      .where('activity.id = CAST(:id AS uuid)', { id })
+      .andWhere('activity.organizer_id = CAST(:organizer_id AS bigint)', {
         organizer_id,
-      },
-    });
+      })
+      .andWhere('activity.datetime > :now', {
+        now: new Date().toDateString(),
+      })
+      .getOne();
+
     if (!activity) throw new Error('Activity is not valid');
 
     await this.softRemove(activity);
@@ -65,6 +79,9 @@ export class ActivityRepository extends Repository<ActivityEntity> {
       .leftJoinAndSelect('activity.location', 'location')
       .leftJoinAndSelect('activity.price', 'price')
       .where({ organizer_id })
+      .andWhere('activity.datetime > :now', {
+        now: new Date().toDateString(),
+      })
       .orderBy('activity.datetime', 'ASC')
       .skip(skip)
       .take(PAGE_SIZE)
@@ -88,8 +105,8 @@ export class ActivityRepository extends Repository<ActivityEntity> {
       .leftJoinAndSelect('activity.price', 'price')
       .leftJoin('activity.participants', 'participants')
       .where('participants.id = CAST(:user_id AS bigint)', { user_id })
-      .andWhere((qb: SelectQueryBuilder<ActivityEntity>) => {
-        const subQuery = qb
+      .andWhere((queryBuilder: SelectQueryBuilder<ActivityEntity>) => {
+        const subQuery = queryBuilder
           .subQuery()
           .select('activity_id')
           .from(ParticipationEntity, 'participation')
@@ -100,6 +117,9 @@ export class ActivityRepository extends Repository<ActivityEntity> {
         return `activity.id IN ${subQuery}`;
       })
       .andWhere('activity.deleted_at IS NULL')
+      .andWhere('activity.datetime > :now', {
+        now: new Date().toDateString(),
+      })
       .orderBy('activity.datetime', 'ASC')
       .skip(skip)
       .take(PAGE_SIZE)
@@ -121,8 +141,8 @@ export class ActivityRepository extends Repository<ActivityEntity> {
     const [results, total] = await this.createQueryBuilder('activity')
       .leftJoinAndSelect('activity.location', 'location')
       .leftJoinAndSelect('activity.price', 'price')
-      .where((qb: SelectQueryBuilder<ActivityEntity>) => {
-        const subQuery = qb
+      .where((queryBuilder: SelectQueryBuilder<ActivityEntity>) => {
+        const subQuery = queryBuilder
           .subQuery()
           .select('activity_id')
           .from(ParticipationEntity, 'participation')
@@ -159,15 +179,19 @@ export class ActivityRepository extends Repository<ActivityEntity> {
 
   @methodTransformToDto(Activity)
   async resetRemainingVacancies(
-    activityId: string,
-    organizerId: number,
+    activity_id: string,
+    organizer_id: number,
   ): Promise<ActivityEntity> {
-    const activity = await this.findOne({
-      where: {
-        id: activityId,
-        organizer_id: organizerId,
-      },
-    });
+    const activity = await this.createQueryBuilder('activity')
+      .where('activity.id = CAST(:activity_id as uuid)', { activity_id })
+      .andWhere('activity.organizer_id = CAST(:organizer_id AS bigint)', {
+        organizer_id,
+      })
+      .andWhere('activity.datetime > :now', {
+        now: new Date().toDateString(),
+      })
+      .getOne();
+
     if (!activity) throw new Error('Activity is not valid');
 
     return this.save({
@@ -178,16 +202,24 @@ export class ActivityRepository extends Repository<ActivityEntity> {
 
   @methodTransformToDto(Activity)
   async subtractRemainingVacancies(
-    activityId: string,
-    organizerId?: number,
+    activity_id: string,
+    organizer_id?: number,
   ): Promise<ActivityEntity> {
-    const activity = await this.findOne({
-      where: {
-        id: activityId,
-        remaining_vacancies: MoreThan(0),
-        ...(organizerId && { organizer_id: organizerId }),
-      },
-    });
+    let queryBuilder = this.createQueryBuilder('activity')
+      .where('activity.id = CAST(:activity_id AS uuid)', { activity_id })
+      .andWhere('activity.remaining_vacancies > 0')
+      .andWhere('activity.datetime > :now', {
+        now: new Date().toDateString(),
+      });
+
+    if (organizer_id) {
+      queryBuilder = queryBuilder.andWhere(
+        'activity.organizer_id = CAST(:organizer_id as bigint)',
+        { organizer_id },
+      );
+    }
+
+    const activity = await queryBuilder.getOne();
     if (!activity) throw new Error('Activity is not valid');
 
     return this.save({
@@ -196,11 +228,15 @@ export class ActivityRepository extends Repository<ActivityEntity> {
     });
   }
 
-  validateRemainingVacancies = async (activityId: string): Promise<void> => {
-    const activity = await this.findOne({
-      id: activityId,
-      remaining_vacancies: MoreThan(0),
-    });
+  validateRemainingVacancies = async (activity_id: string): Promise<void> => {
+    const activity = await this.createQueryBuilder('activity')
+      .where('activity.id = CAST(:activity_id AS uuid)', { activity_id })
+      .andWhere('activity.remaining_vacancies > 0')
+      .andWhere('activity.datetime > :now', {
+        now: new Date().toDateString(),
+      })
+      .getOne();
+
     if (!activity) throw new Error('Remaining vacancies value is not valid');
 
     return Promise.resolve();

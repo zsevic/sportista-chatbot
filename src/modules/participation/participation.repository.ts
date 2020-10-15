@@ -12,12 +12,15 @@ export class ParticipationRepository extends Repository<ParticipationEntity> {
     activity_id: string,
     participant_id: number,
   ): Promise<void> => {
-    const participation = await this.findOne({
-      where: {
-        activity_id,
-        participant_id,
-      },
-    });
+    const participation = await this.createQueryBuilder('participation')
+      .leftJoin('participation.activity', 'activity')
+      .leftJoin('participation.participant', 'participant')
+      .where('activity.id = CAST(:id AS uuid)', { id: activity_id })
+      .andWhere('participant.id = CAST(:id AS bigint)', { id: participant_id })
+      .andWhere('activity.datetime > :now', {
+        now: new Date().toDateString(),
+      })
+      .getOne();
     if (!participation) throw new Error("Participation doesn't exist");
 
     await this.softRemove(participation);
@@ -29,10 +32,22 @@ export class ParticipationRepository extends Repository<ParticipationEntity> {
     activity_id: string,
     participant_id: number,
   ): Promise<ParticipationEntity> {
-    const participation = await this.findOne({
-      where: { activity_id, participant_id },
-      withDeleted: true,
-    });
+    const participation = await this.createQueryBuilder('participation')
+      .leftJoinAndSelect('participation.activity', 'activity')
+      .leftJoin('participation.participant', 'participant')
+      .where('participation.activity_id = CAST(:activity_id AS uuid)', {
+        activity_id,
+      })
+      .andWhere(
+        'participation.participant_id = CAST(:participant_id AS uuid)',
+        { participant_id },
+      )
+      .andWhere('activity.datetime > :now', {
+        now: new Date().toDateString(),
+      })
+      .withDeleted()
+      .getOne();
+
     if (participation) {
       this.logger.log(
         `User ${participant_id} already joined activity ${activity_id}`,

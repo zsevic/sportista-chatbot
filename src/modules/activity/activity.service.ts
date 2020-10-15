@@ -86,7 +86,7 @@ export class ActivityService {
 
   @Transactional()
   async joinActivity(activityId: string, userId: number): Promise<void> {
-    await this.validateRemainingVacancies(activityId);
+    await this.activityRepository.validateRemainingVacancies(activityId);
     await this.participationRepository.createParticipation(activityId, userId);
     await this.activityRepository.subtractRemainingVacancies(activityId);
   }
@@ -109,7 +109,4 @@ export class ActivityService {
     longitude: number,
   ): Promise<boolean> =>
     this.userRepository.validateActivityLocation(userId, latitude, longitude);
-
-  validateRemainingVacancies = async (activityId: string): Promise<void> =>
-    this.activityRepository.validateRemainingVacancies(activityId);
 }
