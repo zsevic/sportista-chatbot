@@ -35,6 +35,7 @@ import {
   GET_STARTED_PAYLOAD,
   INITIALIZE_ACTIVITY,
   INITIALIZE_ACTIVITY_PAYLOAD,
+  INVALID_USER_LOCATION,
   INVALID_DATETIME,
   JOINED_ACTIVITIES,
   JOINED_ACTIVITIES_PAYLOAD,
@@ -70,7 +71,6 @@ import {
   STATE_INVALID_LOCATION,
   STATE_INVALID_PRICE,
   STATE_INVALID_REMAINING_VACANCIES,
-  STATE_INVALID_USER_LOCATION,
   SUBTRACT_REMAINING_VACANCIES,
   SUBTRACT_REMAINING_VACANCIES_TYPE,
   UPCOMING_ACTIVITIES,
@@ -426,8 +426,14 @@ export class ResponseService {
   ): Promise<string> =>
     this.i18nService.translate(STATE_INVALID_REMAINING_VACANCIES, { lang });
 
-  getInvalidUserLocationResponse = async (lang: string): Promise<string> =>
-    this.i18nService.translate(STATE_INVALID_USER_LOCATION, { lang });
+  getInvalidUserLocationResponse = async (lang: string) => {
+    const userI18n = await this.i18nService.translate('user', { lang });
+
+    return this.getUserLocationResponse(
+      userI18n[INVALID_USER_LOCATION],
+      userI18n[USER_LOCATION_BUTTON],
+    );
+  };
 
   getJoinActivityFailureResponse = async (lang: string): Promise<string> =>
     this.i18nService.translate(ACTIVITY_JOIN_ACTIVITY_FAILURE, {

@@ -1,4 +1,5 @@
 {
+  "INVALID_USER_LOCATION": "Lokacija nije dobra, probaj ponovo",
   "REGISTRATION": "📝 Registruj me",
   "REGISTRATION_FAILURE": "Registracija nije uspela, pokušaj ponovo",
   "REGISTRATION_SUCCESS": "Registracija je uspela",

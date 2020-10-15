@@ -130,7 +130,14 @@ export class MessageService {
     if (state.current_state === this.stateService.states.user_location) {
       try {
         const [latitude, longitude] = text.split(',');
-        await this.validateLocation([+latitude, +longitude], locale);
+        const validationResponse = this.validateLocation([
+          +latitude,
+          +longitude,
+        ]);
+        if (validationResponse) {
+          return this.responseService.getInvalidUserLocationResponse(locale);
+        }
+
         await this.userService.createLocation(
           state.user_id,
           +latitude,
@@ -146,16 +153,11 @@ export class MessageService {
     }
   };
 
-  validateLocation = async (coordinates: number[], locale: string) => {
-    const coords = coordinates.map(
-      (coordinate: number): Promise<string> => {
-        if (Number.isNaN(coordinate) || Math.sign(coordinate) !== 1) {
-          return this.responseService.getInvalidUserLocationResponse(locale);
-        }
-      },
+  validateLocation = (coordinates: number[]): boolean =>
+    coordinates.some(
+      (coordinate: number): boolean =>
+        Number.isNaN(coordinate) || Math.sign(coordinate) !== 1,
     );
-    return Promise.all(coords);
-  };
 
   validateRemainingVacancies = async (
     text: number,

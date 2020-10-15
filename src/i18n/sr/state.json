@@ -9,7 +9,6 @@
   "INVALID_LOCATION": "Lokacija treba da bude u krugu od {distance}km, probaj ponovo",
   "INVALID_PRICE": "Cena nije dobra, pokušaj ponovo",
   "INVALID_REMAINING_VACANCIES": "Unesi broj potrebnih igrača",
-  "INVALID_USER_LOCATION": "Lokacija nije dobra, probaj ponovo",
   "LOCATION_INSTRUCTION": "Sa leve strane klikni na 4 tačkice i izaberi lokaciju",
   "LOCATION_QUESTION": "Gde se igra? Pošalji lokaciju",
   "PRICE_QUESTION": "Koliko plaća svaki igrač?",

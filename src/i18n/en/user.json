@@ -1,4 +1,5 @@
 {
+  "INVALID_USER_LOCATION": "Location is not good, try again",
   "REGISTRATION": "📝 Register me",
   "REGISTRATION_FAILURE": "Registration failed",
   "REGISTRATION_SUCCESS": "Registration succeeded",
