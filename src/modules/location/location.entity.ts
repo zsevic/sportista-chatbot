@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { ActivityEntity } from 'modules/activity/activity.entity';
+import { UserEntity } from 'modules/user/user.entity';
 
 @Entity('location')
 export class LocationEntity {
@@ -30,4 +31,7 @@ export class LocationEntity {
 
   @OneToMany(() => ActivityEntity, (activityEntity) => activityEntity.location)
   activities: ActivityEntity[];
+
+  @OneToMany(() => UserEntity, (userEntity) => userEntity.location)
+  users: UserEntity[];
 }

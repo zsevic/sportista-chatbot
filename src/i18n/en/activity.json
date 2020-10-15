@@ -12,7 +12,7 @@
   "CANCEL_PARTICIPATION_FAILURE": "Canceling participation failed",
   "CANCEL_PARTICIPATION_SUCCESS": "Canceling participation succeeded",
   "CREATED_ACTIVITIES": "📑 Check who applied",
-  "INITIALIZE_ACTIVITY": "🗓 Find missing players",
+  "INITIALIZE_ACTIVITY": "🗓 Find playmates",
   "JOIN_ACTIVITY": "Apply",
   "JOIN_ACTIVITY_SUCCESS": "Joining succeeded",
   "JOIN_ACTIVITY_FAILURE": "Joining failed",

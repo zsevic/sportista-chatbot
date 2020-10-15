@@ -4,9 +4,13 @@ import {
   Repository,
   SelectQueryBuilder,
 } from 'typeorm';
-import { FIRST_PAGE, PAGE_SIZE } from 'common/config/constants';
+import {
+  FIRST_PAGE,
+  LOCATION_RADIUS_METERS,
+  PAGE_SIZE,
+} from 'common/config/constants';
 import { methodTransformToDto } from 'common/decorators';
-import { PaginatedResponse } from 'common/dtos';
+import { PaginatedResponse, UserLocation } from 'common/dtos';
 import { getSkip } from 'common/utils';
 import { ParticipationEntity } from 'modules/participation/participation.entity';
 import { Activity } from './activity.dto';
@@ -110,7 +114,7 @@ export class ActivityRepository extends Repository<ActivityEntity> {
 
   @methodTransformToDto(Activity, true)
   async getUpcomingActivities(
-    user_id: number,
+    userLocation: UserLocation,
     page = FIRST_PAGE,
   ): Promise<PaginatedResponse<ActivityEntity>> {
     const skip = getSkip(page);
@@ -123,12 +127,20 @@ export class ActivityRepository extends Repository<ActivityEntity> {
           .select('activity_id')
           .from(ParticipationEntity, 'participation')
           .where('participation.participant_id = CAST(:user_id AS bigint)', {
-            user_id,
+            user_id: userLocation.userId,
           })
           .withDeleted()
           .getQuery();
         return `activity.id NOT IN ${subQuery}`;
       })
+      .andWhere(
+        'ST_Distance(ST_Point(location.longitude, location.latitude)::geography, ST_Point(:longitude, :latitude)::geography) < :distance',
+        {
+          latitude: userLocation.latitude,
+          longitude: userLocation.longitude,
+          distance: LOCATION_RADIUS_METERS,
+        },
+      )
       .andWhere('activity.remaining_vacancies > 0')
       .andWhere('activity.datetime > :now', {
         now: new Date().toDateString(),

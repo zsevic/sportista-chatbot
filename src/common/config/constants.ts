@@ -14,5 +14,6 @@ export const I18N_FALLBACKS = {
 export const FIRST_PAGE = 1;
 export const PAGE_SIZE = 10;
 export const PROJECT_NAME = 'Sportista.fit';
+export const LOCATION_RADIUS_METERS = 5000;
 
 export const NODEGEOCODER_PROVIDER = 'openstreetmap';

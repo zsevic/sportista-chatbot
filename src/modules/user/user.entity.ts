@@ -2,13 +2,16 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToMany,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { ActivityEntity } from 'modules/activity/activity.entity';
+import { LocationEntity } from 'modules/location/location.entity';
 import { StateEntity } from 'modules/state/state.entity';
 
 @Entity('user')
@@ -45,12 +48,16 @@ export class UserEntity {
   @OneToMany(() => ActivityEntity, (activityEntity) => activityEntity.organizer)
   activities: ActivityEntity[];
 
-  @OneToOne(() => StateEntity, (stateEntity) => stateEntity.user)
-  state: StateEntity;
+  @ManyToOne(() => LocationEntity, (locationEntity) => locationEntity.users)
+  @JoinColumn({ name: 'location_id' })
+  location: LocationEntity;
 
   @ManyToMany(
     () => ActivityEntity,
     (activityEntity) => activityEntity.participants,
   )
   participations: ActivityEntity[];
+
+  @OneToOne(() => StateEntity, (stateEntity) => stateEntity.user)
+  state: StateEntity;
 }

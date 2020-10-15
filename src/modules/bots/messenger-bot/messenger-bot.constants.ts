@@ -28,7 +28,7 @@ export const UPCOMING_ACTIVITIES_TYPE = 'UPCOMING_ACTIVITIES_TYPE';
 const DEFAULT_LOCALE = 'default';
 const EN_GB_LOCALE = 'en_GB';
 const EN_US_LOCALE = 'en_US';
-const EN_GREETING_TEXT = `Hi! With ${PROJECT_NAME} you can find missing players or join some game`;
+const EN_GREETING_TEXT = `Hi! With ${PROJECT_NAME} you can find missing playmates or join some game`;
 export const GREETING_TEXT = [
   {
     locale: EN_GB_LOCALE,

@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { FIRST_PAGE } from 'common/config/constants';
-import { PaginatedResponse } from 'common/dtos';
+import { PaginatedResponse, UserLocation } from 'common/dtos';
 import { LocationService } from 'modules/location/location.service';
 import { ParticipationRepository } from 'modules/participation/participation.repository';
 import { StateRepository } from 'modules/state/state.repository';
+import { UserRepository } from 'modules/user/user.repository';
 import { DEFAULT_PRICE_CURRENCY } from './activity.constants';
 import { Activity } from './activity.dto';
 import { ActivityRepository } from './activity.repository';
@@ -18,6 +19,7 @@ export class ActivityService {
     private readonly participationRepository: ParticipationRepository,
     private readonly priceRepository: PriceRepository,
     private readonly stateRepository: StateRepository,
+    private readonly userRepository: UserRepository,
   ) {}
 
   addRemainingVacancies = async (
@@ -66,11 +68,21 @@ export class ActivityService {
   ): Promise<PaginatedResponse<Activity>> =>
     this.activityRepository.getJoinedActivities(participantId, page);
 
-  getUpcomingActivities = async (
+  @Transactional()
+  async getUpcomingActivities(
     userId: number,
     page = FIRST_PAGE,
-  ): Promise<PaginatedResponse<Activity>> =>
-    this.activityRepository.getUpcomingActivities(userId, page);
+  ): Promise<PaginatedResponse<Activity>> {
+    const { location } = await this.userRepository.findOne(userId, {
+      relations: ['location'],
+    });
+    const userLocation: UserLocation = {
+      latitude: location.latitude,
+      longitude: location.longitude,
+      userId,
+    };
+    return this.activityRepository.getUpcomingActivities(userLocation, page);
+  }
 
   @Transactional()
   async joinActivity(activityId: string, userId: number): Promise<void> {
