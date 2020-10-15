@@ -11,6 +11,7 @@ import { StateService } from 'modules/state/state.service';
 import { UserService } from 'modules/user/user.service';
 import { ResolverService } from './resolver.service';
 import { ResponseService } from './response.service';
+import { FIRST_PAGE } from 'common/config/constants';
 
 @Injectable()
 export class MessageService {
@@ -108,10 +109,6 @@ export class MessageService {
       }
     }
 
-    if (state.current_state === this.stateService.states.location) {
-      return this.responseService.getInvalidLocationResponse(locale);
-    }
-
     if (
       state.current_state === this.stateService.states.datetime &&
       (!isValid(parseISO(text)) || !isAfter(new Date(text), new Date()))
@@ -125,6 +122,39 @@ export class MessageService {
     ) {
       return this.responseService.getInvalidPriceResponse(locale);
     }
+
+    if (state.current_state === this.stateService.states.location) {
+      return this.responseService.getInvalidLocationResponse(locale);
+    }
+
+    if (state.current_state === this.stateService.states.user_location) {
+      try {
+        const [latitude, longitude] = text.split(',');
+        await this.validateLocation([+latitude, +longitude], locale);
+        await this.userService.createLocation(
+          state.user_id,
+          +latitude,
+          +longitude,
+        );
+        return this.resolverService.getUpcomingActivities(
+          state.user_id,
+          FIRST_PAGE,
+        );
+      } catch {
+        return this.responseService.getInvalidUserLocationResponse(locale);
+      }
+    }
+  };
+
+  validateLocation = async (coordinates: number[], locale: string) => {
+    const coords = coordinates.map(
+      (coordinate: number): Promise<string> => {
+        if (Number.isNaN(coordinate) || Math.sign(coordinate) !== 1) {
+          return this.responseService.getInvalidUserLocationResponse(locale);
+        }
+      },
+    );
+    return Promise.all(coords);
   };
 
   validateRemainingVacancies = async (

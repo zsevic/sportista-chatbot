@@ -18,6 +18,9 @@ export class UserEntity {
   })
   id: number;
 
+  @Column({ nullable: true, type: 'uuid' })
+  location_id?: string;
+
   @Column()
   first_name: string;
 

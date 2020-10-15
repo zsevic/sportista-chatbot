@@ -1,7 +1,7 @@
 export class Location {
   id?: string;
 
-  title: string;
+  title?: string;
 
   latitude: number;
 

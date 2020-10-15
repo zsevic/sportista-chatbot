@@ -1,4 +1,5 @@
 import { Controller } from '@nestjs/common';
+import { FIRST_PAGE } from 'common/config/constants';
 import { AttachmentService } from './services/attachment.service';
 import { MessageService } from './services/message.service';
 import { PostbackService } from './services/postback.service';
@@ -100,6 +101,7 @@ export class MessengerBotController {
   upcomingActivitiesHandler = async (payload, chat) => {
     const response = await this.resolverService.getUpcomingActivities(
       payload.sender.id,
+      FIRST_PAGE,
     );
     return chat.say(response);
   };

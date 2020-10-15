@@ -70,6 +70,7 @@ import {
   STATE_INVALID_LOCATION,
   STATE_INVALID_PRICE,
   STATE_INVALID_REMAINING_VACANCIES,
+  STATE_INVALID_USER_LOCATION,
   SUBTRACT_REMAINING_VACANCIES,
   SUBTRACT_REMAINING_VACANCIES_TYPE,
   UPCOMING_ACTIVITIES,
@@ -416,6 +417,9 @@ export class ResponseService {
   ): Promise<string> =>
     this.i18nService.translate(STATE_INVALID_REMAINING_VACANCIES, { lang });
 
+  getInvalidUserLocationResponse = async (lang: string): Promise<string> =>
+    this.i18nService.translate(STATE_INVALID_USER_LOCATION, { lang });
+
   getJoinActivityFailureResponse = async (lang: string): Promise<string> =>
     this.i18nService.translate(ACTIVITY_JOIN_ACTIVITY_FAILURE, {
       lang,
@@ -603,5 +607,24 @@ export class ResponseService {
     return this.messages[currentState].map(
       (message: string): string => stateI18n[message],
     );
+  };
+
+  getUserLocationResponse = (text: string, buttonTitle: string) => {
+    const url = `${this.configService.get(
+      'EXTENSIONS_URL',
+    )}/extensions/location`;
+
+    return {
+      text,
+      buttons: [
+        {
+          type: 'web_url',
+          title: buttonTitle,
+          url,
+          messenger_extensions: true,
+          webview_height_ratio: 'compact',
+        },
+      ],
+    };
   };
 }

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { LocationService } from './services';
 import { LocationRepository } from './location.repository';
+import { LocationService } from './location.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([LocationRepository])],

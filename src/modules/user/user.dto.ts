@@ -1,5 +1,10 @@
+import { Type } from 'class-transformer';
+import { Location } from 'modules/location/location.dto';
+
 export class User {
   id: number;
+
+  location_id?: string;
 
   first_name: string;
 
@@ -10,4 +15,7 @@ export class User {
   last_name: string;
 
   locale: string;
+
+  // @Type(() => Location)
+  // location?: Location;
 }

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../partials/head'); %>
+  </head>
+  <body class="container">
+    <header><%- include('../partials/header'); %></header>
+
+    <main>
+      <div class="jumbotron">
+        Lokacija će biti korišćena za filtriranje aktivnosti
+      </div>
+    </main>
+
+    <footer><%- include('../partials/footer'); %></footer>
+    <script>
+      window.extAsyncInit = async function () {
+        MessengerExtensions.getUserID(
+          function success(uids) {
+            const { psid: user_id } = uids;
+            if (!user_id) return;
+
+            const showPosition = async (position) => {
+              const { latitude, longitude } = position.coords;
+              try {
+                const response = await fetch('/extensions/location', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({ latitude, longitude, user_id }),
+                });
+                if (response.status === 200) {
+                  MessengerExtensions.requestCloseBrowser(
+                    function success() {},
+                    function error(err) {},
+                  );
+                }
+              } catch (error) {
+                console.log(error.message);
+              }
+            };
+
+            const showError = (error) => {
+              switch (error.code) {
+                case error.PERMISSION_DENIED:
+                  console.log('user denied');
+                  break;
+                case error.POSITION_UNAVAILABLE:
+                  console.log('position unavailable');
+                  break;
+                case error.TIMEOUT:
+                  console.log('request timeout');
+                  break;
+                case error.UNKNOWN_ERROR:
+                  console.log('unknown error');
+                  break;
+              }
+            };
+
+            if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+              console.log('not supported');
+            }
+          },
+          function error(err) {
+            console.log(err);
+          },
+        );
+      };
+    </script>
+  </body>
+</html>

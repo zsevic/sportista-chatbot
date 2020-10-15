@@ -126,8 +126,20 @@ export class ResolverService {
     );
   };
 
-  getUpcomingActivities = async (userId: number, page = FIRST_PAGE) => {
+  getUpcomingActivities = async (userId: number, page: number) => {
     const locale = await this.userService.getLocale(userId);
+    const userLocation = await this.userService.getLocation(userId);
+    if (!userLocation) {
+      await this.stateService.updateState(userId, {
+        current_state: this.stateService.states.user_location,
+      });
+      return this.responseService.getUserLocationResponse(
+        'posalji lokaciju',
+        'unesi lokaciju',
+      );
+    }
+
+    await this.stateService.resetState(userId);
     const activityListData = await this.activityService.getUpcomingActivities(
       userId,
       page,

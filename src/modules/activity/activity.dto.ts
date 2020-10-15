@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { Location } from './location/location.dto';
+import { Location } from 'modules/location/location.dto';
 import { Price } from './price/price.dto';
 
 export class Activity {

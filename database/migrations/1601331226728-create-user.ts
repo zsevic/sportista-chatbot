@@ -14,6 +14,11 @@ export class CreateUser1601331226728 implements MigrationInterface {
             isPrimary: true,
           },
           {
+            name: 'location_id',
+            type: 'uuid',
+            isNullable: true,
+          },
+          {
             name: 'first_name',
             type: 'varchar',
           },

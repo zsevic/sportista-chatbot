@@ -8,6 +8,19 @@ import { UserEntity } from './user.entity';
 @EntityRepository(UserEntity)
 @classTransformToDto(User)
 export class UserRepository extends Repository<UserEntity> {
+  async createLocation(
+    userId: number,
+    location_id: string,
+  ): Promise<UserEntity> {
+    const user = await this.findOne(userId);
+    if (!user) throw new Error("User doesn't exist");
+
+    return this.save({
+      ...user,
+      location_id,
+    });
+  }
+
   async getParticipantListByActivity(
     activity_id: string,
   ): Promise<UserEntity[]> {

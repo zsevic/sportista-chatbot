@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { FIRST_PAGE } from 'common/config/constants';
 import { PaginatedResponse } from 'common/dtos';
+import { LocationService } from 'modules/location/location.service';
 import { ParticipationRepository } from 'modules/participation/participation.repository';
 import { StateRepository } from 'modules/state/state.repository';
 import { DEFAULT_PRICE_CURRENCY } from './activity.constants';
 import { Activity } from './activity.dto';
 import { ActivityRepository } from './activity.repository';
-import { LocationService } from './location/services';
 import { PriceRepository } from './price/price.repository';
 
 @Injectable()

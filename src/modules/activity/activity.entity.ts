@@ -10,8 +10,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { LocationEntity } from 'modules/location/location.entity';
 import { UserEntity } from 'modules/user/user.entity';
-import { LocationEntity } from './location/location.entity';
 import { PriceEntity } from './price/price.entity';
 
 @Entity('activity')

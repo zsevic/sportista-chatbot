@@ -1,8 +1,8 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import convert from 'cyrillic-to-latin';
-import { PINNED_LOCATION } from 'modules/activity/location/location.constants';
-import { Location } from 'modules/activity/location/location.dto';
-import { LocationRepository } from 'modules/activity/location/location.repository';
+import { PINNED_LOCATION } from 'modules/location/location.constants';
+import { Location } from 'modules/location/location.dto';
+import { LocationRepository } from 'modules/location/location.repository';
 import { NODE_GEOCODER_OPTIONS_FACTORY } from 'modules/external/node-geocoder';
 
 @Injectable()

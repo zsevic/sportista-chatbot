@@ -11,6 +11,7 @@ export class StateService {
     price: 'price',
     remaining_vacancies: 'remaining_vacancies',
     closing: 'closing',
+    user_location: 'user_location',
   };
 
   nextStates = {
