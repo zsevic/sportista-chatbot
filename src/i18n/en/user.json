@@ -3,6 +3,6 @@
   "REGISTRATION_FAILURE": "Registration failed",
   "REGISTRATION_SUCCESS": "Registration succeeded",
   "UPDATE_LOCALE": "🗣 Update language",
-  "UPDATE_LOCALE_FAILURE": "Updating failed",
+  "UPDATE_LOCALE_FAILURE": "Updating failed, try to change language on Facebook website and try again here",
   "UPDATE_LOCALE_SUCCESS": "Updating succeeded"
 }
