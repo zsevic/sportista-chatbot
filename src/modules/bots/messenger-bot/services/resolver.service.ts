@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { FIRST_PAGE } from 'common/config/constants';
 import { ActivityService } from 'modules/activity/activity.service';
-import { FIRST_PAGE } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { ParticipationService } from 'modules/participation/participation.service';
 import { RESET_STATE } from 'modules/state/state.constants';
 import { State } from 'modules/state/state.dto';

@@ -1,9 +1,4 @@
-import {
-  EntityRepository,
-  MoreThan,
-  Repository,
-  SelectQueryBuilder,
-} from 'typeorm';
+import { EntityRepository, Repository, SelectQueryBuilder } from 'typeorm';
 import {
   FIRST_PAGE,
   LOCATION_RADIUS_METERS,

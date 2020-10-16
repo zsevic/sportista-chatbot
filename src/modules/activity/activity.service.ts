@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { FIRST_PAGE } from 'common/config/constants';
-import { PaginatedResponse, UserLocation } from 'common/dtos';
+import { PaginatedResponse } from 'common/dtos';
 import { LocationService } from 'modules/location/location.service';
 import { ParticipationRepository } from 'modules/participation/participation.repository';
 import { StateRepository } from 'modules/state/state.repository';

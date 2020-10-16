@@ -50,9 +50,6 @@ export const GREETING_TEXT = [
   },
 ];
 
-export const FIRST_PAGE = 1;
-export const PAGE_SIZE = 10;
-
 export const SKIPPED_POSTBACK_PAYLOADS = [
   GET_STARTED_PAYLOAD,
   INITIALIZE_ACTIVITY_PAYLOAD,
