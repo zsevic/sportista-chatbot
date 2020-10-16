@@ -178,7 +178,7 @@ export class ResolverService {
       case this.stateService.states.user_location:
         return this.getUpcomingActivities(state.user_id, FIRST_PAGE);
       default:
-        return this.responseService.getDefaultResponse(locale);
+        return this.responseService.getUpdateLocationSuccessResponse(locale);
     }
   };
 

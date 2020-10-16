@@ -145,6 +145,9 @@ export const REGISTRATION = 'REGISTRATION';
 export const REGISTRATION_FAILURE = 'REGISTRATION_FAILURE';
 const REGISTRATION_SUCCESS = 'REGISTRATION_SUCCESS';
 export const UPDATE_LOCALE = 'UPDATE_LOCALE';
+const UPDATE_LOCATION = 'UPDATE_LOCATION';
+const UPDATE_LOCATION_SUCCESS = 'UPDATE_LOCATION_SUCCESS';
+export const USER_UPDATE_LOCATION_SUCCESS = `user.${UPDATE_LOCATION_SUCCESS}`;
 export const USER_LOCATION_BUTTON = 'USER_LOCATION_BUTTON';
 export const USER_LOCATION_TEXT = 'USER_LOCATION_TEXT';
 export const USER_REGISTRATION_SUCCESS = `user.${REGISTRATION_SUCCESS}`;
@@ -153,6 +156,10 @@ export const USER_UPDATE_LOCALE_FAILURE = `user.${UPDATE_LOCALE_FAILURE}`;
 const UPDATE_LOCALE_SUCCESS = 'UPDATE_LOCALE_SUCCESS';
 export const USER_UPDATE_LOCALE_SUCCESS = `user.${UPDATE_LOCALE_SUCCESS}`;
 
+export const UPDATE_LOCATION_TITLES = [
+  userI18nSr[UPDATE_LOCATION],
+  userI18nEn[UPDATE_LOCATION],
+];
 const EN_PERSISTENT_MENU = [
   {
     type: 'postback',
@@ -173,6 +180,13 @@ const EN_PERSISTENT_MENU = [
     type: 'postback',
     title: activityI18nEn[INITIALIZE_ACTIVITY],
     payload: INITIALIZE_ACTIVITY_PAYLOAD,
+  },
+  {
+    type: 'web_url',
+    title: userI18nEn[UPDATE_LOCATION],
+    url: '',
+    messenger_extensions: true,
+    webview_height_ratio: 'compact',
   },
   {
     type: 'postback',
@@ -201,6 +215,13 @@ const SR_PERSISTENT_MENU = [
     type: 'postback',
     title: activityI18nSr[INITIALIZE_ACTIVITY],
     payload: INITIALIZE_ACTIVITY_PAYLOAD,
+  },
+  {
+    type: 'web_url',
+    title: userI18nSr[UPDATE_LOCATION],
+    url: '',
+    messenger_extensions: true,
+    webview_height_ratio: 'compact',
   },
   {
     type: 'postback',
