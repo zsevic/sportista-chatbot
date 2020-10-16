@@ -88,7 +88,6 @@ export class ActivityService {
       location.longitude,
     );
     if (!isValidLocation) throw new Error('Location is not valid');
-    await this.activityRepository.validateRemainingVacancies(activityId);
     await this.participationRepository.createParticipation(activityId, userId);
     await this.activityRepository.subtractRemainingVacancies(activityId);
   }

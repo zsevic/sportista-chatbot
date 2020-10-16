@@ -227,18 +227,4 @@ export class ActivityRepository extends Repository<ActivityEntity> {
       remaining_vacancies: activity.remaining_vacancies - 1,
     });
   }
-
-  async validateRemainingVacancies(activity_id: string): Promise<void> {
-    const activity = await this.createQueryBuilder('activity')
-      .where('activity.id = CAST(:activity_id AS uuid)', { activity_id })
-      .andWhere('activity.remaining_vacancies > 0')
-      .andWhere('activity.datetime > :now', {
-        now: new Date().toDateString(),
-      })
-      .getOne();
-
-    if (!activity) throw new Error('Remaining vacancies value is not valid');
-
-    return Promise.resolve();
-  }
 }
