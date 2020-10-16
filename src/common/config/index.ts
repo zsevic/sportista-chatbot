@@ -1,5 +1,6 @@
 export default () => ({
   EXTENSIONS_URL: process.env.EXTENSIONS_URL,
+  FB_APP_ID: process.env.FB_APP_ID,
   FB_APP_SECRET: process.env.FB_APP_SECRET,
   FB_PAGE_ACCESS_TOKEN: process.env.FB_PAGE_ACCESS_TOKEN,
   GRAPH_API_VERSION: process.env.GRAPH_API_VERSION || 'v8.0',

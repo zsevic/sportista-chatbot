@@ -8,6 +8,7 @@ import {
   Post,
   Res,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import { USER_LOCATION_TYPE } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { BOOTBOT_OPTIONS_FACTORY } from 'modules/external/bootbot';
@@ -15,7 +16,10 @@ import { DatetimeMessageDto, LocationMessageDto } from './dto';
 
 @Controller('extensions')
 export class ExtensionsController {
-  constructor(@Inject(BOOTBOT_OPTIONS_FACTORY) private readonly bot) {}
+  constructor(
+    @Inject(BOOTBOT_OPTIONS_FACTORY) private readonly bot,
+    private readonly configService: ConfigService,
+  ) {}
 
   @Get('datetime')
   getDatetimePage(@Res() res: Response) {
@@ -46,7 +50,9 @@ export class ExtensionsController {
 
   @Get('location')
   getLocationPage(@Res() res: Response) {
-    return res.render('pages/location.ejs');
+    return res.render('pages/location.ejs', {
+      APP_ID: this.configService.get('FB_APP_ID'),
+    });
   }
 
   @Post('location')

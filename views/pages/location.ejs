@@ -15,9 +15,9 @@
     <footer><%- include('../partials/footer'); %></footer>
     <script>
       window.extAsyncInit = async function () {
-        MessengerExtensions.getUserID(
-          function success(uids) {
-            const { psid: user_id } = uids;
+        MessengerExtensions.getContext(<%= APP_ID %>,
+          function success(result) {
+            const { psid: user_id } = result;
             if (!user_id) return;
 
             const showPosition = async (position) => {
