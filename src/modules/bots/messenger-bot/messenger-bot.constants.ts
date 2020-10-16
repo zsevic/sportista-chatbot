@@ -1,8 +1,4 @@
 import { PROJECT_NAME } from 'common/config/constants';
-import activityI18nEn from 'i18n/en/activity.json';
-import activityI18nSr from 'i18n/sr/activity.json';
-import userI18nEn from 'i18n/en/user.json';
-import userI18nSr from 'i18n/sr/user.json';
 
 export const CREATED_ACTIVITIES_PAYLOAD = 'CREATED_ACTIVITIES_PAYLOAD';
 export const GET_STARTED_PAYLOAD = 'BOOTBOT_GET_STARTED';
@@ -29,10 +25,10 @@ export const PARTICIPANT_LIST_TYPE = 'PARTICIPANT_LIST_TYPE';
 export const UPCOMING_ACTIVITIES_TYPE = 'UPCOMING_ACTIVITIES_TYPE';
 export const USER_LOCATION_TYPE = 'USER_LOCATION_TYPE';
 
-const DEFAULT_LOCALE = 'default';
-const EN_GB_LOCALE = 'en_GB';
-const EN_US_LOCALE = 'en_US';
-const SR_RS_LOCALE = 'sr_RS';
+export const DEFAULT_LOCALE = 'default';
+export const EN_GB_LOCALE = 'en_GB';
+export const EN_US_LOCALE = 'en_US';
+export const SR_RS_LOCALE = 'sr_RS';
 const EN_GREETING_TEXT = `Hi! With ${PROJECT_NAME} you can find missing playmates or join some game`;
 const SR_GREETING_TEXT = `Zdravo! ${PROJECT_NAME} ti pomaže da lakše nađeš igrače ili da se pridružiš timu u zakazanom terminu!`;
 export const GREETING_TEXT = [
@@ -145,7 +141,7 @@ export const REGISTRATION = 'REGISTRATION';
 export const REGISTRATION_FAILURE = 'REGISTRATION_FAILURE';
 const REGISTRATION_SUCCESS = 'REGISTRATION_SUCCESS';
 export const UPDATE_LOCALE = 'UPDATE_LOCALE';
-const UPDATE_LOCATION = 'UPDATE_LOCATION';
+export const UPDATE_LOCATION = 'UPDATE_LOCATION';
 const UPDATE_LOCATION_SUCCESS = 'UPDATE_LOCATION_SUCCESS';
 export const USER_UPDATE_LOCATION_SUCCESS = `user.${UPDATE_LOCATION_SUCCESS}`;
 export const USER_LOCATION_BUTTON = 'USER_LOCATION_BUTTON';
@@ -155,96 +151,3 @@ const UPDATE_LOCALE_FAILURE = 'UPDATE_LOCALE_FAILURE';
 export const USER_UPDATE_LOCALE_FAILURE = `user.${UPDATE_LOCALE_FAILURE}`;
 const UPDATE_LOCALE_SUCCESS = 'UPDATE_LOCALE_SUCCESS';
 export const USER_UPDATE_LOCALE_SUCCESS = `user.${UPDATE_LOCALE_SUCCESS}`;
-
-export const UPDATE_LOCATION_TITLES = [
-  userI18nSr[UPDATE_LOCATION],
-  userI18nEn[UPDATE_LOCATION],
-];
-const EN_PERSISTENT_MENU = [
-  {
-    type: 'postback',
-    title: activityI18nEn[UPCOMING_ACTIVITIES],
-    payload: UPCOMING_ACTIVITIES_PAYLOAD,
-  },
-  {
-    type: 'postback',
-    title: activityI18nEn[JOINED_ACTIVITIES],
-    payload: JOINED_ACTIVITIES_PAYLOAD,
-  },
-  {
-    type: 'postback',
-    title: activityI18nEn[CREATED_ACTIVITIES],
-    payload: CREATED_ACTIVITIES_PAYLOAD,
-  },
-  {
-    type: 'postback',
-    title: activityI18nEn[INITIALIZE_ACTIVITY],
-    payload: INITIALIZE_ACTIVITY_PAYLOAD,
-  },
-  {
-    type: 'web_url',
-    title: userI18nEn[UPDATE_LOCATION],
-    url: '',
-    messenger_extensions: true,
-    webview_height_ratio: 'compact',
-  },
-  {
-    type: 'postback',
-    title: userI18nEn[UPDATE_LOCALE],
-    payload: UPDATE_LOCALE_PAYLOAD,
-  },
-];
-
-const SR_PERSISTENT_MENU = [
-  {
-    type: 'postback',
-    title: activityI18nSr[UPCOMING_ACTIVITIES],
-    payload: UPCOMING_ACTIVITIES_PAYLOAD,
-  },
-  {
-    type: 'postback',
-    title: activityI18nSr[JOINED_ACTIVITIES],
-    payload: JOINED_ACTIVITIES_PAYLOAD,
-  },
-  {
-    type: 'postback',
-    title: activityI18nSr[CREATED_ACTIVITIES],
-    payload: CREATED_ACTIVITIES_PAYLOAD,
-  },
-  {
-    type: 'postback',
-    title: activityI18nSr[INITIALIZE_ACTIVITY],
-    payload: INITIALIZE_ACTIVITY_PAYLOAD,
-  },
-  {
-    type: 'web_url',
-    title: userI18nSr[UPDATE_LOCATION],
-    url: '',
-    messenger_extensions: true,
-    webview_height_ratio: 'compact',
-  },
-  {
-    type: 'postback',
-    title: userI18nSr[UPDATE_LOCALE],
-    payload: UPDATE_LOCALE_PAYLOAD,
-  },
-];
-
-export const PERSISTENT_MENU = [
-  {
-    locale: EN_GB_LOCALE,
-    call_to_actions: EN_PERSISTENT_MENU,
-  },
-  {
-    locale: EN_US_LOCALE,
-    call_to_actions: EN_PERSISTENT_MENU,
-  },
-  {
-    locale: SR_RS_LOCALE,
-    call_to_actions: SR_PERSISTENT_MENU,
-  },
-  {
-    locale: DEFAULT_LOCALE,
-    call_to_actions: SR_PERSISTENT_MENU,
-  },
-];

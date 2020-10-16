@@ -5,10 +5,8 @@ import {
   GREETING_TEXT,
   INITIALIZE_ACTIVITY_PAYLOAD,
   JOINED_ACTIVITIES_PAYLOAD,
-  PERSISTENT_MENU,
   UPCOMING_ACTIVITIES_PAYLOAD,
   UPDATE_LOCALE_PAYLOAD,
-  UPDATE_LOCATION_TITLES,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { MessengerBotController } from 'modules/bots/messenger-bot/messenger-bot.controller';
 import { BOOTBOT_OPTIONS_FACTORY } from 'modules/external/bootbot';
@@ -22,16 +20,7 @@ export class MessengerBotService {
   ) {}
 
   init(): void {
-    const persistentMenu = PERSISTENT_MENU.map((menu) => {
-      const updateLocationIndex = menu.call_to_actions.findIndex((button) =>
-        UPDATE_LOCATION_TITLES.includes(button.title),
-      );
-      menu.call_to_actions[updateLocationIndex].url = `${this.configService.get(
-        'EXTENSIONS_URL',
-      )}/extensions/location`;
-
-      return menu;
-    });
+    const persistentMenu = this.configService.get('persistentMenu');
     this.bot.setGreetingText(GREETING_TEXT);
     this.bot.setGetStartedButton(this.controller.getStartedButtonHandler);
     this.bot.setPersistentMenu(persistentMenu);
