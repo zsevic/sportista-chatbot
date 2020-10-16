@@ -79,12 +79,17 @@ export class ActivityService {
 
   @Transactional()
   async joinActivity(activityId: string, userId: number): Promise<void> {
-    const userLocation = await this.userRepository.getLocation(userId);
-    await this.activityRepository.validateRemainingVacancies(activityId);
-    await this.participationRepository.createParticipation(
-      activityId,
-      userLocation,
+    const { location } = await this.activityRepository.findOne(activityId, {
+      relations: ['location'],
+    });
+    const isValidLocation = await this.userRepository.validateActivityLocation(
+      userId,
+      location.latitude,
+      location.longitude,
     );
+    if (!isValidLocation) throw new Error('Location is not valid');
+    await this.activityRepository.validateRemainingVacancies(activityId);
+    await this.participationRepository.createParticipation(activityId, userId);
     await this.activityRepository.subtractRemainingVacancies(activityId);
   }
 

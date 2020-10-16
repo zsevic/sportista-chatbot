@@ -32,7 +32,7 @@ export class ParticipationRepository extends Repository<ParticipationEntity> {
   @methodTransformToDto(Participation)
   async createParticipation(
     activity_id: string,
-    userLocation: UserLocation,
+    participant_id: number,
   ): Promise<ParticipationEntity> {
     const participation = await this.createQueryBuilder('participation')
       .leftJoinAndSelect('participation.activity', 'activity')
@@ -43,30 +43,19 @@ export class ParticipationRepository extends Repository<ParticipationEntity> {
       })
       .andWhere(
         'participation.participant_id = CAST(:participant_id AS bigint)',
-        { participant_id: userLocation.userId },
+        { participant_id },
       )
-      .andWhere(
-        'ST_Distance(ST_Point(location.longitude, location.latitude)::geography, ST_Point(:longitude, :latitude)::geography) < :distance',
-        {
-          latitude: userLocation.latitude,
-          longitude: userLocation.longitude,
-          distance: LOCATION_RADIUS_METERS,
-        },
-      )
-      .andWhere('activity.datetime > :now', {
-        now: new Date().toDateString(),
-      })
       .withDeleted()
       .getOne();
 
     if (participation) {
       this.logger.log(
-        `User ${userLocation.userId} already joined activity ${activity_id}`,
+        `User ${participant_id} already joined activity ${activity_id}`,
       );
       throw new Error('User already joined the activity');
     }
 
-    return this.save({ activity_id, participant_id: userLocation.userId });
+    return this.save({ activity_id, participant_id });
   }
 
   removeParticipationList = async (activity_id: string): Promise<void> => {
