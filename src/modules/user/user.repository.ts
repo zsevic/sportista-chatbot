@@ -33,8 +33,8 @@ export class UserRepository extends Repository<UserEntity> {
     if (!location) throw new Error("User's location is not set");
 
     const userLocation: UserLocation = {
-      latitude: location.latitude,
-      longitude: location.longitude,
+      latitude: +location.latitude,
+      longitude: +location.longitude,
       userId,
     };
 

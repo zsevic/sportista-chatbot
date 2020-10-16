@@ -42,7 +42,7 @@ export class ParticipationRepository extends Repository<ParticipationEntity> {
         activity_id,
       })
       .andWhere(
-        'participation.participant_id = CAST(:participant_id AS uuid)',
+        'participation.participant_id = CAST(:participant_id AS bigint)',
         { participant_id: userLocation.userId },
       )
       .andWhere(
