@@ -13,6 +13,7 @@ import {
   PostbackService,
   ResolverService,
   ResponseService,
+  ValidationService,
 } from './services';
 
 @Module({
@@ -34,6 +35,7 @@ import {
     PostbackService,
     ResolverService,
     ResponseService,
+    ValidationService,
   ],
   exports: [MessengerBotController, MessengerBotService],
 })

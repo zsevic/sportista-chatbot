@@ -15,6 +15,7 @@ import {
   SUBTRACT_REMAINING_VACANCIES_TYPE,
   UPCOMING_ACTIVITIES_TYPE,
   UPDATE_REMAINING_VACANCIES_TYPE,
+  USER_LOCATION_TYPE,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { ResolverService } from './resolver.service';
 import { ResponseService } from './response.service';
@@ -30,10 +31,14 @@ export class PostbackService {
 
   handlePostback = async (buttonPayload: string, userId: number) => {
     if (SKIPPED_POSTBACK_PAYLOADS.includes(buttonPayload)) return;
-    await this.resolverService.resetState(userId);
 
     const locale = await this.userService.getLocale(userId);
-    const { activity_id, type, page, user_id } = parse(buttonPayload);
+    const { activity_id, type, page, user_id, latitude, longitude } = parse(
+      buttonPayload,
+    );
+    if (type !== USER_LOCATION_TYPE) {
+      await this.resolverService.resetState(userId);
+    }
     switch (type) {
       case ACTIVITY_OPTIONS_TYPE: {
         return this.responseService.getActivityOptionsResponse(
@@ -104,6 +109,14 @@ export class PostbackService {
       case UPDATE_REMAINING_VACANCIES_TYPE: {
         return this.resolverService.updateRemainingVacancies(
           activity_id.toString(),
+          locale,
+        );
+      }
+      case USER_LOCATION_TYPE: {
+        return this.resolverService.getUserLocation(
+          userId,
+          +latitude,
+          +longitude,
           locale,
         );
       }

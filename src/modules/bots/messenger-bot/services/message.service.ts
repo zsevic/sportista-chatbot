@@ -1,37 +1,26 @@
 import { parse } from 'querystring';
 import { Injectable } from '@nestjs/common';
-import { isAfter, isValid, parseISO } from 'date-fns';
-import {
-  ACTIVITY_TYPES,
-  MIN_REMAINING_VACANCIES,
-} from 'modules/activity/activity.constants';
-import { SKIPPED_QUICK_REPLY_PAYLOADS } from 'modules/bots/messenger-bot/messenger-bot.constants';
-import { State } from 'modules/state/state.dto';
 import { StateService } from 'modules/state/state.service';
 import { UserService } from 'modules/user/user.service';
 import { ResolverService } from './resolver.service';
 import { ResponseService } from './response.service';
-import { FIRST_PAGE } from 'common/config/constants';
+import { ValidationService } from './validation.service';
 
 @Injectable()
 export class MessageService {
-  private readonly LOCATION_STATES: string[] = [
-    this.stateService.states.initialize_activity,
-    this.stateService.states.user_location,
-  ];
-
   constructor(
     private readonly responseService: ResponseService,
     private readonly resolverService: ResolverService,
     private readonly stateService: StateService,
     private readonly userService: UserService,
+    private readonly validationService: ValidationService,
   ) {}
 
   handleMessage = async (message: any, userId: number) => {
     const state = await this.resolverService.getCurrentState(userId);
     const locale = await this.userService.getLocale(userId);
 
-    let validationResponse: any = await this.validateMessage(
+    let validationResponse: any = await this.validationService.validateMessage(
       message,
       state,
       locale,
@@ -57,7 +46,10 @@ export class MessageService {
     };
 
     if (updatedState.current_state === this.stateService.states.closing) {
-      validationResponse = await this.validateRemainingVacancies(+text, locale);
+      validationResponse = await this.validationService.validateRemainingVacancies(
+        +text,
+        locale,
+      );
       if (validationResponse) return validationResponse;
 
       const newActivity = {
@@ -88,93 +80,5 @@ export class MessageService {
     }
 
     return response;
-  };
-
-  validateMessage = async (message: any, state: State, locale: string) => {
-    const { quick_reply, text } = message;
-
-    if (!state || !state.current_state) {
-      if (
-        quick_reply?.payload &&
-        SKIPPED_QUICK_REPLY_PAYLOADS.includes(quick_reply.payload)
-      )
-        return;
-      else {
-        return this.responseService.getDefaultResponse(locale);
-      }
-    }
-
-    if (state.current_state === this.stateService.states.activity_type) {
-      const { activity_type } = parse(quick_reply?.payload);
-      if (
-        !activity_type ||
-        !ACTIVITY_TYPES.hasOwnProperty(activity_type.toString())
-      ) {
-        return this.responseService.getInvalidActivityTypeResponse(locale);
-      }
-    }
-
-    if (
-      state.current_state === this.stateService.states.datetime &&
-      (!isValid(parseISO(text)) || !isAfter(new Date(text), new Date()))
-    ) {
-      return this.responseService.getDatetimeQuestionI18n(locale);
-    }
-
-    if (
-      state.current_state === this.stateService.states.price &&
-      (Number.isNaN(text) || Math.sign(+text) !== 1)
-    ) {
-      return this.responseService.getInvalidPriceResponse(locale);
-    }
-
-    if (state.current_state === this.stateService.states.location) {
-      return this.responseService.getInvalidLocationResponse(locale);
-    }
-
-    if (this.LOCATION_STATES.includes(state.current_state)) {
-      try {
-        const [latitude, longitude] = text.split(',');
-        const validationResponse = this.validateLocation([
-          +latitude,
-          +longitude,
-        ]);
-        if (validationResponse) {
-          return this.responseService.getInvalidUserLocationResponse(locale);
-        }
-
-        await this.userService.createLocation(
-          state.user_id,
-          +latitude,
-          +longitude,
-        );
-        if (
-          state.current_state === this.stateService.states.initialize_activity
-        ) {
-          return this.resolverService.initializeActivity(state.user_id);
-        }
-        return this.resolverService.getUpcomingActivities(
-          state.user_id,
-          FIRST_PAGE,
-        );
-      } catch {
-        return this.responseService.getInvalidUserLocationResponse(locale);
-      }
-    }
-  };
-
-  validateLocation = (coordinates: number[]): boolean =>
-    coordinates.some(
-      (coordinate: number): boolean =>
-        Number.isNaN(coordinate) || Math.sign(coordinate) !== 1,
-    );
-
-  validateRemainingVacancies = async (
-    text: number,
-    locale: string,
-  ): Promise<string> => {
-    if (!Number.isInteger(text) || text <= MIN_REMAINING_VACANCIES) {
-      return this.responseService.getInvalidRemainingVacanciesResponse(locale);
-    }
   };
 }

@@ -9,6 +9,7 @@ import {
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { USER_LOCATION_TYPE } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { BOOTBOT_OPTIONS_FACTORY } from 'modules/external/bootbot';
 import { DatetimeMessageDto, LocationMessageDto } from './dto';
 
@@ -59,8 +60,8 @@ export class ExtensionsController {
           messaging: [
             {
               sender: { id: user_id },
-              message: {
-                text: `${latitude},${longitude}`,
+              postback: {
+                payload: `type=${USER_LOCATION_TYPE}&latitude=${latitude}&longitude=${longitude}`,
               },
             },
           ],

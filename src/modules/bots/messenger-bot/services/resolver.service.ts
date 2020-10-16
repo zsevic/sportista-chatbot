@@ -8,6 +8,7 @@ import { StateService } from 'modules/state/state.service';
 import { User } from 'modules/user/user.dto';
 import { UserService } from 'modules/user/user.service';
 import { ResponseService } from './response.service';
+import { ValidationService } from './validation.service';
 
 @Injectable()
 export class ResolverService {
@@ -19,6 +20,7 @@ export class ResolverService {
     private readonly responseService: ResponseService,
     private readonly stateService: StateService,
     private readonly userService: UserService,
+    private readonly validationService: ValidationService,
   ) {}
 
   addRemainingVacancies = async (
@@ -150,6 +152,34 @@ export class ResolverService {
       },
       locale,
     );
+  };
+
+  getUserLocation = async (
+    userId: number,
+    latitude: number,
+    longitude: number,
+    locale: string,
+  ) => {
+    const validationResponse = this.validationService.validateLocation([
+      latitude,
+      longitude,
+    ]);
+    if (validationResponse) {
+      return this.responseService.getInvalidUserLocationResponse(locale);
+    }
+
+    await this.userService.createLocation(userId, latitude, longitude);
+
+    const state = await this.stateService.getCurrentState(userId);
+
+    switch (state.current_state) {
+      case this.stateService.states.initialize_activity:
+        return this.initializeActivity(state.user_id);
+      case this.stateService.states.user_location:
+        return this.getUpcomingActivities(state.user_id, FIRST_PAGE);
+      default:
+        return this.responseService.getDefaultResponse(locale);
+    }
   };
 
   initializeActivity = async (userId: number) => {
