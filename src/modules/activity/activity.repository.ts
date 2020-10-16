@@ -21,7 +21,7 @@ export class ActivityRepository extends Repository<ActivityEntity> {
     let queryBuilder = this.createQueryBuilder('activity')
       .where('activity.id = CAST(:activity_id as uuid)', { activity_id })
       .andWhere('activity.datetime > :now', {
-        now: new Date().toDateString(),
+        now: new Date().toUTCString(),
       });
 
     if (organizer_id) {
@@ -49,7 +49,7 @@ export class ActivityRepository extends Repository<ActivityEntity> {
         organizer_id,
       })
       .andWhere('activity.datetime > :now', {
-        now: new Date().toDateString(),
+        now: new Date().toUTCString(),
       })
       .getOne();
 
@@ -75,7 +75,7 @@ export class ActivityRepository extends Repository<ActivityEntity> {
       .leftJoinAndSelect('activity.price', 'price')
       .where({ organizer_id })
       .andWhere('activity.datetime > :now', {
-        now: new Date().toDateString(),
+        now: new Date().toUTCString(),
       })
       .orderBy('activity.datetime', 'ASC')
       .skip(skip)
@@ -113,7 +113,7 @@ export class ActivityRepository extends Repository<ActivityEntity> {
       })
       .andWhere('activity.deleted_at IS NULL')
       .andWhere('activity.datetime > :now', {
-        now: new Date().toDateString(),
+        now: new Date().toUTCString(),
       })
       .orderBy('activity.datetime', 'ASC')
       .skip(skip)
@@ -158,7 +158,7 @@ export class ActivityRepository extends Repository<ActivityEntity> {
       )
       .andWhere('activity.remaining_vacancies > 0')
       .andWhere('activity.datetime > :now', {
-        now: new Date().toDateString(),
+        now: new Date().toUTCString(),
       })
       .orderBy('activity.datetime', 'ASC')
       .skip(skip)
@@ -183,7 +183,7 @@ export class ActivityRepository extends Repository<ActivityEntity> {
         organizer_id,
       })
       .andWhere('activity.datetime > :now', {
-        now: new Date().toDateString(),
+        now: new Date().toUTCString(),
       })
       .getOne();
 
@@ -204,7 +204,7 @@ export class ActivityRepository extends Repository<ActivityEntity> {
       .where('activity.id = CAST(:activity_id AS uuid)', { activity_id })
       .andWhere('activity.remaining_vacancies > 0')
       .andWhere('activity.datetime > :now', {
-        now: new Date().toDateString(),
+        now: new Date().toUTCString(),
       });
 
     if (organizer_id) {

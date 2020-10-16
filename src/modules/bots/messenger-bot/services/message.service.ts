@@ -18,7 +18,7 @@ export class MessageService {
 
   handleMessage = async (message: any, userId: number) => {
     const state = await this.resolverService.getCurrentState(userId);
-    const locale = await this.userService.getLocale(userId);
+    const { locale, timezone } = await this.userService.getUser(userId);
 
     let validationResponse: any = await this.validationService.validateMessage(
       message,
@@ -53,7 +53,7 @@ export class MessageService {
       if (validationResponse) return validationResponse;
 
       const newActivity = {
-        datetime: state.datetime,
+        datetime: new Date(state.datetime).toUTCString(),
         organizer_id: userId,
         location_title: state.location_title,
         location_latitude: state.location_latitude,
@@ -74,7 +74,7 @@ export class MessageService {
     if (state.current_state === this.stateService.states.datetime) {
       const datetimeConfirmationResponse = await this.responseService.getDatetimeConfirmationResponse(
         text,
-        locale,
+        { lang: locale, timezone },
       );
       return [datetimeConfirmationResponse, response];
     }

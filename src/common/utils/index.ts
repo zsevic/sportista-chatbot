@@ -1,10 +1,16 @@
+import { addHours } from 'date-fns';
 import {
   DATE_LOCALES,
   DEFAULT_DATETIME_LOCALE,
   PAGE_SIZE,
 } from 'common/config/constants';
+import { DateTimeOptions } from 'common/types';
 
-export const formatDatetime = (datetime: string, lang: string): string => {
+export const formatDatetime = (
+  datetime: string,
+  dateTimeOptions: DateTimeOptions,
+): string => {
+  const { lang, timezone } = dateTimeOptions;
   const options = {
     weekday: 'long',
     year: 'numeric',
@@ -13,8 +19,9 @@ export const formatDatetime = (datetime: string, lang: string): string => {
     hour: '2-digit',
     minute: '2-digit',
   };
+  const timezonedDateTime = addHours(new Date(datetime), timezone);
 
-  return new Date(datetime).toLocaleDateString(
+  return new Date(timezonedDateTime).toLocaleDateString(
     DATE_LOCALES[lang] || DATE_LOCALES[DEFAULT_DATETIME_LOCALE],
     options,
   );

@@ -77,7 +77,7 @@ export class ResolverService {
   };
 
   getCreatedActivities = async (userId: number, page = FIRST_PAGE) => {
-    const locale = await this.userService.getLocale(userId);
+    const { locale, timezone } = await this.userService.getUser(userId);
     const activityListData = await this.activityService.getCreatedActivities(
       userId,
       page,
@@ -88,7 +88,7 @@ export class ResolverService {
         ...activityListData,
         page,
       },
-      locale,
+      { lang: locale, timezone },
     );
   };
 
@@ -99,7 +99,7 @@ export class ResolverService {
     this.responseService.getDefaultResponse(locale);
 
   getJoinedActivities = async (userId: number, page = FIRST_PAGE) => {
-    const locale = await this.userService.getLocale(userId);
+    const { locale, timezone } = await this.userService.getUser(userId);
     const activityListData = await this.activityService.getJoinedActivities(
       userId,
       page,
@@ -110,12 +110,12 @@ export class ResolverService {
         ...activityListData,
         page,
       },
-      locale,
+      { lang: locale, timezone },
     );
   };
 
   getOrganizer = async (id: number) => {
-    const organizer = await this.userService.getOrganizer(id);
+    const organizer = await this.userService.getUser(id);
 
     return this.responseService.getOrganizerResponse(organizer);
   };
@@ -129,8 +129,8 @@ export class ResolverService {
     );
   };
 
-  getUpcomingActivities = async (userId: number, page: number) => {
-    const locale = await this.userService.getLocale(userId);
+  getUpcomingActivities = async (userId: number, page = FIRST_PAGE) => {
+    const { locale, timezone } = await this.userService.getUser(userId);
     const userLocation = await this.userService.getLocation(userId);
     if (!userLocation) {
       await this.stateService.updateState(userId, {
@@ -150,7 +150,10 @@ export class ResolverService {
         ...activityListData,
         page,
       },
-      locale,
+      {
+        lang: locale,
+        timezone,
+      },
     );
   };
 

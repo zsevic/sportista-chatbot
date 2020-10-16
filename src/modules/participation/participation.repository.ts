@@ -20,7 +20,7 @@ export class ParticipationRepository extends Repository<ParticipationEntity> {
       .where('activity.id = CAST(:id AS uuid)', { id: activity_id })
       .andWhere('participant.id = CAST(:id AS bigint)', { id: participant_id })
       .andWhere('activity.datetime > :now', {
-        now: new Date().toDateString(),
+        now: new Date().toUTCString(),
       })
       .getOne();
     if (!participation) throw new Error("Participation doesn't exist");

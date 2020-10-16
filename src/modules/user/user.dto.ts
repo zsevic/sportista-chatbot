@@ -16,6 +16,8 @@ export class User {
 
   locale: string;
 
+  timezone: number;
+
   // @Type(() => Location)
   // location?: Location;
 }

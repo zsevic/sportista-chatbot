@@ -1,5 +1,4 @@
 import { Controller } from '@nestjs/common';
-import { FIRST_PAGE } from 'common/config/constants';
 import { AttachmentService } from './services/attachment.service';
 import { MessageService } from './services/message.service';
 import { PostbackService } from './services/postback.service';
@@ -44,6 +43,7 @@ export class MessengerBotController {
       last_name,
       locale,
       profile_pic: image_url,
+      timezone,
     } = await chat.getUserProfile();
     const response = await this.resolverService.registerUser({
       id,
@@ -52,6 +52,7 @@ export class MessengerBotController {
       image_url,
       last_name,
       locale,
+      timezone,
     });
 
     return chat.say(response);
@@ -101,7 +102,6 @@ export class MessengerBotController {
   upcomingActivitiesHandler = async (payload, chat) => {
     const response = await this.resolverService.getUpcomingActivities(
       payload.sender.id,
-      FIRST_PAGE,
     );
     return chat.say(response);
   };

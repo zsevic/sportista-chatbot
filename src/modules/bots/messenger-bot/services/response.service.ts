@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { I18nService } from 'nestjs-i18n';
 import { LOCATION_RADIUS_METERS, PAGE_SIZE } from 'common/config/constants';
 import { PaginatedResponse } from 'common/dtos';
+import { DateTimeOptions } from 'common/types';
 import { formatDatetime } from 'common/utils';
 import { ACTIVITY_TYPES } from 'modules/activity/activity.constants';
 import { Activity } from 'modules/activity/activity.dto';
@@ -124,8 +125,9 @@ export class ResponseService {
     viewMoreActivitiesText,
     buttonPayloadActivityType,
     isOrganizerShown,
-    lang,
+    options,
   }) {
+    const { lang } = options;
     const { results, page, total } = activityListData;
 
     if (results.length === 0) return noActivitiesText;
@@ -136,7 +138,7 @@ export class ResponseService {
         buttonTitle: activityTypeText,
         buttonPayload: `type=${activityType}&activity_id=${activity.id}`,
         isOrganizerShown,
-        lang,
+        options,
       }),
     );
     const cards = await Promise.all(elements);
@@ -235,9 +237,11 @@ export class ResponseService {
 
   getCreatedActivitiesResponse = async (
     activityListData: PaginatedResponse<Activity>,
-    lang: string,
+    options: DateTimeOptions,
   ) => {
-    const activityI18n = await this.i18nService.translate('activity', { lang });
+    const activityI18n = await this.i18nService.translate('activity', {
+      lang: options.lang,
+    });
 
     return this.getActivitiesResponse({
       activityListData,
@@ -247,15 +251,16 @@ export class ResponseService {
       viewMoreActivitiesText: activityI18n[VIEW_MORE_CREATED_ACTIVITIES],
       buttonPayloadActivityType: CREATED_ACTIVITIES_TYPE,
       isOrganizerShown: false,
-      lang,
+      options,
     });
   };
 
   getDatetimeConfirmationResponse = async (
     datetime: string,
-    lang: string,
+    dateTimeOptions: DateTimeOptions,
   ): Promise<string> => {
-    const formattedDatetime = formatDatetime(datetime, lang);
+    const formattedDatetime = formatDatetime(datetime, dateTimeOptions);
+    const { lang } = dateTimeOptions;
     return this.i18nService.translate(STATE_DATETIME_CONFIRMATION, {
       lang,
       args: { datetime: formattedDatetime },
@@ -334,10 +339,10 @@ export class ResponseService {
     buttonTitle,
     buttonPayload,
     isOrganizerShown = true,
-    lang,
+    options,
   }) {
     const activityI18n = await this.i18nService.translate('activity', {
-      lang,
+      lang: options.lang,
       args: {
         remainingVacancies: activity.remaining_vacancies,
         type: activity.type,
@@ -363,7 +368,7 @@ export class ResponseService {
         payload: `type=${ORGANIZER_TYPE}&user_id=${activity.organizer_id}`,
       });
     }
-    const datetime = formatDatetime(activity.datetime, lang);
+    const datetime = formatDatetime(activity.datetime, options);
 
     return {
       title,
@@ -453,9 +458,11 @@ export class ResponseService {
 
   getJoinedActivitiesResponse = async (
     activityListData: PaginatedResponse<Activity>,
-    lang: string,
+    options: DateTimeOptions,
   ) => {
-    const activityI18n = await this.i18nService.translate('activity', { lang });
+    const activityI18n = await this.i18nService.translate('activity', {
+      lang: options.lang,
+    });
 
     return this.getActivitiesResponse({
       activityListData,
@@ -465,7 +472,7 @@ export class ResponseService {
       viewMoreActivitiesText: activityI18n[VIEW_MORE_JOINED_ACTIVITIES],
       buttonPayloadActivityType: JOINED_ACTIVITIES_TYPE,
       isOrganizerShown: true,
-      lang,
+      options,
     });
   };
 
@@ -548,9 +555,11 @@ export class ResponseService {
 
   getUpcomingActivitiesResponse = async (
     activityListData: PaginatedResponse<Activity>,
-    lang: string,
+    options: DateTimeOptions,
   ) => {
-    const activityI18n = await this.i18nService.translate('activity', { lang });
+    const activityI18n = await this.i18nService.translate('activity', {
+      lang: options.lang,
+    });
 
     return this.getActivitiesResponse({
       activityListData,
@@ -560,7 +569,7 @@ export class ResponseService {
       viewMoreActivitiesText: activityI18n[VIEW_MORE_UPCOMING_ACTIVITIES],
       buttonPayloadActivityType: UPCOMING_ACTIVITIES_TYPE,
       isOrganizerShown: true,
-      lang,
+      options,
     });
   };
 

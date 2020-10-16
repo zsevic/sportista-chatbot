@@ -45,9 +45,6 @@ export class UserService {
     return user.location_id;
   };
 
-  getOrganizer = async (id: number): Promise<User> =>
-    this.userRepository.getUser(id);
-
   getParticipantList = async (activityId: string): Promise<User[]> =>
     this.userRepository.getParticipantListByActivity(activityId);
 
@@ -59,4 +56,7 @@ export class UserService {
 
   updateLocale = async (userId: number, locale: string): Promise<User> =>
     this.userRepository.updateLocale(userId, locale);
+
+  getUser = async (id: number): Promise<User> =>
+    this.userRepository.getUser(id);
 }
