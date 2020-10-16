@@ -32,6 +32,7 @@ export class UserService {
     const user = await this.userRepository.findOne(userId, {
       select: ['locale'],
     });
+    if (!user) throw new Error("User doesn't exist");
 
     return user.locale;
   };
@@ -48,6 +49,9 @@ export class UserService {
   getParticipantList = async (activityId: string): Promise<User[]> =>
     this.userRepository.getParticipantListByActivity(activityId);
 
+  getUser = async (id: number): Promise<User> =>
+    this.userRepository.getUser(id);
+
   @Transactional()
   async registerUser(user: User): Promise<void> {
     await this.userRepository.registerUser(user);
@@ -57,6 +61,6 @@ export class UserService {
   updateLocale = async (userId: number, locale: string): Promise<User> =>
     this.userRepository.updateLocale(userId, locale);
 
-  getUser = async (id: number): Promise<User> =>
-    this.userRepository.getUser(id);
+  validateUser = async (id: number): Promise<User> =>
+    this.userRepository.validateUser(id);
 }

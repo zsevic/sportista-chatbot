@@ -110,4 +110,11 @@ export class UserRepository extends Repository<UserEntity> {
 
     return true;
   }
+
+  async validateUser(id: number): Promise<User> {
+    const user = await this.findOne(id);
+    if (!user) return;
+
+    return user;
+  }
 }
