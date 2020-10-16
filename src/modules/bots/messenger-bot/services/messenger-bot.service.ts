@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   CREATED_ACTIVITIES_PAYLOAD,
+  GET_STARTED_PAYLOAD,
   GREETING_TEXT,
   INITIALIZE_ACTIVITY_PAYLOAD,
   JOINED_ACTIVITIES_PAYLOAD,
@@ -25,7 +26,8 @@ export class MessengerBotService {
 
   asyncWrap = (fn) => async (payload, chat) => {
     const user = await this.userService.validateUser(payload.sender.id);
-    if (!user) {
+
+    if (!user && payload?.postback?.payload !== GET_STARTED_PAYLOAD) {
       const { locale } = await chat.getUserProfile();
       const response = await this.responseService.getRegisterUserFailureResponse(
         locale,
