@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { I18nService } from 'nestjs-i18n';
 import { LOCATION_RADIUS_METERS, PAGE_SIZE } from 'common/config/constants';
 import { PaginatedResponse } from 'common/dtos';
-import { DateTimeOptions } from 'common/types';
+import { DatetimeOptions } from 'common/types';
 import { formatDatetime } from 'common/utils';
 import { ACTIVITY_TYPES } from 'modules/activity/activity.constants';
 import { Activity } from 'modules/activity/activity.dto';
@@ -237,7 +237,7 @@ export class ResponseService {
 
   getCreatedActivitiesResponse = async (
     activityListData: PaginatedResponse<Activity>,
-    options: DateTimeOptions,
+    options: DatetimeOptions,
   ) => {
     const activityI18n = await this.i18nService.translate('activity', {
       lang: options.lang,
@@ -257,10 +257,13 @@ export class ResponseService {
 
   getDatetimeConfirmationResponse = async (
     datetime: string,
-    dateTimeOptions: DateTimeOptions,
+    datetimeOptions: DatetimeOptions,
   ): Promise<string> => {
-    const formattedDatetime = formatDatetime(datetime, dateTimeOptions);
-    const { lang } = dateTimeOptions;
+    const formattedDatetime = formatDatetime(datetime, {
+      ...datetimeOptions,
+      isTimezoned: true,
+    });
+    const { lang } = datetimeOptions;
     return this.i18nService.translate(STATE_DATETIME_CONFIRMATION, {
       lang,
       args: { datetime: formattedDatetime },
@@ -458,7 +461,7 @@ export class ResponseService {
 
   getJoinedActivitiesResponse = async (
     activityListData: PaginatedResponse<Activity>,
-    options: DateTimeOptions,
+    options: DatetimeOptions,
   ) => {
     const activityI18n = await this.i18nService.translate('activity', {
       lang: options.lang,
@@ -555,7 +558,7 @@ export class ResponseService {
 
   getUpcomingActivitiesResponse = async (
     activityListData: PaginatedResponse<Activity>,
-    options: DateTimeOptions,
+    options: DatetimeOptions,
   ) => {
     const activityI18n = await this.i18nService.translate('activity', {
       lang: options.lang,

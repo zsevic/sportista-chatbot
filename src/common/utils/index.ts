@@ -4,13 +4,13 @@ import {
   DEFAULT_DATETIME_LOCALE,
   PAGE_SIZE,
 } from 'common/config/constants';
-import { DateTimeOptions } from 'common/types';
+import { DatetimeOptions } from 'common/types';
 
 export const formatDatetime = (
   datetime: string,
-  dateTimeOptions: DateTimeOptions,
+  datetimeOptions: DatetimeOptions,
 ): string => {
-  const { lang, timezone } = dateTimeOptions;
+  const { lang, timezone } = datetimeOptions;
   const options = {
     weekday: 'long',
     year: 'numeric',
@@ -19,9 +19,11 @@ export const formatDatetime = (
     hour: '2-digit',
     minute: '2-digit',
   };
-  const timezonedDateTime = addHours(new Date(datetime), timezone);
+  const timezonedDatetime = datetimeOptions.isTimezoned
+    ? datetime
+    : addHours(new Date(datetime), timezone);
 
-  return new Date(timezonedDateTime).toLocaleDateString(
+  return new Date(timezonedDatetime).toLocaleDateString(
     DATE_LOCALES[lang] || DATE_LOCALES[DEFAULT_DATETIME_LOCALE],
     options,
   );
