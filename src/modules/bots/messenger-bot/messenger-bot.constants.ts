@@ -32,7 +32,9 @@ export const USER_LOCATION_TYPE = 'USER_LOCATION_TYPE';
 const DEFAULT_LOCALE = 'default';
 const EN_GB_LOCALE = 'en_GB';
 const EN_US_LOCALE = 'en_US';
+const SR_RS_LOCALE = 'sr_RS';
 const EN_GREETING_TEXT = `Hi! With ${PROJECT_NAME} you can find missing playmates or join some game`;
+const SR_GREETING_TEXT = `Zdravo! ${PROJECT_NAME} ti pomaže da lakše nađeš igrače ili da se pridružiš timu u zakazanom terminu!`;
 export const GREETING_TEXT = [
   {
     locale: EN_GB_LOCALE,
@@ -43,8 +45,12 @@ export const GREETING_TEXT = [
     text: EN_GREETING_TEXT,
   },
   {
+    locale: SR_RS_LOCALE,
+    text: SR_GREETING_TEXT,
+  },
+  {
     locale: DEFAULT_LOCALE,
-    text: `Zdravo! ${PROJECT_NAME} ti pomaže da lakše nađeš igrače ili da se pridružiš timu u zakazanom terminu!`,
+    text: SR_GREETING_TEXT,
   },
 ];
 
@@ -175,6 +181,34 @@ const EN_PERSISTENT_MENU = [
   },
 ];
 
+const SR_PERSISTENT_MENU = [
+  {
+    type: 'postback',
+    title: activityI18nSr[UPCOMING_ACTIVITIES],
+    payload: UPCOMING_ACTIVITIES_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: activityI18nSr[JOINED_ACTIVITIES],
+    payload: JOINED_ACTIVITIES_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: activityI18nSr[CREATED_ACTIVITIES],
+    payload: CREATED_ACTIVITIES_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: activityI18nSr[INITIALIZE_ACTIVITY],
+    payload: INITIALIZE_ACTIVITY_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: userI18nSr[UPDATE_LOCALE],
+    payload: UPDATE_LOCALE_PAYLOAD,
+  },
+];
+
 export const PERSISTENT_MENU = [
   {
     locale: EN_GB_LOCALE,
@@ -185,33 +219,11 @@ export const PERSISTENT_MENU = [
     call_to_actions: EN_PERSISTENT_MENU,
   },
   {
+    locale: SR_RS_LOCALE,
+    call_to_actions: SR_PERSISTENT_MENU,
+  },
+  {
     locale: DEFAULT_LOCALE,
-    call_to_actions: [
-      {
-        type: 'postback',
-        title: activityI18nSr[UPCOMING_ACTIVITIES],
-        payload: UPCOMING_ACTIVITIES_PAYLOAD,
-      },
-      {
-        type: 'postback',
-        title: activityI18nSr[JOINED_ACTIVITIES],
-        payload: JOINED_ACTIVITIES_PAYLOAD,
-      },
-      {
-        type: 'postback',
-        title: activityI18nSr[CREATED_ACTIVITIES],
-        payload: CREATED_ACTIVITIES_PAYLOAD,
-      },
-      {
-        type: 'postback',
-        title: activityI18nSr[INITIALIZE_ACTIVITY],
-        payload: INITIALIZE_ACTIVITY_PAYLOAD,
-      },
-      {
-        type: 'postback',
-        title: userI18nSr[UPDATE_LOCALE],
-        payload: UPDATE_LOCALE_PAYLOAD,
-      },
-    ],
+    call_to_actions: SR_PERSISTENT_MENU,
   },
 ];
