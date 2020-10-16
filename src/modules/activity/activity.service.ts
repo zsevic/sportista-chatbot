@@ -73,21 +73,18 @@ export class ActivityService {
     userId: number,
     page = FIRST_PAGE,
   ): Promise<PaginatedResponse<Activity>> {
-    const { location } = await this.userRepository.findOne(userId, {
-      relations: ['location'],
-    });
-    const userLocation: UserLocation = {
-      latitude: location.latitude,
-      longitude: location.longitude,
-      userId,
-    };
+    const userLocation = await this.userRepository.getLocation(userId);
     return this.activityRepository.getUpcomingActivities(userLocation, page);
   }
 
   @Transactional()
   async joinActivity(activityId: string, userId: number): Promise<void> {
+    const userLocation = await this.userRepository.getLocation(userId);
     await this.activityRepository.validateRemainingVacancies(activityId);
-    await this.participationRepository.createParticipation(activityId, userId);
+    await this.participationRepository.createParticipation(
+      activityId,
+      userLocation,
+    );
     await this.activityRepository.subtractRemainingVacancies(activityId);
   }
 

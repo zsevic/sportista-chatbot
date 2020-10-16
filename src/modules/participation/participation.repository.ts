@@ -1,6 +1,8 @@
 import { Logger } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
+import { LOCATION_RADIUS_METERS } from 'common/config/constants';
 import { methodTransformToDto } from 'common/decorators';
+import { UserLocation } from 'common/dtos';
 import { Participation } from './participation.dto';
 import { ParticipationEntity } from './participation.entity';
 
@@ -30,17 +32,26 @@ export class ParticipationRepository extends Repository<ParticipationEntity> {
   @methodTransformToDto(Participation)
   async createParticipation(
     activity_id: string,
-    participant_id: number,
+    userLocation: UserLocation,
   ): Promise<ParticipationEntity> {
     const participation = await this.createQueryBuilder('participation')
       .leftJoinAndSelect('participation.activity', 'activity')
       .leftJoin('participation.participant', 'participant')
+      .leftJoinAndSelect('activity.location', 'location')
       .where('participation.activity_id = CAST(:activity_id AS uuid)', {
         activity_id,
       })
       .andWhere(
         'participation.participant_id = CAST(:participant_id AS uuid)',
-        { participant_id },
+        { participant_id: userLocation.userId },
+      )
+      .andWhere(
+        'ST_Distance(ST_Point(location.longitude, location.latitude)::geography, ST_Point(:longitude, :latitude)::geography) < :distance',
+        {
+          latitude: userLocation.latitude,
+          longitude: userLocation.longitude,
+          distance: LOCATION_RADIUS_METERS,
+        },
       )
       .andWhere('activity.datetime > :now', {
         now: new Date().toDateString(),
@@ -50,12 +61,12 @@ export class ParticipationRepository extends Repository<ParticipationEntity> {
 
     if (participation) {
       this.logger.log(
-        `User ${participant_id} already joined activity ${activity_id}`,
+        `User ${userLocation.userId} already joined activity ${activity_id}`,
       );
       throw new Error('User already joined the activity');
     }
 
-    return this.save({ activity_id, participant_id });
+    return this.save({ activity_id, participant_id: userLocation.userId });
   }
 
   removeParticipationList = async (activity_id: string): Promise<void> => {

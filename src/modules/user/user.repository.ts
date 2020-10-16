@@ -4,6 +4,7 @@ import {
   LOCATION_RADIUS_METERS,
 } from 'common/config/constants';
 import { classTransformToDto } from 'common/decorators';
+import { UserLocation } from 'common/dtos';
 import { ActivityEntity } from 'modules/activity/activity.entity';
 import { ParticipationEntity } from 'modules/participation/participation.entity';
 import { User } from './user.dto';
@@ -23,6 +24,21 @@ export class UserRepository extends Repository<UserEntity> {
       ...user,
       location_id,
     });
+  }
+
+  async getLocation(userId: number): Promise<UserLocation> {
+    const { location } = await this.findOne(userId, {
+      relations: ['location'],
+    });
+    if (!location) throw new Error("User's location is not set");
+
+    const userLocation: UserLocation = {
+      latitude: location.latitude,
+      longitude: location.longitude,
+      userId,
+    };
+
+    return userLocation;
   }
 
   async getParticipantListByActivity(
