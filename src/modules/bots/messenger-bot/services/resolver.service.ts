@@ -134,7 +134,7 @@ export class ResolverService {
     const userLocation = await this.userService.getLocation(userId);
     if (!userLocation) {
       await this.stateService.updateState(userId, {
-        current_state: this.stateService.states.user_location,
+        current_state: this.stateService.states.get_upcoming_activities,
       });
       return this.responseService.getUserLocationI18n(locale);
     }
@@ -168,17 +168,21 @@ export class ResolverService {
       return this.responseService.getInvalidUserLocationResponse(locale);
     }
 
-    await this.userService.createLocation(userId, latitude, longitude);
+    try {
+      await this.userService.createLocation(userId, latitude, longitude);
 
-    const state = await this.stateService.getCurrentState(userId);
+      const state = await this.stateService.getCurrentState(userId);
 
-    switch (state.current_state) {
-      case this.stateService.states.initialize_activity:
-        return this.initializeActivity(state.user_id);
-      case this.stateService.states.user_location:
-        return this.getUpcomingActivities(state.user_id, FIRST_PAGE);
-      default:
-        return this.responseService.getUpdateLocationSuccessResponse(locale);
+      switch (state.current_state) {
+        case this.stateService.states.initialize_activity:
+          return this.initializeActivity(state.user_id);
+        case this.stateService.states.get_upcoming_activities:
+          return this.getUpcomingActivities(state.user_id, FIRST_PAGE);
+        default:
+          return this.responseService.getUpdateLocationSuccessResponse(locale);
+      }
+    } catch {
+      return this.responseService.getInvalidUserLocationResponse(locale);
     }
   };
 

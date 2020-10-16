@@ -14,7 +14,7 @@ import { ResponseService } from './response.service';
 export class ValidationService {
   private readonly LOCATION_STATES: string[] = [
     this.stateService.states.initialize_activity,
-    this.stateService.states.user_location,
+    this.stateService.states.get_upcoming_activities,
   ];
 
   constructor(
