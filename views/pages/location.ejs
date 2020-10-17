@@ -42,6 +42,7 @@
             };
 
             const showError = (error) => {
+              console.log(error);
               switch (error.code) {
                 case error.PERMISSION_DENIED:
                   console.log('user denied');
