@@ -23,7 +23,9 @@ export class ExtensionsController {
 
   @Get('datetime')
   getDatetimePage(@Res() res: Response) {
-    return res.render('pages/datetime-picker.ejs');
+    return res.render('pages/datetime-picker.ejs', {
+      APP_ID: this.configService.get('FB_APP_ID'),
+    });
   }
 
   @Post('datetime')
