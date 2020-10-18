@@ -7,9 +7,7 @@
     <header><%- include('../partials/header'); %></header>
 
     <main>
-      <div class="jumbotron">
-        Lokacija će biti korišćena za filtriranje aktivnosti
-      </div>
+      <div class="jumbotron"><%= USER_LOCATION_PAGE_TEXT %></div>
     </main>
 
     <footer><%- include('../partials/footer'); %></footer>
@@ -44,7 +42,7 @@
             const showError = (error) => {
               switch (error.code) {
                 case error.PERMISSION_DENIED:
-                  console.log('user denied');
+                  alert('<%= USER_LOCATION_FAILURE %>');
                   break;
                 case error.POSITION_UNAVAILABLE:
                   console.log('position unavailable');

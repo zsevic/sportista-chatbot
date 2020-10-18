@@ -2,16 +2,22 @@ import {
   Body,
   Controller,
   Get,
-  Header,
   HttpCode,
   HttpStatus,
   Inject,
   Post,
+  Query,
   Res,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
-import { USER_LOCATION_TYPE } from 'modules/bots/messenger-bot/messenger-bot.constants';
+import { I18nService } from 'nestjs-i18n';
+import { I18N_FALLBACK_LANGUAGE } from 'common/config/constants';
+import {
+  USER_LOCATION_FAILURE,
+  USER_LOCATION_PAGE_TEXT,
+  USER_LOCATION_TYPE,
+} from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { BOOTBOT_OPTIONS_FACTORY } from 'modules/external/bootbot';
 import { DatetimeMessageDto, LocationMessageDto } from './dto';
 
@@ -20,6 +26,7 @@ export class ExtensionsController {
   constructor(
     @Inject(BOOTBOT_OPTIONS_FACTORY) private readonly bot,
     private readonly configService: ConfigService,
+    private readonly i18nService: I18nService,
   ) {}
 
   @Get('datetime')
@@ -52,9 +59,13 @@ export class ExtensionsController {
   }
 
   @Get('location')
-  getLocationPage(@Res() res: Response) {
+  async getLocationPage(@Res() res: Response, @Query() query) {
+    const { lang = I18N_FALLBACK_LANGUAGE } = query;
+    const userI18n = await this.i18nService.translate('user', { lang });
     return res.render('pages/location.ejs', {
       APP_ID: this.configService.get('FB_APP_ID'),
+      USER_LOCATION_FAILURE: userI18n[USER_LOCATION_FAILURE],
+      USER_LOCATION_PAGE_TEXT: userI18n[USER_LOCATION_PAGE_TEXT],
     });
   }
 

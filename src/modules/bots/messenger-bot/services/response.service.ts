@@ -446,10 +446,11 @@ export class ResponseService {
   getInvalidUserLocationResponse = async (lang: string) => {
     const userI18n = await this.i18nService.translate('user', { lang });
 
-    return this.getUserLocationResponse(
-      userI18n[INVALID_USER_LOCATION],
-      userI18n[USER_LOCATION_BUTTON],
-    );
+    return this.getUserLocationResponse({
+      text: userI18n[INVALID_USER_LOCATION],
+      buttonTitle: userI18n[USER_LOCATION_BUTTON],
+      lang,
+    });
   };
 
   getJoinActivityFailureResponse = async (lang: string): Promise<string> =>
@@ -672,21 +673,23 @@ export class ResponseService {
 
   getUserLocationI18n = async (lang: string) => {
     const userI18n = await this.i18nService.translate('user', { lang });
-    return this.getUserLocationResponse(
-      userI18n[USER_LOCATION_TEXT],
-      userI18n[USER_LOCATION_BUTTON],
-      userI18n[USER_LOCATION_DESCRIPTION_TEXT],
-    );
+    return this.getUserLocationResponse({
+      text: userI18n[USER_LOCATION_TEXT],
+      buttonTitle: userI18n[USER_LOCATION_BUTTON],
+      descriptionText: userI18n[USER_LOCATION_DESCRIPTION_TEXT],
+      lang,
+    });
   };
 
-  private getUserLocationResponse = (
-    text: string,
-    buttonTitle: string,
-    descriptionText?: string,
-  ) => {
+  private getUserLocationResponse = ({
+    text,
+    buttonTitle,
+    descriptionText = null,
+    lang,
+  }) => {
     const url = `${this.configService.get(
       'EXTENSIONS_URL',
-    )}/extensions/location`;
+    )}/extensions/location?lang=${lang}`;
 
     const response: any = [
       {
