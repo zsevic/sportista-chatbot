@@ -29,8 +29,8 @@ export const DEFAULT_LOCALE = 'default';
 export const EN_GB_LOCALE = 'en_GB';
 export const EN_US_LOCALE = 'en_US';
 export const SR_RS_LOCALE = 'sr_RS';
-const EN_GREETING_TEXT = `Hi! With ${PROJECT_NAME} you can find missing playmates or join some game`;
-const SR_GREETING_TEXT = `Zdravo! ${PROJECT_NAME} ti pomaže da lakše nađeš igrače ili da se pridružiš timu u zakazanom terminu!`;
+const EN_GREETING_TEXT = `Hi! With ${PROJECT_NAME} you can find missing playmates or join some game. Use Messenger app for the best experience with ${PROJECT_NAME}`;
+const SR_GREETING_TEXT = `Zdravo! ${PROJECT_NAME} ti pomaže da lakše nađeš igrače ili da se pridružiš timu u zakazanom terminu! Koristi Messenger aplikaciju za najbolje iskustvo sa ${PROJECT_NAME}`;
 export const GREETING_TEXT = [
   {
     locale: EN_GB_LOCALE,
