@@ -14,6 +14,7 @@ import { Response } from 'express';
 import { I18nService } from 'nestjs-i18n';
 import { I18N_FALLBACK_LANGUAGE } from 'common/config/constants';
 import {
+  STATE_DATETIME_BUTTON,
   USER_LOCATION_FAILURE,
   USER_LOCATION_PAGE_TEXT,
   USER_LOCATION_TYPE,
@@ -30,9 +31,16 @@ export class ExtensionsController {
   ) {}
 
   @Get('datetime')
-  getDatetimePage(@Res() res: Response) {
+  async getDatetimePage(@Res() res: Response, @Query() query) {
+    const { lang = I18N_FALLBACK_LANGUAGE } = query;
+    const datetimeButton = await this.i18nService.translate(
+      STATE_DATETIME_BUTTON,
+      { lang },
+    );
+
     return res.render('pages/datetime-picker.ejs', {
       APP_ID: this.configService.get('FB_APP_ID'),
+      DATETIME_BUTTON: datetimeButton,
     });
   }
 

@@ -35,7 +35,7 @@ import {
   CREATED_ACTIVITIES_PAYLOAD,
   CREATED_ACTIVITIES_TYPE,
   CREATE_ACTIVITY_CLOSING,
-  DATETIME,
+  DATETIME_BUTTON,
   DATETIME_QUESTION,
   GET_STARTED_PAYLOAD,
   INITIALIZE_ACTIVITY,
@@ -107,7 +107,7 @@ import { User } from 'modules/user/user.dto';
 export class ResponseService {
   messages: any = {
     [this.stateService.states.activity_type]: [ACTIVITY_TYPE_QUESTION],
-    [this.stateService.states.datetime]: [DATETIME_QUESTION, DATETIME],
+    [this.stateService.states.datetime]: [DATETIME_QUESTION, DATETIME_BUTTON],
     [this.stateService.states.location]: [
       LOCATION_QUESTION,
       LOCATION_INSTRUCTION,
@@ -282,14 +282,15 @@ export class ResponseService {
     const stateI18n = await this.i18nService.translate('state', { lang });
     return this.getDatetimeQuestion(
       stateI18n[INVALID_DATETIME],
-      stateI18n[DATETIME],
+      stateI18n[DATETIME_BUTTON],
+      lang,
     );
   };
 
-  getDatetimeQuestion = (text: string, buttonTitle: string) => {
+  getDatetimeQuestion = (text: string, buttonTitle: string, lang: string) => {
     const url = `${this.configService.get(
       'EXTENSIONS_URL',
-    )}/extensions/datetime`;
+    )}/extensions/datetime?lang=${lang}`;
 
     return {
       text,
@@ -663,7 +664,8 @@ export class ResponseService {
     if (currentState === this.stateService.states.datetime) {
       return this.getDatetimeQuestion(
         stateI18n[DATETIME_QUESTION],
-        stateI18n[DATETIME],
+        stateI18n[DATETIME_BUTTON],
+        lang,
       );
     }
     return this.messages[currentState].map(

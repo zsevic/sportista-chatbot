@@ -3,7 +3,7 @@
   "CREATE_ACTIVITY_CLOSING": "Thanks for the info, you'll receive a message when someone applies",
   "DATETIME_CONFIRMATION": "Chosen datetime is {datetime}",
   "DATETIME_QUESTION": "What is a planned datetime?",
-  "DATETIME": "📆 Fill out the datetime",
+  "DATETIME_BUTTON": "📆 Fill out the datetime",
   "INVALID_ACTIVITY_TYPE": "Activity type is not valid, try again",
   "INVALID_DATETIME": "Datetime is not good, try again",
   "INVALID_LOCATION": "Location should be in radius of {distance}km, try again",
