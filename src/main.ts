@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { setupApiDocs } from 'common/config/api-docs';
 import { AllExceptionsFilter } from 'common/filters';
-// import { loggerMiddleware } from 'common/middlewares';
+import { sslRedirect } from 'common/middlewares';
 import { CustomValidationPipe } from 'common/pipes';
 import { AppModule } from 'modules/app/app.module';
 
@@ -15,7 +15,7 @@ async function bootstrap(): Promise<void> {
   app.enableShutdownHooks();
   app.get(AppModule).subscribeToShutdown(() => app.close());
 
-  // app.use(loggerMiddleware);
+  app.use(sslRedirect());
   app.setViewEngine('ejs');
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalPipes(
