@@ -52,7 +52,6 @@ export class ExtensionsController {
   }
 
   @Get('location')
-  @Header('Feature-Policy', 'geolocation *')
   getLocationPage(@Res() res: Response) {
     return res.render('pages/location.ejs', {
       APP_ID: this.configService.get('FB_APP_ID'),
