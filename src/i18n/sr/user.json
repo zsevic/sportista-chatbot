@@ -5,6 +5,7 @@
   "REGISTRATION_SUCCESS": "Registracija je uspela",
   "UPDATE_LOCALE": "🗣 Ažuriraj jezik",
   "UPDATE_LOCALE_FAILURE": "Ažuriranje nije uspelo, pokušaj da promeniš jezik na Facebook sajtu pa pokušaj ponovo ovde",
+  "UPDATE_LOCALE_LINK_TEXT": "Promeni jezik na sajtu",
   "UPDATE_LOCALE_SUCCESS": "Ažuriranje je uspelo",
   "UPDATE_LOCATION": "📌 Ažuriraj lokaciju",
   "UPDATE_LOCATION_SUCCESS": "Lokacija je uspešno promenjena",

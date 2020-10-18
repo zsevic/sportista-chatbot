@@ -281,7 +281,7 @@ export class ResolverService {
     }
   };
 
-  updateLocale = async (userId: number, locale: string): Promise<string> => {
+  updateLocale = async (userId: number, locale: string) => {
     try {
       await this.userService.updateLocale(userId, locale);
       return this.responseService.getUpdateLocaleSuccessResponse(locale);

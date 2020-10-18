@@ -5,6 +5,7 @@
   "REGISTRATION_SUCCESS": "Registration succeeded",
   "UPDATE_LOCALE": "🗣 Update language",
   "UPDATE_LOCALE_FAILURE": "Updating failed, try to change language on Facebook website and try again here",
+  "UPDATE_LOCALE_LINK_TEXT": "Update language on the website",
   "UPDATE_LOCALE_SUCCESS": "Updating succeeded",
   "UPDATE_LOCATION": "📌 Update location",
   "UPDATE_LOCATION_SUCCESS": "Location is successfully changed",
