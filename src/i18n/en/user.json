@@ -9,5 +9,6 @@
   "UPDATE_LOCATION": "📌 Update location",
   "UPDATE_LOCATION_SUCCESS": "Location is successfully changed",
   "USER_LOCATION_BUTTON": "📌 Send location",
-  "USER_LOCATION_TEXT": "Send your location"
+  "USER_LOCATION_DESCRIPTION_TEXT": "This information is required for proper activity filtering",
+  "USER_LOCATION_TEXT": "Send your location, use Messenger for this feature and allow location sharing on the phone"
 }

@@ -81,6 +81,7 @@ import {
   UPDATE_REMAINING_VACANCIES,
   UPDATE_REMAINING_VACANCIES_TYPE,
   USER_LOCATION_BUTTON,
+  USER_LOCATION_DESCRIPTION_TEXT,
   USER_LOCATION_TEXT,
   USER_REGISTRATION_SUCCESS,
   USER_UPDATE_LOCALE_FAILURE,
@@ -651,25 +652,35 @@ export class ResponseService {
     return this.getUserLocationResponse(
       userI18n[USER_LOCATION_TEXT],
       userI18n[USER_LOCATION_BUTTON],
+      userI18n[USER_LOCATION_DESCRIPTION_TEXT],
     );
   };
 
-  private getUserLocationResponse = (text: string, buttonTitle: string) => {
+  private getUserLocationResponse = (
+    text: string,
+    buttonTitle: string,
+    descriptionText?: string,
+  ) => {
     const url = `${this.configService.get(
       'EXTENSIONS_URL',
     )}/extensions/location`;
 
-    return {
-      text,
-      buttons: [
-        {
-          type: 'web_url',
-          title: buttonTitle,
-          url,
-          messenger_extensions: true,
-          webview_height_ratio: 'compact',
-        },
-      ],
-    };
+    const response: any = [
+      {
+        text: descriptionText ? descriptionText : text,
+        buttons: [
+          {
+            type: 'web_url',
+            title: buttonTitle,
+            url,
+            messenger_extensions: true,
+            webview_height_ratio: 'compact',
+          },
+        ],
+      },
+    ];
+
+    if (descriptionText) response.unshift(text);
+    return response;
   };
 }

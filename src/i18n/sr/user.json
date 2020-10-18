@@ -9,5 +9,6 @@
   "UPDATE_LOCATION": "📌 Ažuriraj lokaciju",
   "UPDATE_LOCATION_SUCCESS": "Lokacija je uspešno promenjena",
   "USER_LOCATION_BUTTON": "📌 Pošalji lokaciju",
-  "USER_LOCATION_TEXT": "Pošalji svoju lokaciju"
+  "USER_LOCATION_DESCRIPTION_TEXT": "Ova informacija je neophodna za pravilno filtriranje aktivnosti",
+  "USER_LOCATION_TEXT": "Pošalji svoju lokaciju preko Messenger aplikacije i dozvoli korišćenje lokacije na telefonu"
 }
