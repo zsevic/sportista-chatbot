@@ -10,6 +10,7 @@ const options = {
   migrations: ['database/migrations/*.js'],
   migrationsTableName: 'migrations',
   synchronize: false,
+  timezone: 'Z',
 };
 
 export default registerAs('database', () => {

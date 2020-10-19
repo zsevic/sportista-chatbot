@@ -39,6 +39,7 @@
     "class-validator": "^0.12.2",
     "cyrillic-to-latin": "^2.0.0",
     "date-fns": "^2.16.1",
+    "date-fns-tz": "^1.0.12",
     "dotenv": "^8.2.0",
     "ejs": "^3.1.5",
     "geo-tz": "^6.0.0",
