@@ -24,7 +24,9 @@ export class ActivityEntity {
   })
   organizer_id: number;
 
-  @Column()
+  @Column({
+    type: 'timestamp',
+  })
   datetime: string;
 
   @Column({
