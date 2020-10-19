@@ -10,6 +10,7 @@ module.exports = {
       env_production: {
         NODE_ENV: 'production',
         NODE_PATH: './dist/src',
+        TZ: 'UTC',
       },
       exec_mode: 'cluster',
     },

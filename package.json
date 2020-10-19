@@ -17,7 +17,7 @@
     "migrate": "npm run typeorm -- migration:run -c migrations",
     "migrate:down": "npm run typeorm -- migration:revert -c migrations",
     "start": "nest start",
-    "start:dev": "NODE_ENV=development nest start --watch",
+    "start:dev": "NODE_ENV=development TZ=UTC nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "pm2-runtime start pm2.config.js --env production",
     "test": "jest",
