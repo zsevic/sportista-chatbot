@@ -56,7 +56,7 @@ export class ExtensionsController {
             {
               sender: { id: user_id },
               message: {
-                text: datetime,
+                text: new Date(datetime).toISOString(),
               },
             },
           ],

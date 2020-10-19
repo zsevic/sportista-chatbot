@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import geoTz from 'geo-tz';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { PINNED_LOCATION } from 'modules/location/location.constants';
 import { LocationService } from 'modules/location/location.service';
@@ -15,7 +16,7 @@ export class UserService {
   ) {}
 
   @Transactional()
-  async createLocation(
+  async upsertLocation(
     userId: number,
     latitude: number,
     longitude: number,
@@ -25,7 +26,10 @@ export class UserService {
       longitude,
       title: PINNED_LOCATION,
     });
-    await this.userRepository.createLocation(userId, location.id);
+    await this.userRepository.upsertLocation(userId, location.id);
+    const timezone = geoTz(latitude, longitude);
+    if (timezone.length === 0) throw new Error('Timezone is not valid');
+    await this.userRepository.upsertTimezone(userId, timezone[0]);
   }
 
   getLocale = async (userId: number): Promise<string> => {

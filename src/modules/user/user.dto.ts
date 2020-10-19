@@ -1,6 +1,3 @@
-import { Type } from 'class-transformer';
-import { Location } from 'modules/location/location.dto';
-
 export class User {
   id: number;
 
@@ -16,8 +13,5 @@ export class User {
 
   locale: string;
 
-  timezone: number;
-
-  // @Type(() => Location)
-  // location?: Location;
+  timezone?: string;
 }

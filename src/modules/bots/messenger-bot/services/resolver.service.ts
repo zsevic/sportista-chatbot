@@ -172,7 +172,7 @@ export class ResolverService {
     }
 
     try {
-      await this.userService.createLocation(userId, latitude, longitude);
+      await this.userService.upsertLocation(userId, latitude, longitude);
 
       const state = await this.stateService.getCurrentState(userId);
 

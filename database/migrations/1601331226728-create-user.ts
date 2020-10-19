@@ -38,7 +38,8 @@ export class CreateUser1601331226728 implements MigrationInterface {
           },
           {
             name: 'timezone',
-            type: 'int',
+            type: 'varchar',
+            isNullable: true,
           },
           {
             name: 'created_at',

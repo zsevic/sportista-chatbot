@@ -1,8 +1,9 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsISO8601, IsNotEmpty } from 'class-validator';
 
 export class DatetimeMessageDto {
   @IsNotEmpty()
-  datetime: Date;
+  @IsISO8601()
+  datetime: string;
 
   @IsNotEmpty()
   user_id: number;

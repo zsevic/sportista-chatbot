@@ -39,8 +39,10 @@ export class UserEntity {
   @Column()
   locale: string;
 
-  @Column()
-  timezone: number;
+  @Column({
+    nullable: true,
+  })
+  timezone: string;
 
   @CreateDateColumn()
   created_at: Date;

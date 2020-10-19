@@ -53,7 +53,7 @@ export class MessageService {
       if (validationResponse) return validationResponse;
 
       const newActivity = {
-        datetime: new Date(state.datetime).toUTCString(),
+        datetime: state.datetime,
         organizer_id: userId,
         location_title: state.location_title,
         location_latitude: state.location_latitude,

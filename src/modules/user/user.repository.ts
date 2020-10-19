@@ -13,19 +13,6 @@ import { UserEntity } from './user.entity';
 @EntityRepository(UserEntity)
 @classTransformToDto(User)
 export class UserRepository extends Repository<UserEntity> {
-  async createLocation(
-    userId: number,
-    location_id: string,
-  ): Promise<UserEntity> {
-    const user = await this.findOne(userId);
-    if (!user) throw new Error("User doesn't exist");
-
-    return this.save({
-      ...user,
-      location_id,
-    });
-  }
-
   async getLocation(userId: number): Promise<UserLocation> {
     const { location } = await this.findOne(userId, {
       relations: ['location'],
@@ -86,6 +73,33 @@ export class UserRepository extends Repository<UserEntity> {
     return this.save({
       ...user,
       locale,
+    });
+  }
+
+  async upsertLocation(
+    userId: number,
+    location_id: string,
+  ): Promise<UserEntity> {
+    const user = await this.findOne(userId);
+    if (!user) throw new Error("User doesn't exist");
+
+    if (user.location_id === location_id) return user;
+
+    return this.save({
+      ...user,
+      location_id,
+    });
+  }
+
+  async upsertTimezone(userId: number, timezone: string): Promise<UserEntity> {
+    const user = await this.findOne(userId);
+    if (!user) throw new Error("User doesn't exist");
+
+    if (user.timezone === timezone) return user;
+
+    return this.save({
+      ...user,
+      timezone,
     });
   }
 

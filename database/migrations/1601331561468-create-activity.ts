@@ -32,7 +32,7 @@ export class CreateActivity1601331561468 implements MigrationInterface {
           },
           {
             name: 'datetime',
-            type: 'timestamp',
+            type: 'timestamptz',
           },
           {
             name: 'remaining_vacancies',

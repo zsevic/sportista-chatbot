@@ -45,7 +45,7 @@ export class CreateState1601332913068 implements MigrationInterface {
           },
           {
             name: 'datetime',
-            type: 'timestamp',
+            type: 'timestamptz',
             isNullable: true,
           },
           {

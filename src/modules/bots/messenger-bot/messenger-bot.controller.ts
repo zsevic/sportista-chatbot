@@ -43,7 +43,6 @@ export class MessengerBotController {
       last_name,
       locale,
       profile_pic: image_url,
-      timezone,
     } = await chat.getUserProfile();
     const response = await this.resolverService.registerUser({
       id,
@@ -52,7 +51,6 @@ export class MessengerBotController {
       image_url,
       last_name,
       locale,
-      timezone,
     });
 
     return chat.say(response);

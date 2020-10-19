@@ -267,10 +267,7 @@ export class ResponseService {
     datetime: string,
     datetimeOptions: DatetimeOptions,
   ): Promise<string> => {
-    const formattedDatetime = formatDatetime(datetime, {
-      ...datetimeOptions,
-      isTimezoned: true,
-    });
+    const formattedDatetime = formatDatetime(datetime, datetimeOptions);
     const { lang } = datetimeOptions;
     return this.i18nService.translate(STATE_DATETIME_CONFIRMATION, {
       lang,
