@@ -12,8 +12,10 @@ import {
   DEFAULT,
   EN_GB_LOCALE,
   EN_US_LOCALE,
+  FEEDBACK_BUTTON,
   INITIALIZE_ACTIVITY,
   INITIALIZE_ACTIVITY_PAYLOAD,
+  INITIALIZE_FEEDBACK_PAYLOAD,
   JOINED_ACTIVITIES,
   JOINED_ACTIVITIES_PAYLOAD,
   SR_RS_LOCALE,
@@ -60,6 +62,11 @@ export default () => {
     },
     {
       type: 'postback',
+      title: botI18nEn[FEEDBACK_BUTTON],
+      payload: INITIALIZE_FEEDBACK_PAYLOAD,
+    },
+    {
+      type: 'postback',
       title: botI18nEn[ABOUT_ME],
       payload: ABOUT_ME_PAYLOAD,
     },
@@ -100,6 +107,11 @@ export default () => {
     },
     {
       type: 'postback',
+      title: botI18nEn[FEEDBACK_BUTTON],
+      payload: INITIALIZE_FEEDBACK_PAYLOAD,
+    },
+    {
+      type: 'postback',
       title: botI18nEn[ABOUT_ME],
       payload: ABOUT_ME_PAYLOAD,
     },
@@ -137,6 +149,11 @@ export default () => {
       type: 'postback',
       title: userI18nSr[UPDATE_LOCALE],
       payload: UPDATE_LOCALE_PAYLOAD,
+    },
+    {
+      type: 'postback',
+      title: botI18nSr[FEEDBACK_BUTTON],
+      payload: INITIALIZE_FEEDBACK_PAYLOAD,
     },
     {
       type: 'postback',

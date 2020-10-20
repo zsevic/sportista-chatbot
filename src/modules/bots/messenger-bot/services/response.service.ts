@@ -102,6 +102,8 @@ import {
   VIEW_MORE_UPCOMING_ACTIVITIES,
   ABOUT_ME_1,
   ABOUT_ME_2,
+  BOT_INITIALIZE_FEEDBACK,
+  BOT_CREATE_FEEDBACK,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { I18n } from 'modules/bots/messenger-bot/messenger-bot.types';
 import { getLocationUrl } from 'modules/bots/messenger-bot/messenger-bot.utils';
@@ -121,7 +123,9 @@ export class ResponseService {
     [this.stateService.states.remaining_vacancies]: [
       REMAINING_VACANCIES_QUESTION,
     ],
-    [this.stateService.states.closing]: [CREATE_ACTIVITY_CLOSING],
+    [this.stateService.states.create_activity_closing]: [
+      CREATE_ACTIVITY_CLOSING,
+    ],
   };
 
   constructor(
@@ -258,6 +262,9 @@ export class ResponseService {
 
   getCreateActivityResponse = async (lang: string): Promise<string> =>
     this.i18nService.translate(STATE_CREATE_ACTIVITY_CLOSING, { lang });
+
+  getCreateFeedbackResponse = async (lang: string): Promise<string> =>
+    this.i18nService.translate(BOT_CREATE_FEEDBACK, { lang });
 
   getCreatedActivitiesResponse = async (
     activityListData: PaginatedResponse<Activity>,
@@ -432,6 +439,9 @@ export class ResponseService {
       quickReplies,
     };
   };
+
+  getInitializeFeedbackResponse = async (lang: string): Promise<string> =>
+    this.i18nService.translate(BOT_INITIALIZE_FEEDBACK, { lang });
 
   getInvalidActivityTypeResponse = async (lang: string) => {
     const quickReplies = await this.getActivityTypeOptions(lang);

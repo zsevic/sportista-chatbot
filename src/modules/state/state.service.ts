@@ -6,12 +6,13 @@ import { StateRepository } from './state.repository';
 export class StateService {
   states = {
     initialize_activity: 'initialize_activity',
+    initialize_feedback: 'initialize_feedback',
     activity_type: 'activity_type',
     datetime: 'datetime',
     location: 'location',
     price: 'price',
     remaining_vacancies: 'remaining_vacancies',
-    closing: 'closing',
+    create_activity_closing: 'create_activity_closing',
     get_upcoming_activities: 'get_upcoming_activities',
   };
 
@@ -20,7 +21,7 @@ export class StateService {
     [this.states.datetime]: this.states.location,
     [this.states.location]: this.states.price,
     [this.states.price]: this.states.remaining_vacancies,
-    [this.states.remaining_vacancies]: this.states.closing,
+    [this.states.remaining_vacancies]: this.states.create_activity_closing,
   };
 
   constructor(private readonly stateRepository: StateRepository) {}

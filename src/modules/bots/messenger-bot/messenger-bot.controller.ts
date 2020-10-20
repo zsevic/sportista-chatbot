@@ -71,6 +71,13 @@ export class MessengerBotController {
     return chat.say(response);
   };
 
+  initializeFeedbackHandler = async (payload, chat) => {
+    const response = await this.resolverService.initializeFeedback(
+      payload.sender.id,
+    );
+    return chat.say(response);
+  };
+
   joinedActivitiesHandler = async (payload, chat) => {
     const response = await this.resolverService.getJoinedActivities(
       payload.sender.id,

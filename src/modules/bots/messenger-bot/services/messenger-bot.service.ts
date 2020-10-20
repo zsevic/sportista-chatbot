@@ -6,6 +6,7 @@ import {
   GET_STARTED_PAYLOAD,
   GREETING_TEXT,
   INITIALIZE_ACTIVITY_PAYLOAD,
+  INITIALIZE_FEEDBACK_PAYLOAD,
   JOINED_ACTIVITIES_PAYLOAD,
   UPCOMING_ACTIVITIES_PAYLOAD,
   UPDATE_LOCALE_PAYLOAD,
@@ -58,6 +59,10 @@ export class MessengerBotService {
     this.bot.on(
       `postback:${INITIALIZE_ACTIVITY_PAYLOAD}`,
       this.controller.initializeActivityHandler,
+    );
+    this.bot.on(
+      `postback:${INITIALIZE_FEEDBACK_PAYLOAD}`,
+      this.controller.initializeFeedbackHandler,
     );
     this.bot.on(
       `postback:${JOINED_ACTIVITIES_PAYLOAD}`,

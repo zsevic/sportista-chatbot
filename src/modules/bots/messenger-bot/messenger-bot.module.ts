@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import config from 'common/config';
 import { ActivityModule } from 'modules/activity/activity.module';
 import messengerBotConfig from 'modules/bots/messenger-bot/messenger-bot.config';
+import { FeedbackModule } from 'modules/feedback/feedback.module';
 import { ParticipationModule } from 'modules/participation/participation.module';
 import { StateModule } from 'modules/state/state.module';
 import { UserModule } from 'modules/user/user.module';
@@ -23,6 +24,7 @@ import {
       load: [config, messengerBotConfig],
     }),
     ActivityModule,
+    FeedbackModule,
     ParticipationModule,
     StateModule,
     UserModule,

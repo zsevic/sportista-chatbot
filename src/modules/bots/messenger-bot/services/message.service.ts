@@ -28,6 +28,16 @@ export class MessageService {
     if (validationResponse) return validationResponse;
 
     const { text } = message;
+    if (state.current_state === this.stateService.states.initialize_feedback) {
+      return this.resolverService.createFeedback(
+        {
+          user_id: userId,
+          text,
+        },
+        locale,
+      );
+    }
+
     const updatedState = {
       [state.current_state]: text,
       ...(state.current_state === this.stateService.states.price && {
@@ -45,7 +55,10 @@ export class MessageService {
       current_state: this.stateService.nextStates[state.current_state] || null,
     };
 
-    if (updatedState.current_state === this.stateService.states.closing) {
+    if (
+      updatedState.current_state ===
+      this.stateService.states.create_activity_closing
+    ) {
       validationResponse = await this.validationService.validateRemainingVacancies(
         +text,
         locale,

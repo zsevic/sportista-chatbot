@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { FIRST_PAGE } from 'common/config/constants';
 import { ActivityService } from 'modules/activity/activity.service';
+import { Feedback } from 'modules/feedback/feedback.dto';
+import { FeedbackService } from 'modules/feedback/feedback.service';
 import { ParticipationService } from 'modules/participation/participation.service';
 import { RESET_STATE } from 'modules/state/state.constants';
 import { State } from 'modules/state/state.dto';
@@ -16,6 +18,7 @@ export class ResolverService {
 
   constructor(
     private readonly activityService: ActivityService,
+    private readonly feedbackService: FeedbackService,
     private readonly participationService: ParticipationService,
     private readonly responseService: ResponseService,
     private readonly stateService: StateService,
@@ -74,6 +77,15 @@ export class ResolverService {
     await this.activityService.createActivity(newActivity);
 
     return this.responseService.getCreateActivityResponse(locale);
+  };
+
+  createFeedback = async (
+    feedbackDto: Feedback,
+    locale: string,
+  ): Promise<string> => {
+    await this.feedbackService.createFeedback(feedbackDto);
+
+    return this.responseService.getCreateFeedbackResponse(locale);
   };
 
   getAboutMeResponse = async (userId: number) => {
@@ -212,6 +224,16 @@ export class ResolverService {
     await this.stateService.updateState(userId, state);
 
     return this.responseService.getInitializeActivityResponse(locale);
+  };
+
+  initializeFeedback = async (userId: number) => {
+    const locale = await this.userService.getLocale(userId);
+
+    await this.stateService.updateState(userId, {
+      current_state: this.stateService.states.initialize_feedback,
+    });
+
+    return this.responseService.getInitializeFeedbackResponse(locale);
   };
 
   joinActivity = async (

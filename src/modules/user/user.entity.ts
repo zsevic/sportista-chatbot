@@ -11,6 +11,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { ActivityEntity } from 'modules/activity/activity.entity';
+import { FeedbackEntity } from 'modules/feedback/feedback.entity';
 import { LocationEntity } from 'modules/location/location.entity';
 import { StateEntity } from 'modules/state/state.entity';
 
@@ -52,6 +53,9 @@ export class UserEntity {
 
   @OneToMany(() => ActivityEntity, (activityEntity) => activityEntity.organizer)
   activities: ActivityEntity[];
+
+  @OneToMany(() => FeedbackEntity, (feedbackEntity) => feedbackEntity.user)
+  feedbacks: FeedbackEntity[];
 
   @ManyToOne(() => LocationEntity, (locationEntity) => locationEntity.users)
   @JoinColumn({ name: 'location_id' })
