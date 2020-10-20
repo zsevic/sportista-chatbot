@@ -1,8 +1,5 @@
 import { EntityRepository, Repository, SelectQueryBuilder } from 'typeorm';
-import {
-  I18N_FALLBACKS,
-  LOCATION_RADIUS_METERS,
-} from 'common/config/constants';
+import { LOCATION_RADIUS_METERS } from 'common/config/constants';
 import { classTransformToDto } from 'common/decorators';
 import { UserLocation } from 'common/dtos';
 import { ActivityEntity } from 'modules/activity/activity.entity';

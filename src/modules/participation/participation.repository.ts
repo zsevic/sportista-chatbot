@@ -1,8 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
-import { LOCATION_RADIUS_METERS } from 'common/config/constants';
 import { methodTransformToDto } from 'common/decorators';
-import { UserLocation } from 'common/dtos';
 import { Participation } from './participation.dto';
 import { ParticipationEntity } from './participation.entity';
 
