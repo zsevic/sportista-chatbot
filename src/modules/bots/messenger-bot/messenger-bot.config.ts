@@ -26,96 +26,62 @@ import {
   UPDATE_LOCATION,
 } from './messenger-bot.constants';
 
-export default () => {
-  const EN_GB_PERSISTENT_MENU = [
-    {
-      type: 'postback',
-      title: activityI18nEn[UPCOMING_ACTIVITIES],
-      payload: UPCOMING_ACTIVITIES_PAYLOAD,
-    },
-    {
-      type: 'postback',
-      title: activityI18nEn[JOINED_ACTIVITIES],
-      payload: JOINED_ACTIVITIES_PAYLOAD,
-    },
-    {
-      type: 'postback',
-      title: activityI18nEn[CREATED_ACTIVITIES],
-      payload: CREATED_ACTIVITIES_PAYLOAD,
-    },
-    {
-      type: 'postback',
-      title: activityI18nEn[INITIALIZE_ACTIVITY],
-      payload: INITIALIZE_ACTIVITY_PAYLOAD,
-    },
-    {
-      type: 'web_url',
-      title: userI18nEn[UPDATE_LOCATION],
-      url: `${process.env.EXTENSIONS_URL}/extensions/location?lang=${EN_GB_LOCALE}`,
-      messenger_extensions: true,
-      webview_height_ratio: 'compact',
-    },
-    {
-      type: 'postback',
-      title: userI18nEn[UPDATE_LOCALE],
-      payload: UPDATE_LOCALE_PAYLOAD,
-    },
-    {
-      type: 'postback',
-      title: botI18nEn[FEEDBACK_BUTTON],
-      payload: INITIALIZE_FEEDBACK_PAYLOAD,
-    },
-    {
-      type: 'postback',
-      title: botI18nEn[ABOUT_ME],
-      payload: ABOUT_ME_PAYLOAD,
-    },
-  ];
+const EN_PERSISTENT_MENU: any = [
+  {
+    type: 'postback',
+    title: activityI18nEn[UPCOMING_ACTIVITIES],
+    payload: UPCOMING_ACTIVITIES_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: activityI18nEn[JOINED_ACTIVITIES],
+    payload: JOINED_ACTIVITIES_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: activityI18nEn[CREATED_ACTIVITIES],
+    payload: CREATED_ACTIVITIES_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: activityI18nEn[INITIALIZE_ACTIVITY],
+    payload: INITIALIZE_ACTIVITY_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: userI18nEn[UPDATE_LOCALE],
+    payload: UPDATE_LOCALE_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: botI18nEn[FEEDBACK_BUTTON],
+    payload: INITIALIZE_FEEDBACK_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: botI18nEn[ABOUT_ME],
+    payload: ABOUT_ME_PAYLOAD,
+  },
+];
 
-  const EN_US_PERSISTENT_MENU = [
-    {
-      type: 'postback',
-      title: activityI18nEn[UPCOMING_ACTIVITIES],
-      payload: UPCOMING_ACTIVITIES_PAYLOAD,
-    },
-    {
-      type: 'postback',
-      title: activityI18nEn[JOINED_ACTIVITIES],
-      payload: JOINED_ACTIVITIES_PAYLOAD,
-    },
-    {
-      type: 'postback',
-      title: activityI18nEn[CREATED_ACTIVITIES],
-      payload: CREATED_ACTIVITIES_PAYLOAD,
-    },
-    {
-      type: 'postback',
-      title: activityI18nEn[INITIALIZE_ACTIVITY],
-      payload: INITIALIZE_ACTIVITY_PAYLOAD,
-    },
-    {
-      type: 'web_url',
-      title: userI18nEn[UPDATE_LOCATION],
-      url: `${process.env.EXTENSIONS_URL}/extensions/location?lang=${EN_US_LOCALE}`,
-      messenger_extensions: true,
-      webview_height_ratio: 'compact',
-    },
-    {
-      type: 'postback',
-      title: userI18nEn[UPDATE_LOCALE],
-      payload: UPDATE_LOCALE_PAYLOAD,
-    },
-    {
-      type: 'postback',
-      title: botI18nEn[FEEDBACK_BUTTON],
-      payload: INITIALIZE_FEEDBACK_PAYLOAD,
-    },
-    {
-      type: 'postback',
-      title: botI18nEn[ABOUT_ME],
-      payload: ABOUT_ME_PAYLOAD,
-    },
-  ];
+export default () => {
+  const EN_GB_PERSISTENT_MENU = [...EN_PERSISTENT_MENU];
+  EN_GB_PERSISTENT_MENU.splice(4, 0, {
+    type: 'web_url',
+    title: userI18nEn[UPDATE_LOCATION],
+    url: `${process.env.EXTENSIONS_URL}/extensions/location?lang=${EN_GB_LOCALE}`,
+    messenger_extensions: true,
+    webview_height_ratio: 'compact',
+  });
+
+  const EN_US_PERSISTENT_MENU = [...EN_PERSISTENT_MENU];
+  EN_US_PERSISTENT_MENU.splice(4, 0, {
+    type: 'web_url',
+    title: userI18nEn[UPDATE_LOCATION],
+    url: `${process.env.EXTENSIONS_URL}/extensions/location?lang=${EN_US_LOCALE}`,
+    messenger_extensions: true,
+    webview_height_ratio: 'compact',
+  });
 
   const SR_PERSISTENT_MENU = [
     {
