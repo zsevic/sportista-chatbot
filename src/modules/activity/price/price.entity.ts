@@ -17,7 +17,7 @@ export class PriceEntity {
   value: number;
 
   @Column()
-  currency: string;
+  currency_code: string;
 
   @CreateDateColumn()
   created_at: Date;

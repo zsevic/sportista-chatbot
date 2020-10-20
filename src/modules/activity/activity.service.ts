@@ -6,7 +6,6 @@ import { LocationService } from 'modules/location/location.service';
 import { ParticipationRepository } from 'modules/participation/participation.repository';
 import { StateRepository } from 'modules/state/state.repository';
 import { UserRepository } from 'modules/user/user.repository';
-import { DEFAULT_PRICE_CURRENCY } from './activity.constants';
 import { Activity } from './activity.dto';
 import { ActivityRepository } from './activity.repository';
 import { PriceRepository } from './price/price.repository';
@@ -43,7 +42,7 @@ export class ActivityService {
     });
     const price = await this.priceRepository.findOrCreate({
       value: activity.price,
-      currency: DEFAULT_PRICE_CURRENCY,
+      currency_code: location.currency_code,
     });
     await this.activityRepository.createActivity({
       organizer_id: activity.organizer_id,

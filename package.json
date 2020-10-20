@@ -37,6 +37,7 @@
     "bootbot": "^1.1.0",
     "class-transformer": "^0.3.1",
     "class-validator": "^0.12.2",
+    "country-to-currency": "^1.0.2",
     "cyrillic-to-latin": "^2.0.0",
     "date-fns": "^2.16.1",
     "date-fns-tz": "^1.0.12",

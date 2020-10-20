@@ -19,7 +19,7 @@ export class CreatePrice1601331544225 implements MigrationInterface {
             type: 'decimal',
           },
           {
-            name: 'currency',
+            name: 'currency_code',
             type: 'varchar',
           },
           {

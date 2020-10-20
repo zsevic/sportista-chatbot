@@ -22,6 +22,10 @@ export class CreateLocation1601331548678 implements MigrationInterface {
             type: 'varchar',
           },
           {
+            name: 'currency_code',
+            type: 'varchar',
+          },
+          {
             name: 'latitude',
             type: 'decimal',
           },

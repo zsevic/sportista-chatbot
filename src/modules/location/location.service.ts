@@ -1,5 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import convert from 'cyrillic-to-latin';
+import currency from 'country-to-currency';
+import convertToLatin from 'cyrillic-to-latin';
 import { PINNED_LOCATION } from 'modules/location/location.constants';
 import { Location } from 'modules/location/location.dto';
 import { LocationRepository } from 'modules/location/location.repository';
@@ -22,32 +23,47 @@ export class LocationService {
     );
     if (location) return location;
 
+    const locationData = await this.getLocationData(
+      locationDto.latitude,
+      locationDto.longitude,
+    );
+    if (!locationData) throw new Error('Location data is not valid');
+
+    const currencyCode = currency[locationData.countryCode];
     if (locationDto.title === PINNED_LOCATION) {
-      const title = await this.getLocationTitle(locationDto);
+      const title = this.getLocationTitle(locationData);
       if (title) {
-        const convertedTitle = convert(title);
+        const convertedTitle = convertToLatin(title);
         return this.locationRepository.createLocation({
           ...locationDto,
           title: convertedTitle,
+          currency_code: currencyCode,
         });
       }
     }
 
-    return this.locationRepository.createLocation(locationDto);
+    return this.locationRepository.createLocation({
+      ...locationDto,
+      currency_code: currencyCode,
+    });
   }
 
-  getLocationTitle = async (locationDto: Location): Promise<string> => {
+  getLocationData = async (latitude: number, longitude: number) => {
     try {
       const [location] = await this.geocoderService.reverse({
-        lat: locationDto.latitude,
-        lon: locationDto.longitude,
+        lat: latitude,
+        lon: longitude,
       });
-      if (!location.streetName || !location.streetNumber) return location.city;
-
-      return `${location.streetName} ${location.streetNumber}, ${location.city}`;
-    } catch (err) {
-      this.logger.error(err);
+      return location;
+    } catch (error) {
+      this.logger.error(error);
       return;
     }
+  };
+
+  getLocationTitle = (location: any): string => {
+    if (!location.streetName || !location.streetNumber) return location.city;
+
+    return `${location.streetName} ${location.streetNumber}, ${location.city}`;
   };
 }

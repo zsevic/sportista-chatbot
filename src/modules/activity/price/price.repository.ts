@@ -9,7 +9,7 @@ export class PriceRepository extends Repository<PriceEntity> {
   async findOrCreate(priceDto: Price): Promise<PriceEntity> {
     const price = await this.findOne({
       where: {
-        currency: priceDto.currency,
+        currency_code: priceDto.currency_code,
         value: priceDto.value,
       },
     });

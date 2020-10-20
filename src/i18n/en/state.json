@@ -11,6 +11,6 @@
   "INVALID_REMAINING_VACANCIES": "Fill out the number of remaining vacancies",
   "LOCATION_INSTRUCTION": "Click on 4 dots on the right side and choose location",
   "LOCATION_QUESTION": "Where is the activity hosted? Send location",
-  "PRICE_QUESTION": "How much does it cost per player?",
-  "REMAINING_VACANCIES_QUESTION": "How many remaining vacancies are left?"
+  "PRICE_QUESTION": "How much does it cost per player? Type a number",
+  "REMAINING_VACANCIES_QUESTION": "How many remaining vacancies are left? Type a number"
 }

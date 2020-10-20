@@ -1,9 +1,11 @@
 export class Location {
   id?: string;
 
-  title?: string;
+  currency_code?: string;
 
   latitude: number;
 
   longitude: number;
+
+  title?: string;
 }

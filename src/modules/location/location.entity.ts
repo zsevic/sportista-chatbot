@@ -23,6 +23,9 @@ export class LocationEntity {
   @Column()
   longitude: number;
 
+  @Column()
+  currency_code: string;
+
   @CreateDateColumn()
   created_at: Date;
 

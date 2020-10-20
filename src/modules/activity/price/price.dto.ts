@@ -3,5 +3,5 @@ export class Price {
 
   value: number;
 
-  currency: string;
+  currency_code: string;
 }

@@ -381,7 +381,7 @@ export class ResponseService {
 
     return {
       title,
-      subtitle: `${datetime}, ${activity.location.title}, ${activity.price.value} ${activity.price.currency}`,
+      subtitle: `${datetime}, ${activity.location.title}, ${activity.price.value} ${activity.price.currency_code}`,
       ...(ACTIVITY_TYPES[activity.type] && {
         image_url: `https://loremflickr.com/320/240/${
           ACTIVITY_TYPES[activity.type]
