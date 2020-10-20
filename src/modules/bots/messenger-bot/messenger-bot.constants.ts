@@ -25,7 +25,7 @@ export const PARTICIPANT_LIST_TYPE = 'PARTICIPANT_LIST_TYPE';
 export const UPCOMING_ACTIVITIES_TYPE = 'UPCOMING_ACTIVITIES_TYPE';
 export const USER_LOCATION_TYPE = 'USER_LOCATION_TYPE';
 
-export const DEFAULT_LOCALE = 'default';
+export const DEFAULT = 'default';
 export const EN_GB_LOCALE = 'en_GB';
 export const EN_US_LOCALE = 'en_US';
 export const SR_RS_LOCALE = 'sr_RS';
@@ -45,7 +45,7 @@ export const GREETING_TEXT = [
     text: SR_GREETING_TEXT,
   },
   {
-    locale: DEFAULT_LOCALE,
+    locale: DEFAULT,
     text: SR_GREETING_TEXT,
   },
 ];

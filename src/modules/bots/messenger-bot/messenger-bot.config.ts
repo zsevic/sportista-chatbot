@@ -5,7 +5,7 @@ import userI18nSr from 'i18n/sr/user.json';
 import {
   CREATED_ACTIVITIES,
   CREATED_ACTIVITIES_PAYLOAD,
-  DEFAULT_LOCALE,
+  DEFAULT,
   EN_GB_LOCALE,
   EN_US_LOCALE,
   INITIALIZE_ACTIVITY,
@@ -141,7 +141,7 @@ export default () => {
         call_to_actions: SR_PERSISTENT_MENU,
       },
       {
-        locale: DEFAULT_LOCALE,
+        locale: DEFAULT,
         call_to_actions: SR_PERSISTENT_MENU,
       },
     ],

@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { I18nService } from 'nestjs-i18n';
 import {
+  DEFAULT_LOCALE,
+  LOCALES,
   LOCATION_RADIUS_METERS,
   PAGE_SIZE,
   UPDATE_LOCALE_URL,
@@ -378,10 +380,14 @@ export class ResponseService {
       });
     }
     const datetime = formatDatetime(activity.datetime, options);
+    const price = new Intl.NumberFormat(
+      LOCALES[options.lang] || LOCALES[DEFAULT_LOCALE],
+      { style: 'currency', currency: activity.price.currency_code },
+    ).format(activity.price.value);
 
     return {
       title,
-      subtitle: `${datetime}, ${activity.location.title}, ${activity.price.value} ${activity.price.currency_code}`,
+      subtitle: `${datetime}, ${activity.location.title}, ${price}`,
       ...(ACTIVITY_TYPES[activity.type] && {
         image_url: `https://loremflickr.com/320/240/${
           ACTIVITY_TYPES[activity.type]

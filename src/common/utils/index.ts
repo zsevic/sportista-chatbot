@@ -1,9 +1,5 @@
 import { utcToZonedTime } from 'date-fns-tz';
-import {
-  DATE_LOCALES,
-  DEFAULT_DATETIME_LOCALE,
-  PAGE_SIZE,
-} from 'common/config/constants';
+import { DEFAULT_LOCALE, LOCALES, PAGE_SIZE } from 'common/config/constants';
 import { DatetimeOptions } from 'common/types';
 
 export const formatDatetime = (
@@ -21,7 +17,7 @@ export const formatDatetime = (
   };
 
   return utcToZonedTime(datetime, timezone).toLocaleDateString(
-    DATE_LOCALES[lang] || DATE_LOCALES[DEFAULT_DATETIME_LOCALE],
+    LOCALES[lang] || LOCALES[DEFAULT_LOCALE],
     options,
   );
 };

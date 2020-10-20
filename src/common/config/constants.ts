@@ -1,9 +1,9 @@
-export const DATE_LOCALES = {
+export const LOCALES = {
   sr_RS: 'sr-Latn-RS',
   en_GB: 'en-GB',
   en_US: 'en-US',
 };
-export const DEFAULT_DATETIME_LOCALE = 'sr_RS';
+export const DEFAULT_LOCALE = 'sr_RS';
 export const I18N_FALLBACK_LANGUAGE = 'sr';
 export const I18N_FALLBACKS = {
   en_GB: 'en',
