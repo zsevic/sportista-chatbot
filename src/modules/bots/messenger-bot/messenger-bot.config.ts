@@ -1,8 +1,12 @@
 import activityI18nEn from 'i18n/en/activity.json';
 import activityI18nSr from 'i18n/sr/activity.json';
+import botI18nEn from 'i18n/en/bot.json';
+import botI18nSr from 'i18n/sr/bot.json';
 import userI18nEn from 'i18n/en/user.json';
 import userI18nSr from 'i18n/sr/user.json';
 import {
+  ABOUT_ME,
+  ABOUT_ME_PAYLOAD,
   CREATED_ACTIVITIES,
   CREATED_ACTIVITIES_PAYLOAD,
   DEFAULT,
@@ -54,6 +58,11 @@ export default () => {
       title: userI18nEn[UPDATE_LOCALE],
       payload: UPDATE_LOCALE_PAYLOAD,
     },
+    {
+      type: 'postback',
+      title: botI18nEn[ABOUT_ME],
+      payload: ABOUT_ME_PAYLOAD,
+    },
   ];
 
   const EN_US_PERSISTENT_MENU = [
@@ -89,6 +98,11 @@ export default () => {
       title: userI18nEn[UPDATE_LOCALE],
       payload: UPDATE_LOCALE_PAYLOAD,
     },
+    {
+      type: 'postback',
+      title: botI18nEn[ABOUT_ME],
+      payload: ABOUT_ME_PAYLOAD,
+    },
   ];
 
   const SR_PERSISTENT_MENU = [
@@ -123,6 +137,11 @@ export default () => {
       type: 'postback',
       title: userI18nSr[UPDATE_LOCALE],
       payload: UPDATE_LOCALE_PAYLOAD,
+    },
+    {
+      type: 'postback',
+      title: botI18nSr[ABOUT_ME],
+      payload: ABOUT_ME_PAYLOAD,
     },
   ];
 

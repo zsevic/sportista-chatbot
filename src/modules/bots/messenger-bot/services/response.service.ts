@@ -6,6 +6,7 @@ import {
   LOCALES,
   LOCATION_RADIUS_METERS,
   PAGE_SIZE,
+  PROJECT_NAME,
   UPDATE_LOCALE_URL,
 } from 'common/config/constants';
 import { PaginatedResponse } from 'common/dtos';
@@ -99,6 +100,8 @@ import {
   VIEW_MORE_CREATED_ACTIVITIES,
   VIEW_MORE_JOINED_ACTIVITIES,
   VIEW_MORE_UPCOMING_ACTIVITIES,
+  ABOUT_ME_1,
+  ABOUT_ME_2,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { I18n } from 'modules/bots/messenger-bot/messenger-bot.types';
 import { getLocationUrl } from 'modules/bots/messenger-bot/messenger-bot.utils';
@@ -126,6 +129,17 @@ export class ResponseService {
     private readonly i18nService: I18nService,
     private readonly stateService: StateService,
   ) {}
+
+  getAboutMeResponse = async (lang: string) => {
+    const botI18n = await this.i18nService.translate('bot', {
+      lang,
+      args: {
+        projectName: PROJECT_NAME,
+      },
+    });
+
+    return [botI18n[ABOUT_ME_1], botI18n[ABOUT_ME_2]];
+  };
 
   private async getActivitiesResponse({
     activityListData,

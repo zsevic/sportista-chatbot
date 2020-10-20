@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
+  ABOUT_ME_PAYLOAD,
   CREATED_ACTIVITIES_PAYLOAD,
   GET_STARTED_PAYLOAD,
   GREETING_TEXT,
@@ -49,13 +50,14 @@ export class MessengerBotService {
       this.asyncWrap(this.controller.attachmentHandler),
     );
 
-    this.bot.on(
-      `postback:${INITIALIZE_ACTIVITY_PAYLOAD}`,
-      this.controller.initializeActivityHandler,
-    );
+    this.bot.on(`postback:${ABOUT_ME_PAYLOAD}`, this.controller.aboutMeHandler);
     this.bot.on(
       `postback:${CREATED_ACTIVITIES_PAYLOAD}`,
       this.controller.createdActivitiesHandler,
+    );
+    this.bot.on(
+      `postback:${INITIALIZE_ACTIVITY_PAYLOAD}`,
+      this.controller.initializeActivityHandler,
     );
     this.bot.on(
       `postback:${JOINED_ACTIVITIES_PAYLOAD}`,
@@ -72,12 +74,12 @@ export class MessengerBotService {
     this.bot.on('postback', this.asyncWrap(this.controller.postbackHandler));
 
     this.bot.on(
-      `quick_reply:${INITIALIZE_ACTIVITY_PAYLOAD}`,
-      this.controller.initializeActivityHandler,
-    );
-    this.bot.on(
       `quick_reply:${CREATED_ACTIVITIES_PAYLOAD}`,
       this.controller.createdActivitiesHandler,
+    );
+    this.bot.on(
+      `quick_reply:${INITIALIZE_ACTIVITY_PAYLOAD}`,
+      this.controller.initializeActivityHandler,
     );
     this.bot.on(
       `quick_reply:${JOINED_ACTIVITIES_PAYLOAD}`,

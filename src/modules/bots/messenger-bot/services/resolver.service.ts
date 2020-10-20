@@ -76,6 +76,11 @@ export class ResolverService {
     return this.responseService.getCreateActivityResponse(locale);
   };
 
+  getAboutMeResponse = async (userId: number) => {
+    const locale = await this.userService.getLocale(userId);
+    return this.responseService.getAboutMeResponse(locale);
+  };
+
   getCreatedActivities = async (userId: number, page = FIRST_PAGE) => {
     const { locale, timezone } = await this.userService.getUser(userId);
     const activityListData = await this.activityService.getCreatedActivities(

@@ -13,6 +13,14 @@ export class MessengerBotController {
     private readonly resolverService: ResolverService,
   ) {}
 
+  aboutMeHandler = async (payload, chat) => {
+    const response = await this.resolverService.getAboutMeResponse(
+      payload.sender.id,
+    );
+
+    return chat.say(response);
+  };
+
   attachmentHandler = async (payload, chat) => {
     const {
       message,
