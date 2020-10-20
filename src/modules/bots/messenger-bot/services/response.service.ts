@@ -7,7 +7,6 @@ import {
   LOCATION_RADIUS_METERS,
   PAGE_SIZE,
   PROJECT_NAME,
-  UPDATE_LOCALE_URL,
 } from 'common/config/constants';
 import { PaginatedResponse } from 'common/dtos';
 import { DatetimeOptions } from 'common/types';
@@ -85,17 +84,12 @@ import {
   UPCOMING_ACTIVITIES_PAYLOAD,
   UPCOMING_ACTIVITIES_TYPE,
   UPDATED_REMAINING_VACANCIES,
-  UPDATE_LOCALE,
-  UPDATE_LOCALE_FAILURE,
-  UPDATE_LOCALE_LINK_TEXT,
-  UPDATE_LOCALE_PAYLOAD,
   UPDATE_REMAINING_VACANCIES,
   UPDATE_REMAINING_VACANCIES_TYPE,
   USER_LOCATION_BUTTON,
   USER_LOCATION_DESCRIPTION_TEXT,
   USER_LOCATION_TEXT,
   USER_REGISTRATION_SUCCESS,
-  USER_UPDATE_LOCALE_SUCCESS,
   USER_UPDATE_LOCATION_SUCCESS,
   VIEW_MORE_CREATED_ACTIVITIES,
   VIEW_MORE_JOINED_ACTIVITIES,
@@ -612,28 +606,6 @@ export class ResponseService {
       options,
     });
   };
-
-  getUpdateLocaleFailureResponse = async (lang: string) => {
-    const userI18n = await this.i18nService.translate('user', { lang });
-    return {
-      text: userI18n[UPDATE_LOCALE_FAILURE],
-      buttons: [
-        {
-          type: 'web_url',
-          title: userI18n[UPDATE_LOCALE_LINK_TEXT],
-          url: UPDATE_LOCALE_URL,
-        },
-        {
-          type: 'postback',
-          title: userI18n[UPDATE_LOCALE],
-          payload: UPDATE_LOCALE_PAYLOAD,
-        },
-      ],
-    };
-  };
-
-  getUpdateLocaleSuccessResponse = async (lang: string): Promise<string> =>
-    this.i18nService.translate(USER_UPDATE_LOCALE_SUCCESS, { lang });
 
   getUpdateLocationSuccessResponse = async (lang: string): Promise<string> =>
     this.i18nService.translate(USER_UPDATE_LOCATION_SUCCESS, { lang });

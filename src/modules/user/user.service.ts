@@ -15,23 +15,6 @@ export class UserService {
     private readonly userRepository: UserRepository,
   ) {}
 
-  @Transactional()
-  async upsertLocation(
-    userId: number,
-    latitude: number,
-    longitude: number,
-  ): Promise<void> {
-    const location = await this.locationService.findOrCreate({
-      latitude,
-      longitude,
-      title: PINNED_LOCATION,
-    });
-    await this.userRepository.upsertLocation(userId, location.id);
-    const timezone = geoTz(latitude, longitude);
-    if (timezone.length === 0) throw new Error('Timezone is not valid');
-    await this.userRepository.upsertTimezone(userId, timezone[0]);
-  }
-
   getLocale = async (userId: number): Promise<string> => {
     const user = await this.userRepository.findOne(userId, {
       select: ['locale'],
@@ -62,8 +45,22 @@ export class UserService {
     await this.stateRepository.initializeState(user.id);
   }
 
-  updateLocale = async (userId: number, locale: string): Promise<User> =>
-    this.userRepository.updateLocale(userId, locale);
+  @Transactional()
+  async upsertLocation(
+    userId: number,
+    latitude: number,
+    longitude: number,
+  ): Promise<void> {
+    const location = await this.locationService.findOrCreate({
+      latitude,
+      longitude,
+      title: PINNED_LOCATION,
+    });
+    await this.userRepository.upsertLocation(userId, location.id);
+    const timezone = geoTz(latitude, longitude);
+    if (timezone.length === 0) throw new Error('Timezone is not valid');
+    await this.userRepository.upsertTimezone(userId, timezone[0]);
+  }
 
   validateUser = async (id: number): Promise<User> =>
     this.userRepository.validateUser(id);

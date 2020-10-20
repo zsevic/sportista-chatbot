@@ -17,4 +17,3 @@ export const PROJECT_NAME = 'Sportista.fit';
 export const LOCATION_RADIUS_METERS = 5000;
 
 export const NODEGEOCODER_PROVIDER = 'openstreetmap';
-export const UPDATE_LOCALE_URL = 'https://www.facebook.com/settings';

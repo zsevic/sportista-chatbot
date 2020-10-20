@@ -62,20 +62,6 @@ export class UserRepository extends Repository<UserEntity> {
     return user;
   }
 
-  async updateLocale(userId: number, locale: string): Promise<UserEntity> {
-    const user = await this.findOne(userId);
-    const isUpdated =
-      user &&
-      user.locale !== locale &&
-      Object.keys(I18N_FALLBACKS).includes(locale);
-    if (!isUpdated) throw new Error('Update failed');
-
-    return this.save({
-      ...user,
-      locale,
-    });
-  }
-
   async upsertLocation(
     userId: number,
     location_id: string,

@@ -308,16 +308,6 @@ export class ResolverService {
     }
   };
 
-  updateLocale = async (userId: number, locale: string) => {
-    try {
-      await this.userService.updateLocale(userId, locale);
-      return this.responseService.getUpdateLocaleSuccessResponse(locale);
-    } catch {
-      const userLocale = await this.userService.getLocale(userId);
-      return this.responseService.getUpdateLocaleFailureResponse(userLocale);
-    }
-  };
-
   updateRemainingVacancies = async (activityId: string, locale: string) => {
     return this.responseService.getUpdateRemainingVacanciesResponse(
       activityId,

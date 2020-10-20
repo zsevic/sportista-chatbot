@@ -21,8 +21,6 @@ import {
   SR_RS_LOCALE,
   UPCOMING_ACTIVITIES,
   UPCOMING_ACTIVITIES_PAYLOAD,
-  UPDATE_LOCALE,
-  UPDATE_LOCALE_PAYLOAD,
   UPDATE_LOCATION,
 } from './messenger-bot.constants';
 
@@ -46,11 +44,6 @@ const EN_PERSISTENT_MENU: any = [
     type: 'postback',
     title: activityI18nEn[INITIALIZE_ACTIVITY],
     payload: INITIALIZE_ACTIVITY_PAYLOAD,
-  },
-  {
-    type: 'postback',
-    title: userI18nEn[UPDATE_LOCALE],
-    payload: UPDATE_LOCALE_PAYLOAD,
   },
   {
     type: 'postback',
@@ -110,11 +103,6 @@ export default () => {
       url: `${process.env.EXTENSIONS_URL}/extensions/location?lang=${SR_RS_LOCALE}`,
       messenger_extensions: true,
       webview_height_ratio: 'compact',
-    },
-    {
-      type: 'postback',
-      title: userI18nSr[UPDATE_LOCALE],
-      payload: UPDATE_LOCALE_PAYLOAD,
     },
     {
       type: 'postback',
