@@ -1,9 +1,13 @@
-import activityI18nEn from 'i18n/en/activity.json';
-import activityI18nSr from 'i18n/sr/activity.json';
-import botI18nEn from 'i18n/en/bot.json';
-import botI18nSr from 'i18n/sr/bot.json';
-import userI18nEn from 'i18n/en/user.json';
-import userI18nSr from 'i18n/sr/user.json';
+import {
+  activity as activityI18nEn,
+  bot as botI18nEn,
+  user as userI18nEn,
+} from 'locales/en.json';
+import {
+  activity as activityI18nSr,
+  bot as botI18nSr,
+  user as userI18nSr,
+} from 'locales/sr.json';
 import {
   ABOUT_ME,
   ABOUT_ME_PAYLOAD,

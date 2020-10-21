@@ -1,6 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { I18nService } from 'nestjs-i18n';
 import {
   DEFAULT_LOCALE,
   LOCALES,
@@ -91,7 +90,6 @@ import {
   UPCOMING_ACTIVITIES,
   UPCOMING_ACTIVITIES_PAYLOAD,
   UPCOMING_ACTIVITIES_TYPE,
-  UPDATED_REMAINING_VACANCIES,
   UPDATE_REMAINING_VACANCIES,
   UPDATE_REMAINING_VACANCIES_TYPE,
   USER_LOCATION_BUTTON,
@@ -109,9 +107,12 @@ import {
   USER_UNSUBSCRIBE_TO_NOTIFICATIONS_SUCCESS,
   USER_UNSUBSCRIBE_TO_NOTIFICATIONS_FAILURE,
   BOT_NOTIFICATION_SUBSCRIPTION_FAILURE,
+  ACTIVITY_NO_REMAINING_VACANCIES,
+  ACTIVITY_UPDATED_REMAINING_VACANCIES,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { I18n } from 'modules/bots/messenger-bot/messenger-bot.types';
 import { getLocationUrl } from 'modules/bots/messenger-bot/messenger-bot.utils';
+import { I18N_OPTIONS_FACTORY } from 'modules/external/i18n';
 import { StateService } from 'modules/state/state.service';
 import { User } from 'modules/user/user.dto';
 
@@ -135,19 +136,50 @@ export class ResponseService {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly i18nService: I18nService,
+    @Inject(I18N_OPTIONS_FACTORY) private readonly i18nService,
     private readonly stateService: StateService,
   ) {}
 
-  getAboutMeResponse = async (lang: string) => {
-    const botI18n = await this.i18nService.translate('bot', {
-      lang,
-      args: {
-        projectName: PROJECT_NAME,
-      },
-    });
+  getAboutMeResponse = (lang: string): string[] => {
+    const { bot: botI18n } = this.i18nService.getCatalog(lang);
 
-    return [botI18n[ABOUT_ME_1], botI18n[ABOUT_ME_2]];
+    return [botI18n[ABOUT_ME_1], botI18n[ABOUT_ME_2]].map(
+      (phrase: string): string =>
+        this.i18nService.__(
+          {
+            phrase,
+            locale: lang,
+          },
+          {
+            projectName: PROJECT_NAME,
+          },
+        ),
+    );
+  };
+
+  getActivityOptionsResponse = (activityId: string, lang: string) => {
+    const { activity: activityI18n } = this.i18nService.getCatalog(lang);
+
+    return {
+      text: activityI18n[ACTIVITY_OPTIONS],
+      buttons: [
+        {
+          type: 'postback',
+          title: activityI18n[CANCEL_ACTIVITY],
+          payload: `type=${CANCEL_ACTIVITY_TYPE}&activity_id=${activityId}`,
+        },
+        {
+          type: 'postback',
+          title: activityI18n[PARTICIPANT_LIST],
+          payload: `type=${PARTICIPANT_LIST_TYPE}&activity_id=${activityId}`,
+        },
+        {
+          type: 'postback',
+          title: activityI18n[UPDATE_REMAINING_VACANCIES],
+          payload: `type=${UPDATE_REMAINING_VACANCIES_TYPE}&activity_id=${activityId}`,
+        },
+      ],
+    };
   };
 
   private async getActivitiesResponse({
@@ -182,10 +214,10 @@ export class ResponseService {
     const response: any = [{ cards }];
 
     if (hasNextPage) {
-      const viewMoreTitle = await this.i18nService.translate(
-        ACTIVITY_VIEW_MORE,
-        { lang },
-      );
+      const viewMoreTitle = this.i18nService.__({
+        phrase: ACTIVITY_VIEW_MORE,
+        locale: lang,
+      });
       response.push({
         text: viewMoreActivitiesText,
         buttons: [
@@ -201,83 +233,61 @@ export class ResponseService {
     return response;
   }
 
-  getActivityOptionsResponse = async (activityId: string, lang: string) => {
-    const activityI18n = await this.i18nService.translate('activity', { lang });
-    return {
-      text: activityI18n[ACTIVITY_OPTIONS],
-      buttons: [
-        {
-          type: 'postback',
-          title: activityI18n[CANCEL_ACTIVITY],
-          payload: `type=${CANCEL_ACTIVITY_TYPE}&activity_id=${activityId}`,
-        },
-        {
-          type: 'postback',
-          title: activityI18n[PARTICIPANT_LIST],
-          payload: `type=${PARTICIPANT_LIST_TYPE}&activity_id=${activityId}`,
-        },
-        {
-          type: 'postback',
-          title: activityI18n[UPDATE_REMAINING_VACANCIES],
-          payload: `type=${UPDATE_REMAINING_VACANCIES_TYPE}&activity_id=${activityId}`,
-        },
-      ],
-    };
-  };
+  getActivityTypeOptions = (lang: string) => {
+    const { activity: activityI18n } = this.i18nService.getCatalog(lang);
 
-  getActivityTypeOptions = async (lang: string) => {
-    const activityI18n = await this.i18nService.translate('activity', { lang });
     return Object.keys(ACTIVITY_TYPES).map((type) => ({
       title: `${type} ${activityI18n[type]}`,
       payload: `type=activity_type&activity_type=${type}`,
     }));
   };
 
-  getCancelActivitySuccessResponse = async (
-    lang: string,
-  ): Promise<string[]> => {
-    const activityI18n = await this.i18nService.translate('activity', {
-      lang,
-    });
+  getCancelActivitySuccessResponse = (lang: string): string[] => {
+    const { activity: activityI18n } = this.i18nService.getCatalog(lang);
+
     return [
       activityI18n[CANCEL_ACTIVITY_SUCCESS],
       activityI18n[NOTIFY_PARTICIPANTS],
     ];
   };
 
-  getCancelActivityFailureResponse = async (lang: string): Promise<string> =>
-    this.i18nService.translate(ACTIVITY_CANCEL_ACTIVITY_FAILURE, { lang });
-
-  getCancelParticipationFailureResponse = async (
-    lang: string,
-  ): Promise<string> =>
-    this.i18nService.translate(ACTIVITY_CANCEL_PARTICIPATION_FAILURE, {
-      lang,
+  getCancelActivityFailureResponse = (lang: string): string =>
+    this.i18nService.__({
+      phrase: ACTIVITY_CANCEL_ACTIVITY_FAILURE,
+      locale: lang,
     });
 
-  getCancelParticipationSuccessResponse = async (
-    lang: string,
-  ): Promise<string[]> => {
-    const activityI18n = await this.i18nService.translate('activity', { lang });
+  getCancelParticipationFailureResponse = (lang: string): string =>
+    this.i18nService.__({
+      phrase: ACTIVITY_CANCEL_PARTICIPATION_FAILURE,
+      locale: lang,
+    });
+
+  getCancelParticipationSuccessResponse = (lang: string): string[] => {
+    const { activity: activityI18n } = this.i18nService.getCatalog(lang);
+
     return [
       activityI18n[CANCEL_PARTICIPATION_SUCCESS],
       activityI18n[NOTIFY_ORGANIZER],
     ];
   };
 
-  getCreateActivityResponse = async (lang: string): Promise<string> =>
-    this.i18nService.translate(STATE_CREATE_ACTIVITY_CLOSING, { lang });
+  getCreateActivityResponse = (lang: string): string =>
+    this.i18nService.__({
+      phrase: STATE_CREATE_ACTIVITY_CLOSING,
+      locale: lang,
+    });
 
-  getCreateFeedbackResponse = async (lang: string): Promise<string> =>
-    this.i18nService.translate(BOT_CREATE_FEEDBACK, { lang });
+  getCreateFeedbackResponse = (lang: string): string =>
+    this.i18nService.__({ phrase: BOT_CREATE_FEEDBACK, locale: lang });
 
   getCreatedActivitiesResponse = async (
     activityListData: PaginatedResponse<Activity>,
     options: DatetimeOptions,
   ) => {
-    const activityI18n = await this.i18nService.translate('activity', {
-      lang: options.lang,
-    });
+    const { activity: activityI18n } = this.i18nService.getCatalog(
+      options.lang,
+    );
 
     return this.getActivitiesResponse({
       activityListData,
@@ -291,20 +301,27 @@ export class ResponseService {
     });
   };
 
-  getDatetimeConfirmationResponse = async (
+  getDatetimeConfirmationResponse = (
     datetime: string,
     datetimeOptions: DatetimeOptions,
-  ): Promise<string> => {
+  ): string => {
     const formattedDatetime = formatDatetime(datetime, datetimeOptions);
     const { lang } = datetimeOptions;
-    return this.i18nService.translate(STATE_DATETIME_CONFIRMATION, {
-      lang,
-      args: { datetime: formattedDatetime },
-    });
+
+    return this.i18nService.__(
+      {
+        phrase: STATE_DATETIME_CONFIRMATION,
+        locale: lang,
+      },
+      {
+        datetime: formattedDatetime,
+      },
+    );
   };
 
-  getDatetimeQuestionI18n = async (lang: string) => {
-    const stateI18n = await this.i18nService.translate('state', { lang });
+  getDatetimeQuestionI18n = (lang: string) => {
+    const { state: stateI18n } = this.i18nService.getCatalog(lang);
+
     return this.getDatetimeQuestion(
       stateI18n[INVALID_DATETIME],
       stateI18n[DATETIME_BUTTON],
@@ -331,12 +348,12 @@ export class ResponseService {
     };
   };
 
-  getDefaultResponse = async (lang: string) => {
-    const defaultMessage = await this.i18nService.translate(
-      BOT_DEFAULT_MESSAGE,
-      { lang },
-    );
-    const quickReplies = await this.getDefaultResponseQuickReplies(lang);
+  getDefaultResponse = (lang: string) => {
+    const defaultMessage = this.i18nService.__({
+      phrase: BOT_DEFAULT_MESSAGE,
+      locale: lang,
+    });
+    const quickReplies = this.getDefaultResponseQuickReplies(lang);
 
     return {
       text: defaultMessage,
@@ -344,8 +361,8 @@ export class ResponseService {
     };
   };
 
-  getDefaultResponseQuickReplies = async (lang: string) => {
-    const activityI18n = await this.i18nService.translate('activity', { lang });
+  getDefaultResponseQuickReplies = (lang: string) => {
+    const { activity: activityI18n } = this.i18nService.getCatalog(lang);
 
     return [
       {
@@ -371,24 +388,35 @@ export class ResponseService {
     ];
   };
 
-  private async getElementFromActivity({
+  private getElementFromActivity({
     activity,
     buttonTitle,
     buttonPayload,
     isOrganizerShown = true,
     options,
   }) {
-    const activityI18n = await this.i18nService.translate('activity', {
-      lang: options.lang,
-      args: {
-        remainingVacancies: activity.remaining_vacancies,
-        type: activity.type,
-      },
-    });
+    const { activity: activityI18n } = this.i18nService.getCatalog(
+      options.lang,
+    );
+
     const title =
       activity.remaining_vacancies > 0
-        ? activityI18n[REMAINING_VACANCIES]
-        : activityI18n[NO_REMAINING_VACANCIES];
+        ? this.i18nService.__(
+            { phrase: activityI18n[REMAINING_VACANCIES], locale: options.lang },
+            {
+              remainingVacancies: activity.remaining_vacancies,
+              type: activity.type,
+            },
+          )
+        : this.i18nService.__(
+            {
+              phrase: activityI18n[NO_REMAINING_VACANCIES],
+              locale: options.lang,
+            },
+            {
+              type: activity.type,
+            },
+          );
     const url = getLocationUrl(
       activity.location.latitude,
       activity.location.longitude,
@@ -430,14 +458,12 @@ export class ResponseService {
     };
   }
 
-  getInitializeActivityResponse = async (lang: string) => {
-    const quickReplies = await this.getActivityTypeOptions(lang);
-    const activityTypeMessage = await this.i18nService.translate(
-      STATE_ACTIVITY_TYPE_QUESTION,
-      {
-        lang,
-      },
-    );
+  getInitializeActivityResponse = (lang: string) => {
+    const quickReplies = this.getActivityTypeOptions(lang);
+    const activityTypeMessage = this.i18nService.__({
+      phrase: STATE_ACTIVITY_TYPE_QUESTION,
+      locale: lang,
+    });
 
     return {
       text: activityTypeMessage,
@@ -445,13 +471,17 @@ export class ResponseService {
     };
   };
 
-  getInitializeFeedbackResponse = async (lang: string): Promise<string> =>
-    this.i18nService.translate(BOT_INITIALIZE_FEEDBACK, { lang });
+  getInitializeFeedbackResponse = (lang: string): string =>
+    this.i18nService.__({
+      phrase: BOT_INITIALIZE_FEEDBACK,
+      locale: lang,
+    });
 
-  getInvalidActivityTypeResponse = async (lang: string) => {
-    const quickReplies = await this.getActivityTypeOptions(lang);
-    const text = await this.i18nService.translate(STATE_INVALID_ACTIVITY_TYPE, {
-      lang,
+  getInvalidActivityTypeResponse = (lang: string) => {
+    const quickReplies = this.getActivityTypeOptions(lang);
+    const text = this.i18nService.__({
+      phrase: STATE_INVALID_ACTIVITY_TYPE,
+      locale: lang,
     });
 
     return {
@@ -460,24 +490,25 @@ export class ResponseService {
     };
   };
 
-  getInvalidLocationResponse = async (lang: string): Promise<string> =>
-    this.i18nService.translate(STATE_INVALID_LOCATION, {
-      lang,
-      args: {
+  getInvalidLocationResponse = (lang: string): string =>
+    this.i18nService.__(
+      { phrase: STATE_INVALID_LOCATION, locale: lang },
+      {
         distance: LOCATION_RADIUS_METERS / 1000,
       },
+    );
+
+  getInvalidPriceResponse = (lang: string): string =>
+    this.i18nService.__({ phrase: STATE_INVALID_PRICE, locale: lang });
+
+  getInvalidRemainingVacanciesResponse = (lang: string): string =>
+    this.i18nService.__({
+      phrase: STATE_INVALID_REMAINING_VACANCIES,
+      locale: lang,
     });
 
-  getInvalidPriceResponse = async (lang: string): Promise<string> =>
-    this.i18nService.translate(STATE_INVALID_PRICE, { lang });
-
-  getInvalidRemainingVacanciesResponse = async (
-    lang: string,
-  ): Promise<string> =>
-    this.i18nService.translate(STATE_INVALID_REMAINING_VACANCIES, { lang });
-
-  getInvalidUserLocationResponse = async (lang: string) => {
-    const userI18n = await this.i18nService.translate('user', { lang });
+  getInvalidUserLocationResponse = (lang: string) => {
+    const { user: userI18n } = this.i18nService.getCatalog(lang);
 
     return this.getUserLocationResponse({
       text: userI18n[INVALID_USER_LOCATION],
@@ -486,15 +517,15 @@ export class ResponseService {
     });
   };
 
-  getJoinActivityFailureResponse = async (lang: string): Promise<string> =>
-    this.i18nService.translate(ACTIVITY_JOIN_ACTIVITY_FAILURE, {
-      lang,
+  getJoinActivityFailureResponse = (lang: string): string =>
+    this.i18nService.__({
+      phrase: ACTIVITY_JOIN_ACTIVITY_FAILURE,
+      locale: lang,
     });
 
-  getJoinActivitySuccessResponse = async (lang: string): Promise<string[]> => {
-    const activityI18n = await this.i18nService.translate('activity', {
-      lang,
-    });
+  getJoinActivitySuccessResponse = (lang: string): string[] => {
+    const { activity: activityI18n } = this.i18nService.getCatalog(lang);
+
     return [
       activityI18n[JOIN_ACTIVITY_SUCCESS],
       activityI18n[NOTIFY_ORGANIZER],
@@ -505,9 +536,9 @@ export class ResponseService {
     activityListData: PaginatedResponse<Activity>,
     options: DatetimeOptions,
   ) => {
-    const activityI18n = await this.i18nService.translate('activity', {
-      lang: options.lang,
-    });
+    const { activity: activityI18n } = this.i18nService.getCatalog(
+      options.lang,
+    );
 
     return this.getActivitiesResponse({
       activityListData,
@@ -521,11 +552,11 @@ export class ResponseService {
     });
   };
 
-  getNotificationSubscriptionFailureResponse = async (lang: string) => {
-    return this.i18nService.translate(BOT_NOTIFICATION_SUBSCRIPTION_FAILURE, {
-      lang,
+  getNotificationSubscriptionFailureResponse = (lang: string) =>
+    this.i18nService.__({
+      phrase: BOT_NOTIFICATION_SUBSCRIPTION_FAILURE,
+      locale: lang,
     });
-  };
 
   getOrganizerResponse = (organizer: User) => {
     const elements = [this.getElementFromUser(organizer)];
@@ -535,14 +566,11 @@ export class ResponseService {
     return response;
   };
 
-  getParticipantListResponse = async (
-    participantList: User[],
-    lang: string,
-  ) => {
-    const noParticipantsMessage = await this.i18nService.translate(
-      ACTIVITY_NO_PARTICIPANTS,
-      { lang },
-    );
+  getParticipantListResponse = (participantList: User[], lang: string) => {
+    const noParticipantsMessage = this.i18nService.__({
+      phrase: ACTIVITY_NO_PARTICIPANTS,
+      locale: lang,
+    });
     if (participantList.length === 0) return noParticipantsMessage;
 
     const elements = participantList.map((participant: User) =>
@@ -553,16 +581,11 @@ export class ResponseService {
     return response;
   };
 
-  getRegisterUserSuccessResponse = async (lang: string): Promise<string> => {
-    return this.i18nService.translate(USER_REGISTRATION_SUCCESS, {
-      lang,
-    });
-  };
+  getRegisterUserSuccessResponse = (lang: string): string =>
+    this.i18nService.__({ phrase: USER_REGISTRATION_SUCCESS, locale: lang });
 
-  getRegisterUserFailureResponse = async (lang: string) => {
-    const userI18n = await this.i18nService.translate('user', {
-      lang,
-    });
+  getRegisterUserFailureResponse = (lang: string) => {
+    const { user: userI18n } = this.i18nService.getCatalog(lang);
 
     return {
       text: userI18n[REGISTRATION_FAILURE],
@@ -597,23 +620,20 @@ export class ResponseService {
     },
   ];
 
-  getResetRemainingVacanciesSuccessResponse = async (
-    lang: string,
-  ): Promise<string> =>
-    this.i18nService.translate(ACTIVITY_RESET_REMAINING_VACANCIES, {
-      lang,
+  getResetRemainingVacanciesSuccessResponse = (lang: string): string =>
+    this.i18nService.__({
+      phrase: ACTIVITY_RESET_REMAINING_VACANCIES,
+      locale: lang,
     });
 
-  getSubscribeToNotificationsFailureResponse = async (lang: string) =>
-    this.i18nService.translate(USER_SUBSCRIBE_TO_NOTIFICATIONS_FAILURE, {
-      lang,
+  getSubscribeToNotificationsFailureResponse = (lang: string): string =>
+    this.i18nService.__({
+      phrase: USER_SUBSCRIBE_TO_NOTIFICATIONS_FAILURE,
+      locale: lang,
     });
 
-  getSubscribeToNotificationsResponse = async (
-    userId: number,
-    lang: string,
-  ) => {
-    const userI18n = await this.i18nService.translate('user', { lang });
+  getSubscribeToNotificationsResponse = (lang: string) => {
+    const { user: userI18n } = this.i18nService.getCatalog(lang);
 
     return {
       text: userI18n[SUBSCRIBE_TO_NOTIFICATIONS_TEXT],
@@ -627,21 +647,20 @@ export class ResponseService {
     };
   };
 
-  getSubscribeToNotificationsSuccessResponse = async (lang: string) =>
-    this.i18nService.translate(USER_SUBSCRIBE_TO_NOTIFICATIONS_SUCCESS, {
-      lang,
+  getSubscribeToNotificationsSuccessResponse = (lang: string): string =>
+    this.i18nService.__({
+      phrase: USER_SUBSCRIBE_TO_NOTIFICATIONS_SUCCESS,
+      locale: lang,
     });
 
-  getUnsubscribeToNotificationsFailureResponse = async (lang: string) =>
-    this.i18nService.translate(USER_UNSUBSCRIBE_TO_NOTIFICATIONS_FAILURE, {
-      lang,
+  getUnsubscribeToNotificationsFailureResponse = (lang: string): string =>
+    this.i18nService.__({
+      phrase: USER_UNSUBSCRIBE_TO_NOTIFICATIONS_FAILURE,
+      locale: lang,
     });
 
-  getUnsubscribeToNotificationsResponse = async (
-    userId: number,
-    lang: string,
-  ) => {
-    const userI18n = await this.i18nService.translate('user', { lang });
+  getUnsubscribeToNotificationsResponse = (lang: string) => {
+    const { user: userI18n } = this.i18nService.getCatalog(lang);
 
     return {
       text: userI18n[UNSUBSCRIBE_TO_NOTIFICATIONS_TEXT],
@@ -655,18 +674,19 @@ export class ResponseService {
     };
   };
 
-  getUnsubscribeToNotificationsSuccessResponse = async (lang: string) =>
-    this.i18nService.translate(USER_UNSUBSCRIBE_TO_NOTIFICATIONS_SUCCESS, {
-      lang,
+  getUnsubscribeToNotificationsSuccessResponse = (lang: string): string =>
+    this.i18nService.__({
+      phrase: USER_UNSUBSCRIBE_TO_NOTIFICATIONS_SUCCESS,
+      locale: lang,
     });
 
   getUpcomingActivitiesResponse = async (
     activityListData: PaginatedResponse<Activity>,
     options: DatetimeOptions,
   ) => {
-    const activityI18n = await this.i18nService.translate('activity', {
-      lang: options.lang,
-    });
+    const { activity: activityI18n } = this.i18nService.getCatalog(
+      options.lang,
+    );
 
     return this.getActivitiesResponse({
       activityListData,
@@ -680,59 +700,54 @@ export class ResponseService {
     });
   };
 
-  getUpdateLocationSuccessResponse = async (lang: string): Promise<string> =>
-    this.i18nService.translate(USER_UPDATE_LOCATION_SUCCESS, { lang });
+  getUpdateLocationSuccessResponse = (lang: string): string =>
+    this.i18nService.__({ phrase: USER_UPDATE_LOCATION_SUCCESS, locale: lang });
 
-  getUpdateRemainingVacanciesResponse = async (
-    activityId: string,
-    lang: string,
-  ) => {
-    const activityI18n = await this.i18nService.translate('activity', {
-      lang,
-    });
+  getUpdateRemainingVacanciesResponse = (activityId: string, lang: string) => {
+    const { activity: activityI18n } = this.i18nService.getCatalog(lang);
+
     return {
       text: activityI18n[UPDATE_REMAINING_VACANCIES],
       buttons: this.getRemainingVacanciesButtons(activityId, activityI18n),
     };
   };
 
-  getUpdateRemainingVacanciesFailureResponse = async (
-    lang: string,
-  ): Promise<string> => {
-    return this.i18nService.translate(
-      ACTIVITY_UPDATE_REMAINING_VACANCIES_FAILURE,
-      {
-        lang,
-      },
-    );
-  };
+  getUpdateRemainingVacanciesFailureResponse = (lang: string): string =>
+    this.i18nService.__({
+      phrase: ACTIVITY_UPDATE_REMAINING_VACANCIES_FAILURE,
+      locale: lang,
+    });
 
-  getUpdateRemainingVacanciesSuccessResponse = async (
+  getUpdateRemainingVacanciesSuccessResponse = (
     activity: Activity,
     lang: string,
   ) => {
-    const activityI18n = await this.i18nService.translate('activity', {
-      lang,
-      args: {
+    if (!activity || activity.remaining_vacancies === 0)
+      return this.i18nService.__(
+        { phrase: ACTIVITY_NO_REMAINING_VACANCIES, locale: lang },
+        {
+          type: activity.type,
+        },
+      );
+    const updatedRemainingVacanciesText = this.i18nService.__(
+      { phrase: ACTIVITY_UPDATED_REMAINING_VACANCIES, locale: lang },
+      {
         remainingVacancies: activity.remaining_vacancies,
         type: activity.type,
       },
-    });
-    if (!activity || activity.remaining_vacancies === 0)
-      return activityI18n[NO_REMAINING_VACANCIES];
+    );
 
+    const { activity: activityI18n } = this.i18nService.getCatalog(lang);
     return {
-      text: activityI18n[UPDATED_REMAINING_VACANCIES],
+      text: updatedRemainingVacanciesText,
       buttons: this.getRemainingVacanciesButtons(activity.id, activityI18n),
     };
   };
 
-  getUpdateStateResponse = async (currentState: string, lang: string) => {
+  getUpdateStateResponse = (currentState: string, lang: string) => {
     if (!this.messages[currentState]) return;
 
-    const stateI18n = await this.i18nService.translate('state', {
-      lang,
-    });
+    const { state: stateI18n } = this.i18nService.getCatalog(lang);
     if (currentState === this.stateService.states.datetime) {
       return this.getDatetimeQuestion(
         stateI18n[DATETIME_QUESTION],
@@ -745,8 +760,9 @@ export class ResponseService {
     );
   };
 
-  getUserLocationI18n = async (lang: string) => {
-    const userI18n = await this.i18nService.translate('user', { lang });
+  getUserLocationI18n = (lang: string) => {
+    const { user: userI18n } = this.i18nService.getCatalog(lang);
+
     return this.getUserLocationResponse({
       text: userI18n[USER_LOCATION_TEXT],
       buttonTitle: userI18n[USER_LOCATION_BUTTON],

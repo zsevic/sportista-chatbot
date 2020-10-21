@@ -212,19 +212,13 @@ export class ResolverService {
       await this.stateService.updateState(userId, {
         current_state: this.stateService.states.subscribe_to_notifications,
       });
-      return this.responseService.getSubscribeToNotificationsResponse(
-        userId,
-        locale,
-      );
+      return this.responseService.getSubscribeToNotificationsResponse(locale);
     }
 
     await this.stateService.updateState(userId, {
       current_state: this.stateService.states.unsubscribe_to_notifications,
     });
-    return this.responseService.getUnsubscribeToNotificationsResponse(
-      userId,
-      locale,
-    );
+    return this.responseService.getUnsubscribeToNotificationsResponse(locale);
   };
 
   initializeActivity = async (userId: number) => {

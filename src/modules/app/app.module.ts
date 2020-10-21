@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { ConfigService, ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { I18nModule, I18nJsonParser } from 'nestjs-i18n';
 import { Subject } from 'rxjs';
 import { Connection } from 'typeorm';
 import {
@@ -24,6 +23,7 @@ import databaseConfig from 'common/config/database';
 import { BotsModule } from 'modules/bots/bots.module';
 import { ExtensionsModule } from 'modules/extensions/extensions.module';
 import { BootbotModule, BootbotOptions } from 'modules/external/bootbot';
+import { I18nModule } from 'modules/external/i18n';
 import { NodeGeocoderModule } from 'modules/external/node-geocoder';
 import { WebhookModule } from 'modules/webhook/webhook.module';
 import { AppController } from './app.controller';
@@ -57,13 +57,13 @@ const typeOrmConfig = {
         verifyToken: configService.get('WEBHOOK_VERIFY_TOKEN'),
       }),
     }),
-    I18nModule.forRoot({
-      fallbackLanguage: I18N_FALLBACK_LANGUAGE,
-      fallbacks: I18N_FALLBACKS,
-      parser: I18nJsonParser,
-      parserOptions: {
-        path: path.join(__dirname, '../../../i18n/'),
-      },
+    I18nModule.registerAsync({
+      useFactory: () => ({
+        defaultLocale: I18N_FALLBACK_LANGUAGE,
+        directory: path.join(__dirname, '../../../locales'),
+        fallbacks: I18N_FALLBACKS,
+        objectNotation: true,
+      }),
     }),
     NodeGeocoderModule.registerAsync({
       useFactory: () => ({
