@@ -206,6 +206,27 @@ export class ResolverService {
     }
   };
 
+  handleNotificationSubscription = async (userId: number) => {
+    const { is_subscribed, locale } = await this.userService.getUser(userId);
+    if (!is_subscribed) {
+      await this.stateService.updateState(userId, {
+        current_state: this.stateService.states.subscribe_to_notifications,
+      });
+      return this.responseService.getSubscribeToNotificationsResponse(
+        userId,
+        locale,
+      );
+    }
+
+    await this.stateService.updateState(userId, {
+      current_state: this.stateService.states.unsubscribe_to_notifications,
+    });
+    return this.responseService.getUnsubscribeToNotificationsResponse(
+      userId,
+      locale,
+    );
+  };
+
   initializeActivity = async (userId: number) => {
     const locale = await this.userService.getLocale(userId);
 
@@ -286,15 +307,19 @@ export class ResolverService {
   resetState = async (userId: number): Promise<State> =>
     this.stateService.resetState(userId);
 
-  handleNotificationSubscription = async (userId: number) => {
-    const { is_subscribed, locale } = await this.userService.getUser(userId);
-    if (!is_subscribed) {
+  subscribeToNotifications = async (userId: number): Promise<string> => {
+    const locale = await this.userService.getLocale(userId);
+    try {
       await this.userService.subscribeToNotifications(userId);
-      return this.responseService.getSubscribeToNotificationsResponse(locale);
-    }
 
-    await this.userService.unsubscribeToNotifications(userId);
-    return this.responseService.getUnsubscribeToNotificationsResponse(locale);
+      return this.responseService.getSubscribeToNotificationsSuccessResponse(
+        locale,
+      );
+    } catch {
+      return this.responseService.getSubscribeToNotificationsFailureResponse(
+        locale,
+      );
+    }
   };
 
   subtractRemainingVacancies = async (
@@ -314,6 +339,21 @@ export class ResolverService {
       );
     } catch {
       return this.responseService.getUpdateRemainingVacanciesFailureResponse(
+        locale,
+      );
+    }
+  };
+
+  unsubscribeToNotifications = async (userId: number): Promise<string> => {
+    const locale = await this.userService.getLocale(userId);
+    try {
+      await this.userService.unsubscribeToNotifications(userId);
+
+      return this.responseService.getUnsubscribeToNotificationsSuccessResponse(
+        locale,
+      );
+    } catch {
+      return this.responseService.getUnsubscribeToNotificationsFailureResponse(
         locale,
       );
     }

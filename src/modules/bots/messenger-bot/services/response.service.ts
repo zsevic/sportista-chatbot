@@ -82,8 +82,12 @@ import {
   STATE_INVALID_LOCATION,
   STATE_INVALID_PRICE,
   STATE_INVALID_REMAINING_VACANCIES,
+  SUBSCRIBE_TO_NOTIFICATIONS_BUTTON,
+  SUBSCRIBE_TO_NOTIFICATIONS_TEXT,
   SUBTRACT_REMAINING_VACANCIES,
   SUBTRACT_REMAINING_VACANCIES_TYPE,
+  UNSUBSCRIBE_TO_NOTIFICATIONS_BUTTON,
+  UNSUBSCRIBE_TO_NOTIFICATIONS_TEXT,
   UPCOMING_ACTIVITIES,
   UPCOMING_ACTIVITIES_PAYLOAD,
   UPCOMING_ACTIVITIES_TYPE,
@@ -94,12 +98,17 @@ import {
   USER_LOCATION_DESCRIPTION_TEXT,
   USER_LOCATION_TEXT,
   USER_REGISTRATION_SUCCESS,
-  USER_SUBSCRIBE_TO_NOTIFICATIONS,
-  USER_UNSUBSCRIBE_TO_NOTIFICATIONS,
   USER_UPDATE_LOCATION_SUCCESS,
   VIEW_MORE_CREATED_ACTIVITIES,
   VIEW_MORE_JOINED_ACTIVITIES,
   VIEW_MORE_UPCOMING_ACTIVITIES,
+  SUBSCRIBE_TO_NOTIFICATIONS_PAYLOAD,
+  UNSUBSCRIBE_TO_NOTIFICATIONS_PAYLOAD,
+  USER_SUBSCRIBE_TO_NOTIFICATIONS_FAILURE,
+  USER_SUBSCRIBE_TO_NOTIFICATIONS_SUCCESS,
+  USER_UNSUBSCRIBE_TO_NOTIFICATIONS_SUCCESS,
+  USER_UNSUBSCRIBE_TO_NOTIFICATIONS_FAILURE,
+  BOT_NOTIFICATION_SUBSCRIPTION_FAILURE,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { I18n } from 'modules/bots/messenger-bot/messenger-bot.types';
 import { getLocationUrl } from 'modules/bots/messenger-bot/messenger-bot.utils';
@@ -512,6 +521,12 @@ export class ResponseService {
     });
   };
 
+  getNotificationSubscriptionFailureResponse = async (lang: string) => {
+    return this.i18nService.translate(BOT_NOTIFICATION_SUBSCRIPTION_FAILURE, {
+      lang,
+    });
+  };
+
   getOrganizerResponse = (organizer: User) => {
     const elements = [this.getElementFromUser(organizer)];
 
@@ -589,13 +604,61 @@ export class ResponseService {
       lang,
     });
 
-  getSubscribeToNotificationsResponse = async (lang: string): Promise<string> =>
-    this.i18nService.translate(USER_SUBSCRIBE_TO_NOTIFICATIONS, { lang });
+  getSubscribeToNotificationsFailureResponse = async (lang: string) =>
+    this.i18nService.translate(USER_SUBSCRIBE_TO_NOTIFICATIONS_FAILURE, {
+      lang,
+    });
+
+  getSubscribeToNotificationsResponse = async (
+    userId: number,
+    lang: string,
+  ) => {
+    const userI18n = await this.i18nService.translate('user', { lang });
+
+    return {
+      text: userI18n[SUBSCRIBE_TO_NOTIFICATIONS_TEXT],
+      buttons: [
+        {
+          type: 'postback',
+          title: userI18n[SUBSCRIBE_TO_NOTIFICATIONS_BUTTON],
+          payload: SUBSCRIBE_TO_NOTIFICATIONS_PAYLOAD,
+        },
+      ],
+    };
+  };
+
+  getSubscribeToNotificationsSuccessResponse = async (lang: string) =>
+    this.i18nService.translate(USER_SUBSCRIBE_TO_NOTIFICATIONS_SUCCESS, {
+      lang,
+    });
+
+  getUnsubscribeToNotificationsFailureResponse = async (lang: string) =>
+    this.i18nService.translate(USER_UNSUBSCRIBE_TO_NOTIFICATIONS_FAILURE, {
+      lang,
+    });
 
   getUnsubscribeToNotificationsResponse = async (
+    userId: number,
     lang: string,
-  ): Promise<string> =>
-    this.i18nService.translate(USER_UNSUBSCRIBE_TO_NOTIFICATIONS, { lang });
+  ) => {
+    const userI18n = await this.i18nService.translate('user', { lang });
+
+    return {
+      text: userI18n[UNSUBSCRIBE_TO_NOTIFICATIONS_TEXT],
+      buttons: [
+        {
+          type: 'postback',
+          title: userI18n[UNSUBSCRIBE_TO_NOTIFICATIONS_BUTTON],
+          payload: UNSUBSCRIBE_TO_NOTIFICATIONS_PAYLOAD,
+        },
+      ],
+    };
+  };
+
+  getUnsubscribeToNotificationsSuccessResponse = async (lang: string) =>
+    this.i18nService.translate(USER_UNSUBSCRIBE_TO_NOTIFICATIONS_SUCCESS, {
+      lang,
+    });
 
   getUpcomingActivitiesResponse = async (
     activityListData: PaginatedResponse<Activity>,

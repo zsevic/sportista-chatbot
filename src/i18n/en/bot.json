@@ -6,5 +6,6 @@
   "DEFAULT_MESSAGE": "Choose one of the options",
   "FEEDBACK_BUTTON": "💬 Feedback",
   "INITIALIZE_FEEDBACK": "Tell us your feedback",
-  "NOTIFICATION_SUBSCRIPTION_BUTTON": "🔔 Subscription"
+  "NOTIFICATION_SUBSCRIPTION_BUTTON": "🔔 Subscription",
+  "NOTIFICATION_SUBSCRIPTION_FAILURE": "Notification subscription failed, try again"
 }

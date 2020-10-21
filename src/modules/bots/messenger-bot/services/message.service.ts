@@ -37,6 +37,15 @@ export class MessageService {
         locale,
       );
     }
+    if (
+      this.stateService.notificationSubscriptionStates.includes(
+        state.current_state,
+      )
+    ) {
+      return this.responseService.getNotificationSubscriptionFailureResponse(
+        locale,
+      );
+    }
 
     const updatedState = {
       [state.current_state]: text,

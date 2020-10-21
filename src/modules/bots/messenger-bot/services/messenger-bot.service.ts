@@ -9,6 +9,8 @@ import {
   INITIALIZE_FEEDBACK_PAYLOAD,
   JOINED_ACTIVITIES_PAYLOAD,
   NOTIFICATION_SUBSCRIPTION_PAYLOAD,
+  SUBSCRIBE_TO_NOTIFICATIONS_PAYLOAD,
+  UNSUBSCRIBE_TO_NOTIFICATIONS_PAYLOAD,
   UPCOMING_ACTIVITIES_PAYLOAD,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { MessengerBotController } from 'modules/bots/messenger-bot/messenger-bot.controller';
@@ -71,6 +73,14 @@ export class MessengerBotService {
     this.bot.on(
       `postback:${NOTIFICATION_SUBSCRIPTION_PAYLOAD}`,
       this.controller.notificationSubscriptionHandler,
+    );
+    this.bot.on(
+      `postback:${SUBSCRIBE_TO_NOTIFICATIONS_PAYLOAD}`,
+      this.controller.subscribeToNotificationsHandler,
+    );
+    this.bot.on(
+      `postback:${UNSUBSCRIBE_TO_NOTIFICATIONS_PAYLOAD}`,
+      this.controller.unsubscribeToNotificationsHandler,
     );
     this.bot.on(
       `postback:${UPCOMING_ACTIVITIES_PAYLOAD}`,

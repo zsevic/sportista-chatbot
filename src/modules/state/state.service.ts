@@ -5,16 +5,23 @@ import { StateRepository } from './state.repository';
 @Injectable()
 export class StateService {
   states = {
+    activity_type: 'activity_type',
+    create_activity_closing: 'create_activity_closing',
+    datetime: 'datetime',
+    get_upcoming_activities: 'get_upcoming_activities',
     initialize_activity: 'initialize_activity',
     initialize_feedback: 'initialize_feedback',
-    activity_type: 'activity_type',
-    datetime: 'datetime',
     location: 'location',
     price: 'price',
     remaining_vacancies: 'remaining_vacancies',
-    create_activity_closing: 'create_activity_closing',
-    get_upcoming_activities: 'get_upcoming_activities',
+    subscribe_to_notifications: 'subscribe_to_notifications',
+    unsubscribe_to_notifications: 'unsubscribe_to_notifications',
   };
+
+  notificationSubscriptionStates = [
+    this.states.subscribe_to_notifications,
+    this.states.unsubscribe_to_notifications,
+  ];
 
   nextStates = {
     [this.states.activity_type]: this.states.datetime,

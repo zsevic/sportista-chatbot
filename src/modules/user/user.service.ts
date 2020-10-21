@@ -45,11 +45,17 @@ export class UserService {
     await this.stateRepository.initializeState(user.id);
   }
 
-  subscribeToNotifications = async (userId: number) =>
-    this.userRepository.subscribeToNotifications(userId);
+  @Transactional()
+  async subscribeToNotifications(userId: number): Promise<void> {
+    await this.userRepository.subscribeToNotifications(userId);
+    await this.stateRepository.resetState(userId);
+  }
 
-  unsubscribeToNotifications = async (userId: number) =>
-    this.userRepository.unsubscribeToNotifications(userId);
+  @Transactional()
+  async unsubscribeToNotifications(userId: number): Promise<void> {
+    await this.userRepository.unsubscribeToNotifications(userId);
+    await this.stateRepository.resetState(userId);
+  }
 
   @Transactional()
   async upsertLocation(

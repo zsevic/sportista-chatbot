@@ -120,6 +120,22 @@ export class MessengerBotController {
     return chat.say(response);
   };
 
+  subscribeToNotificationsHandler = async (payload, chat) => {
+    const response = await this.resolverService.subscribeToNotifications(
+      payload.sender.id,
+    );
+
+    return chat.say(response);
+  };
+
+  unsubscribeToNotificationsHandler = async (payload, chat) => {
+    const response = await this.resolverService.unsubscribeToNotifications(
+      payload.sender.id,
+    );
+
+    return chat.say(response);
+  };
+
   upcomingActivitiesHandler = async (payload, chat) => {
     const response = await this.resolverService.getUpcomingActivities(
       payload.sender.id,
