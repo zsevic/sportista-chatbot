@@ -17,5 +17,6 @@
   "USER_LOCATION_DESCRIPTION_TEXT": "This information is required for proper activity filtering",
   "USER_LOCATION_FAILURE": "Use Messenger app and allow location sharing on the phone",
   "USER_LOCATION_PAGE_TEXT": "Your location is required for proper activity filtering",
+  "USER_LOCATION_SETTINGS_FAILURE": "Allow location sharing for Messenger on the phone",
   "USER_LOCATION_TEXT": "Send your location, use Messenger for this feature and allow location sharing on the phone"
 }

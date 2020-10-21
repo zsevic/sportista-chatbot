@@ -17,6 +17,7 @@ import {
   STATE_DATETIME_BUTTON,
   USER_LOCATION_FAILURE,
   USER_LOCATION_PAGE_TEXT,
+  USER_LOCATION_SETTINGS_FAILURE,
   USER_LOCATION_TYPE,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { BOOTBOT_OPTIONS_FACTORY } from 'modules/external/bootbot';
@@ -74,6 +75,7 @@ export class ExtensionsController {
       APP_ID: this.configService.get('FB_APP_ID'),
       USER_LOCATION_FAILURE: userI18n[USER_LOCATION_FAILURE],
       USER_LOCATION_PAGE_TEXT: userI18n[USER_LOCATION_PAGE_TEXT],
+      USER_LOCATION_SETTINGS_FAILURE: userI18n[USER_LOCATION_SETTINGS_FAILURE],
     });
   }
 
