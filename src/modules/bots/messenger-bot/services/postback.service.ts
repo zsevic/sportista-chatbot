@@ -32,7 +32,7 @@ export class PostbackService {
   handlePostback = async (buttonPayload: string, userId: number) => {
     if (SKIPPED_POSTBACK_PAYLOADS.includes(buttonPayload)) return;
 
-    const locale = await this.userService.getLocale(userId);
+    const { gender, locale } = await this.userService.getUser(userId);
     const { activity_id, type, page, user_id, latitude, longitude } = parse(
       buttonPayload,
     );
@@ -64,7 +64,7 @@ export class PostbackService {
         return this.resolverService.cancelParticipation(
           activity_id.toString(),
           userId,
-          locale,
+          { gender, locale },
         );
       }
       case CREATED_ACTIVITIES_TYPE: {
@@ -74,7 +74,7 @@ export class PostbackService {
         return this.resolverService.joinActivity(
           activity_id.toString(),
           userId,
-          locale,
+          { gender, locale },
         );
       }
       case JOINED_ACTIVITIES_TYPE: {

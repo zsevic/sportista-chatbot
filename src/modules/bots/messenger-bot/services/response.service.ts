@@ -110,7 +110,10 @@ import {
   ACTIVITY_NO_REMAINING_VACANCIES,
   ACTIVITY_UPDATED_REMAINING_VACANCIES,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
-import { I18n } from 'modules/bots/messenger-bot/messenger-bot.types';
+import {
+  I18n,
+  I18nOptions,
+} from 'modules/bots/messenger-bot/messenger-bot.types';
 import { getLocationUrl } from 'modules/bots/messenger-bot/messenger-bot.utils';
 import { I18N_OPTIONS_FACTORY } from 'modules/external/i18n';
 import { StateService } from 'modules/state/state.service';
@@ -263,11 +266,15 @@ export class ResponseService {
       locale: lang,
     });
 
-  getCancelParticipationSuccessResponse = (lang: string): string[] => {
-    const { activity: activityI18n } = this.i18nService.getCatalog(lang);
+  getCancelParticipationSuccessResponse = (options: I18nOptions): string[] => {
+    const { activity: activityI18n } = this.i18nService.getCatalog(
+      options.locale,
+    );
 
     return [
-      activityI18n[CANCEL_PARTICIPATION_SUCCESS],
+      this.i18nService.__mf(activityI18n[CANCEL_PARTICIPATION_SUCCESS], {
+        GENDER: options.gender,
+      }),
       activityI18n[NOTIFY_ORGANIZER],
     ];
   };
@@ -523,11 +530,15 @@ export class ResponseService {
       locale: lang,
     });
 
-  getJoinActivitySuccessResponse = (lang: string): string[] => {
-    const { activity: activityI18n } = this.i18nService.getCatalog(lang);
+  getJoinActivitySuccessResponse = (options: I18nOptions): string[] => {
+    const { activity: activityI18n } = this.i18nService.getCatalog(
+      options.locale,
+    );
 
     return [
-      activityI18n[JOIN_ACTIVITY_SUCCESS],
+      this.i18nService.__mf(activityI18n[JOIN_ACTIVITY_SUCCESS], {
+        GENDER: options.gender,
+      }),
       activityI18n[NOTIFY_ORGANIZER],
     ];
   };

@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { FIRST_PAGE } from 'common/config/constants';
 import { ActivityService } from 'modules/activity/activity.service';
+import { I18nOptions } from 'modules/bots/messenger-bot/messenger-bot.types';
 import { Feedback } from 'modules/feedback/feedback.dto';
 import { FeedbackService } from 'modules/feedback/feedback.service';
 import { ParticipationService } from 'modules/participation/participation.service';
@@ -63,13 +64,17 @@ export class ResolverService {
   cancelParticipation = async (
     activityId: string,
     userId: number,
-    locale: string,
+    options: I18nOptions,
   ): Promise<string | string[]> => {
     try {
       await this.participationService.cancelParticipation(activityId, userId);
-      return this.responseService.getCancelParticipationSuccessResponse(locale);
+      return this.responseService.getCancelParticipationSuccessResponse(
+        options,
+      );
     } catch {
-      return this.responseService.getCancelParticipationFailureResponse(locale);
+      return this.responseService.getCancelParticipationFailureResponse(
+        options.locale,
+      );
     }
   };
 
@@ -254,13 +259,15 @@ export class ResolverService {
   joinActivity = async (
     activityId: string,
     userId: number,
-    locale: string,
+    options: I18nOptions,
   ): Promise<string | string[]> => {
     try {
       await this.activityService.joinActivity(activityId, userId);
-      return this.responseService.getJoinActivitySuccessResponse(locale);
+      return this.responseService.getJoinActivitySuccessResponse(options);
     } catch {
-      return this.responseService.getJoinActivityFailureResponse(locale);
+      return this.responseService.getJoinActivityFailureResponse(
+        options.locale,
+      );
     }
   };
 

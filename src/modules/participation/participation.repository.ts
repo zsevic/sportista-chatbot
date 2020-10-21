@@ -15,8 +15,10 @@ export class ParticipationRepository extends Repository<ParticipationEntity> {
     const participation = await this.createQueryBuilder('participation')
       .leftJoin('participation.activity', 'activity')
       .leftJoin('participation.participant', 'participant')
-      .where('activity.id = CAST(:id AS uuid)', { id: activity_id })
-      .andWhere('participant.id = CAST(:id AS bigint)', { id: participant_id })
+      .where('activity.id = CAST(:activity_id AS uuid)', { activity_id })
+      .andWhere('participant.id = CAST(:participant_id AS bigint)', {
+        participant_id,
+      })
       .andWhere('activity.datetime > :now', {
         now: new Date().toUTCString(),
       })
