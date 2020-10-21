@@ -29,6 +29,11 @@ export class CreateUser1601331226728 implements MigrationInterface {
             type: 'varchar',
           },
           {
+            name: 'is_subscribed',
+            type: 'boolean',
+            default: false,
+          },
+          {
             name: 'last_name',
             type: 'varchar',
           },

@@ -59,6 +59,26 @@ export class UserRepository extends Repository<UserEntity> {
     return user;
   }
 
+  async subscribeToNotifications(userId: number): Promise<UserEntity> {
+    const user = await this.findOne(userId);
+    if (!user) throw new Error("User doesn't exist");
+
+    return this.save({
+      ...user,
+      is_subscribed: true,
+    });
+  }
+
+  async unsubscribeToNotifications(userId: number): Promise<UserEntity> {
+    const user = await this.findOne(userId);
+    if (!user) throw new Error("User doesn't exist");
+
+    return this.save({
+      ...user,
+      is_subscribed: false,
+    });
+  }
+
   async upsertLocation(
     userId: number,
     location_id: string,

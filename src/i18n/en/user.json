@@ -3,6 +3,8 @@
   "REGISTRATION": "📝 Register me",
   "REGISTRATION_FAILURE": "Registration failed",
   "REGISTRATION_SUCCESS": "Registration succeeded",
+  "SUBSCRIBE_TO_NOTIFICATIONS": "Subscribed",
+  "UNSUBSCRIBE_TO_NOTIFICATIONS": "Unsubscribed",
   "UPDATE_LOCATION": "📌 Update location",
   "UPDATE_LOCATION_SUCCESS": "Location is successfully changed",
   "USER_LOCATION_BUTTON": "📌 Send location",

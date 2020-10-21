@@ -8,6 +8,7 @@ import {
   INITIALIZE_ACTIVITY_PAYLOAD,
   INITIALIZE_FEEDBACK_PAYLOAD,
   JOINED_ACTIVITIES_PAYLOAD,
+  NOTIFICATION_SUBSCRIPTION_PAYLOAD,
   UPCOMING_ACTIVITIES_PAYLOAD,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { MessengerBotController } from 'modules/bots/messenger-bot/messenger-bot.controller';
@@ -66,6 +67,10 @@ export class MessengerBotService {
     this.bot.on(
       `postback:${JOINED_ACTIVITIES_PAYLOAD}`,
       this.controller.joinedActivitiesHandler,
+    );
+    this.bot.on(
+      `postback:${NOTIFICATION_SUBSCRIPTION_PAYLOAD}`,
+      this.controller.notificationSubscriptionHandler,
     );
     this.bot.on(
       `postback:${UPCOMING_ACTIVITIES_PAYLOAD}`,

@@ -5,5 +5,6 @@
   "CREATE_FEEDBACK": "Thanks for the feedback",
   "DEFAULT_MESSAGE": "Choose one of the options",
   "FEEDBACK_BUTTON": "💬 Feedback",
-  "INITIALIZE_FEEDBACK": "Tell us your feedback"
+  "INITIALIZE_FEEDBACK": "Tell us your feedback",
+  "NOTIFICATION_SUBSCRIPTION_BUTTON": "🔔 Subscription"
 }

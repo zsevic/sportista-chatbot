@@ -45,6 +45,12 @@ export class UserService {
     await this.stateRepository.initializeState(user.id);
   }
 
+  subscribeToNotifications = async (userId: number) =>
+    this.userRepository.subscribeToNotifications(userId);
+
+  unsubscribeToNotifications = async (userId: number) =>
+    this.userRepository.unsubscribeToNotifications(userId);
+
   @Transactional()
   async upsertLocation(
     userId: number,

@@ -5,5 +5,6 @@
   "CREATE_FEEDBACK": "Hvala za povratnu informaciju",
   "DEFAULT_MESSAGE": "Izaberi neku od opcija",
   "FEEDBACK_BUTTON": "💬 Utisci",
-  "INITIALIZE_FEEDBACK": "Podeli sa nama svoje utiske"
+  "INITIALIZE_FEEDBACK": "Podeli sa nama svoje utiske",
+  "NOTIFICATION_SUBSCRIPTION_BUTTON": "🔔 Pretplata"
 }

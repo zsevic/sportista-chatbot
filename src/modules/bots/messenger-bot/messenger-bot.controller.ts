@@ -112,6 +112,14 @@ export class MessengerBotController {
     return chat.say(response);
   };
 
+  notificationSubscriptionHandler = async (payload, chat) => {
+    const response = await this.resolverService.handleNotificationSubscription(
+      payload.sender.id,
+    );
+
+    return chat.say(response);
+  };
+
   upcomingActivitiesHandler = async (payload, chat) => {
     const response = await this.resolverService.getUpcomingActivities(
       payload.sender.id,

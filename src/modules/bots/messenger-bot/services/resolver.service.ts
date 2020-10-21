@@ -286,6 +286,17 @@ export class ResolverService {
   resetState = async (userId: number): Promise<State> =>
     this.stateService.resetState(userId);
 
+  handleNotificationSubscription = async (userId: number) => {
+    const { is_subscribed, locale } = await this.userService.getUser(userId);
+    if (!is_subscribed) {
+      await this.userService.subscribeToNotifications(userId);
+      return this.responseService.getSubscribeToNotificationsResponse(locale);
+    }
+
+    await this.userService.unsubscribeToNotifications(userId);
+    return this.responseService.getUnsubscribeToNotificationsResponse(locale);
+  };
+
   subtractRemainingVacancies = async (
     activityId: string,
     organizerId: number,

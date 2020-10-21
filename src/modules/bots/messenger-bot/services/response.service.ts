@@ -14,6 +14,8 @@ import { formatDatetime } from 'common/utils';
 import { ACTIVITY_TYPES } from 'modules/activity/activity.constants';
 import { Activity } from 'modules/activity/activity.dto';
 import {
+  ABOUT_ME_1,
+  ABOUT_ME_2,
   ACTIVITY_CANCEL_ACTIVITY_FAILURE,
   ACTIVITY_CANCEL_PARTICIPATION_FAILURE,
   ACTIVITY_JOIN_ACTIVITY_FAILURE,
@@ -27,6 +29,8 @@ import {
   ADD_REMAINING_VACANCIES,
   ADD_REMAINING_VACANCIES_TYPE,
   BOT_DEFAULT_MESSAGE,
+  BOT_INITIALIZE_FEEDBACK,
+  BOT_CREATE_FEEDBACK,
   CANCEL_ACTIVITY,
   CANCEL_ACTIVITY_SUCCESS,
   CANCEL_ACTIVITY_TYPE,
@@ -90,14 +94,12 @@ import {
   USER_LOCATION_DESCRIPTION_TEXT,
   USER_LOCATION_TEXT,
   USER_REGISTRATION_SUCCESS,
+  USER_SUBSCRIBE_TO_NOTIFICATIONS,
+  USER_UNSUBSCRIBE_TO_NOTIFICATIONS,
   USER_UPDATE_LOCATION_SUCCESS,
   VIEW_MORE_CREATED_ACTIVITIES,
   VIEW_MORE_JOINED_ACTIVITIES,
   VIEW_MORE_UPCOMING_ACTIVITIES,
-  ABOUT_ME_1,
-  ABOUT_ME_2,
-  BOT_INITIALIZE_FEEDBACK,
-  BOT_CREATE_FEEDBACK,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { I18n } from 'modules/bots/messenger-bot/messenger-bot.types';
 import { getLocationUrl } from 'modules/bots/messenger-bot/messenger-bot.utils';
@@ -586,6 +588,14 @@ export class ResponseService {
     this.i18nService.translate(ACTIVITY_RESET_REMAINING_VACANCIES, {
       lang,
     });
+
+  getSubscribeToNotificationsResponse = async (lang: string): Promise<string> =>
+    this.i18nService.translate(USER_SUBSCRIBE_TO_NOTIFICATIONS, { lang });
+
+  getUnsubscribeToNotificationsResponse = async (
+    lang: string,
+  ): Promise<string> =>
+    this.i18nService.translate(USER_UNSUBSCRIBE_TO_NOTIFICATIONS, { lang });
 
   getUpcomingActivitiesResponse = async (
     activityListData: PaginatedResponse<Activity>,

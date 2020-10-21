@@ -3,6 +3,8 @@
   "REGISTRATION": "📝 Registruj me",
   "REGISTRATION_FAILURE": "Registracija nije uspela, pokušaj ponovo",
   "REGISTRATION_SUCCESS": "Registracija je uspela",
+  "SUBSCRIBE_TO_NOTIFICATIONS": "Pretplata",
+  "UNSUBSCRIBE_TO_NOTIFICATIONS": "Odjava",
   "UPDATE_LOCATION": "📌 Ažuriraj lokaciju",
   "UPDATE_LOCATION_SUCCESS": "Lokacija je uspešno promenjena",
   "USER_LOCATION_BUTTON": "📌 Pošalji lokaciju",

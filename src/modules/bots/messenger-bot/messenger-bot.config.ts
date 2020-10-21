@@ -18,6 +18,8 @@ import {
   INITIALIZE_FEEDBACK_PAYLOAD,
   JOINED_ACTIVITIES,
   JOINED_ACTIVITIES_PAYLOAD,
+  NOTIFICATION_SUBSCRIPTION_BUTTON,
+  NOTIFICATION_SUBSCRIPTION_PAYLOAD,
   SR_RS_LOCALE,
   UPCOMING_ACTIVITIES,
   UPCOMING_ACTIVITIES_PAYLOAD,
@@ -44,6 +46,11 @@ const EN_PERSISTENT_MENU: any = [
     type: 'postback',
     title: activityI18nEn[INITIALIZE_ACTIVITY],
     payload: INITIALIZE_ACTIVITY_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: botI18nEn[NOTIFICATION_SUBSCRIPTION_BUTTON],
+    payload: NOTIFICATION_SUBSCRIPTION_PAYLOAD,
   },
   {
     type: 'postback',
@@ -96,6 +103,11 @@ export default () => {
       type: 'postback',
       title: activityI18nSr[INITIALIZE_ACTIVITY],
       payload: INITIALIZE_ACTIVITY_PAYLOAD,
+    },
+    {
+      type: 'postback',
+      title: botI18nSr[NOTIFICATION_SUBSCRIPTION_BUTTON],
+      payload: NOTIFICATION_SUBSCRIPTION_PAYLOAD,
     },
     {
       type: 'web_url',

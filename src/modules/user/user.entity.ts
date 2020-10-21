@@ -40,6 +40,9 @@ export class UserEntity {
   @Column()
   locale: string;
 
+  @Column()
+  is_subscribed: boolean;
+
   @Column({
     nullable: true,
   })

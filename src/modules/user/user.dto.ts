@@ -13,5 +13,7 @@ export class User {
 
   locale: string;
 
+  is_subscribed?: boolean;
+
   timezone?: string;
 }
