@@ -51,7 +51,7 @@
     "DEFAULT_MESSAGE": "Izaberi neku od opcija",
     "FEEDBACK_BUTTON": "💬 Utisci",
     "INITIALIZE_FEEDBACK": "Podeli sa nama svoje utiske",
-    "JOIN_ACTIVITY_NOTIFICATION": "{GENDER, select, male {Prijavio} female {Prijavila} other {Prijavio}} se {name} za {type} ({datetime})",
+    "JOIN_ACTIVITY_NOTIFICATION": "{name} se {GENDER, select, male {prijavio} female {prijavila} other {prijavio}} za {type} ({datetime})",
     "NOTIFICATION_SUBSCRIPTION_BUTTON": "🔔 Pretplata",
     "NOTIFICATION_SUBSCRIPTION_FAILURE": "Pokušaj ponovo"
   },
