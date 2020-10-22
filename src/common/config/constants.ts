@@ -9,6 +9,7 @@ export const I18N_FALLBACKS = {
   en_GB: 'en',
   en_US: 'en',
   sr_RS: 'sr',
+  '*': I18N_FALLBACK_LANGUAGE,
 };
 
 export const FIRST_PAGE = 1;

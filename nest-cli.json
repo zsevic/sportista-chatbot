@@ -2,7 +2,7 @@
   "collection": "@nestjs/schematics",
   "entryFile": "src/main",
   "compilerOptions": {
-    "assets": ["i18n/**/*", "locales/**/*"],
+    "assets": ["locales/**/*"],
     "plugins": ["@nestjs/swagger/plugin"]
   }
 }
