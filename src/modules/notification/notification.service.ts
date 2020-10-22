@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import convertToLatin from 'cyrillic-to-latin';
+import { formatDatetime } from 'common/utils';
 import { ActivityRepository } from 'modules/activity/activity.repository';
 import { BOOTBOT_OPTIONS_FACTORY } from 'modules/external/bootbot';
 import { I18N_OPTIONS_FACTORY } from 'modules/external/i18n';
@@ -22,19 +23,24 @@ export class NotificationService {
     const { first_name, gender, last_name } = await this.userRepository.findOne(
       userId,
     );
-    const { organizer, type } = await this.activityRepository.findOne(
+    const { organizer, datetime, type } = await this.activityRepository.findOne(
       activityId,
       {
         relations: ['organizer'],
       },
     );
     const name = convertToLatin(`${first_name} ${last_name}`);
+    const formattedDatetime = formatDatetime(datetime, {
+      lang: organizer.locale,
+      timezone: organizer.timezone,
+    });
     const textMessage = await this.i18nService.__mf(
       { phrase, locale: organizer.locale },
       {
         GENDER: gender,
         name,
         type,
+        datetime: formattedDatetime,
       },
     );
     await this.bot.sendTextMessage(organizer.id, textMessage);
