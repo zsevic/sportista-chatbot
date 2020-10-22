@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { FIRST_PAGE } from 'common/config/constants';
 import { ActivityService } from 'modules/activity/activity.service';
 import {
@@ -6,6 +6,7 @@ import {
   BOT_JOIN_ACTIVITY_NOTIFICATION,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { I18nOptions } from 'modules/bots/messenger-bot/messenger-bot.types';
+import { I18N_OPTIONS_FACTORY } from 'modules/external/i18n';
 import { Feedback } from 'modules/feedback/feedback.dto';
 import { FeedbackService } from 'modules/feedback/feedback.service';
 import { NotificationService } from 'modules/notification/notification.service';
@@ -25,6 +26,7 @@ export class ResolverService {
   constructor(
     private readonly activityService: ActivityService,
     private readonly feedbackService: FeedbackService,
+    @Inject(I18N_OPTIONS_FACTORY) private readonly i18nService,
     private readonly notificationService: NotificationService,
     private readonly participationService: ParticipationService,
     private readonly responseService: ResponseService,
@@ -75,13 +77,28 @@ export class ResolverService {
     try {
       await this.participationService
         .cancelParticipation(activityId, userId)
-        .then(async () =>
-          this.notificationService.notifyOrganizer(
+        .then(async () => {
+          const {
+            first_name,
+            gender,
+            last_name,
+          } = await this.userService.getUser(userId);
+          const message = await this.i18nService.__mf(
+            {
+              phrase: BOT_CANCEL_PARTICIPATION_NOTIFICATION,
+              locale: options.locale,
+            },
+            {
+              GENDER: gender,
+              name: `${first_name} ${last_name}`,
+            },
+          );
+          return this.notificationService.notifyOrganizer(
             activityId,
-            BOT_CANCEL_PARTICIPATION_NOTIFICATION,
+            message,
             options.locale,
-          ),
-        );
+          );
+        });
       return this.responseService.getCancelParticipationSuccessResponse(
         options,
       );
@@ -278,13 +295,25 @@ export class ResolverService {
     try {
       await this.activityService
         .joinActivity(activityId, userId)
-        .then(() =>
-          this.notificationService.notifyOrganizer(
+        .then(async () => {
+          const {
+            first_name,
+            gender,
+            last_name,
+          } = await this.userService.getUser(userId);
+          const message = await this.i18nService.__mf(
+            { phrase: BOT_JOIN_ACTIVITY_NOTIFICATION, locale: options.locale },
+            {
+              GENDER: gender,
+              name: `${first_name} ${last_name}`,
+            },
+          );
+          return this.notificationService.notifyOrganizer(
             activityId,
-            BOT_JOIN_ACTIVITY_NOTIFICATION,
+            message,
             options.locale,
-          ),
-        );
+          );
+        });
       return this.responseService.getJoinActivitySuccessResponse(options);
     } catch {
       return this.responseService.getJoinActivityFailureResponse(

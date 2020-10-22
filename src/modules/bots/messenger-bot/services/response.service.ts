@@ -272,9 +272,15 @@ export class ResponseService {
     );
 
     return [
-      this.i18nService.__mf(activityI18n[CANCEL_PARTICIPATION_SUCCESS], {
-        GENDER: options.gender,
-      }),
+      this.i18nService.__mf(
+        {
+          phrase: activityI18n[CANCEL_PARTICIPATION_SUCCESS],
+          locale: options.locale,
+        },
+        {
+          GENDER: options.gender,
+        },
+      ),
       activityI18n[NOTIFY_ORGANIZER],
     ];
   };
@@ -536,9 +542,12 @@ export class ResponseService {
     );
 
     return [
-      this.i18nService.__mf(activityI18n[JOIN_ACTIVITY_SUCCESS], {
-        GENDER: options.gender,
-      }),
+      this.i18nService.__mf(
+        { phrase: activityI18n[JOIN_ACTIVITY_SUCCESS], locale: options.locale },
+        {
+          GENDER: options.gender,
+        },
+      ),
       activityI18n[NOTIFY_ORGANIZER],
     ];
   };
