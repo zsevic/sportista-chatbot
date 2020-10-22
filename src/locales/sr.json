@@ -57,7 +57,7 @@
   },
   "state": {
     "ACTIVITY_TYPE_QUESTION": "Za koji sport tražiš igrače?",
-    "CREATE_ACTIVITY_CLOSING": "Hvala na informacija, stići će ti poruka kad se neko bude prijavio",
+    "CREATE_ACTIVITY_CLOSING": "Hvala na informaciji, stići će ti poruka kad se neko bude prijavio",
     "DATETIME_BUTTON": "📆 Unesi datum i vreme",
     "DATETIME_CONFIRMATION": "Izabrano vreme je {{datetime}}",
     "DATETIME_QUESTION": "Kad se igra?",
