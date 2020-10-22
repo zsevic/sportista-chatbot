@@ -27,9 +27,12 @@ import {
   ACTIVITY_VIEW_MORE,
   ADD_REMAINING_VACANCIES,
   ADD_REMAINING_VACANCIES_TYPE,
+  ACTIVITY_NO_REMAINING_VACANCIES,
+  ACTIVITY_UPDATED_REMAINING_VACANCIES,
+  BOT_CREATE_FEEDBACK,
   BOT_DEFAULT_MESSAGE,
   BOT_INITIALIZE_FEEDBACK,
-  BOT_CREATE_FEEDBACK,
+  BOT_NOTIFICATION_SUBSCRIPTION_FAILURE,
   CANCEL_ACTIVITY,
   CANCEL_ACTIVITY_SUCCESS,
   CANCEL_ACTIVITY_TYPE,
@@ -106,9 +109,6 @@ import {
   USER_SUBSCRIBE_TO_NOTIFICATIONS_SUCCESS,
   USER_UNSUBSCRIBE_TO_NOTIFICATIONS_SUCCESS,
   USER_UNSUBSCRIBE_TO_NOTIFICATIONS_FAILURE,
-  BOT_NOTIFICATION_SUBSCRIPTION_FAILURE,
-  ACTIVITY_NO_REMAINING_VACANCIES,
-  ACTIVITY_UPDATED_REMAINING_VACANCIES,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import {
   I18n,
@@ -272,9 +272,15 @@ export class ResponseService {
     );
 
     return [
-      this.i18nService.__mf(activityI18n[CANCEL_PARTICIPATION_SUCCESS], {
-        GENDER: options.gender,
-      }),
+      this.i18nService.__mf(
+        {
+          phrase: activityI18n[CANCEL_PARTICIPATION_SUCCESS],
+          locale: options.locale,
+        },
+        {
+          GENDER: options.gender,
+        },
+      ),
       activityI18n[NOTIFY_ORGANIZER],
     ];
   };
@@ -536,9 +542,12 @@ export class ResponseService {
     );
 
     return [
-      this.i18nService.__mf(activityI18n[JOIN_ACTIVITY_SUCCESS], {
-        GENDER: options.gender,
-      }),
+      this.i18nService.__mf(
+        { phrase: activityI18n[JOIN_ACTIVITY_SUCCESS], locale: options.locale },
+        {
+          GENDER: options.gender,
+        },
+      ),
       activityI18n[NOTIFY_ORGANIZER],
     ];
   };
