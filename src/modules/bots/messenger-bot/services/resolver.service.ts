@@ -1,9 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { FIRST_PAGE } from 'common/config/constants';
 import { ActivityService } from 'modules/activity/activity.service';
+import {
+  BOT_CANCEL_PARTICIPATION_NOTIFICATION,
+  BOT_JOIN_ACTIVITY_NOTIFICATION,
+} from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { I18nOptions } from 'modules/bots/messenger-bot/messenger-bot.types';
 import { Feedback } from 'modules/feedback/feedback.dto';
 import { FeedbackService } from 'modules/feedback/feedback.service';
+import { NotificationService } from 'modules/notification/notification.service';
 import { ParticipationService } from 'modules/participation/participation.service';
 import { RESET_STATE } from 'modules/state/state.constants';
 import { State } from 'modules/state/state.dto';
@@ -20,6 +25,7 @@ export class ResolverService {
   constructor(
     private readonly activityService: ActivityService,
     private readonly feedbackService: FeedbackService,
+    private readonly notificationService: NotificationService,
     private readonly participationService: ParticipationService,
     private readonly responseService: ResponseService,
     private readonly stateService: StateService,
@@ -67,7 +73,15 @@ export class ResolverService {
     options: I18nOptions,
   ): Promise<string | string[]> => {
     try {
-      await this.participationService.cancelParticipation(activityId, userId);
+      await this.participationService
+        .cancelParticipation(activityId, userId)
+        .then(async () =>
+          this.notificationService.notifyOrganizer(
+            activityId,
+            BOT_CANCEL_PARTICIPATION_NOTIFICATION,
+            options.locale,
+          ),
+        );
       return this.responseService.getCancelParticipationSuccessResponse(
         options,
       );
@@ -262,7 +276,15 @@ export class ResolverService {
     options: I18nOptions,
   ): Promise<string | string[]> => {
     try {
-      await this.activityService.joinActivity(activityId, userId);
+      await this.activityService
+        .joinActivity(activityId, userId)
+        .then(() =>
+          this.notificationService.notifyOrganizer(
+            activityId,
+            BOT_JOIN_ACTIVITY_NOTIFICATION,
+            options.locale,
+          ),
+        );
       return this.responseService.getJoinActivitySuccessResponse(options);
     } catch {
       return this.responseService.getJoinActivityFailureResponse(

@@ -4,6 +4,7 @@ import config from 'common/config';
 import { ActivityModule } from 'modules/activity/activity.module';
 import messengerBotConfig from 'modules/bots/messenger-bot/messenger-bot.config';
 import { FeedbackModule } from 'modules/feedback/feedback.module';
+import { NotificationModule } from 'modules/notification/notification.module';
 import { ParticipationModule } from 'modules/participation/participation.module';
 import { StateModule } from 'modules/state/state.module';
 import { UserModule } from 'modules/user/user.module';
@@ -25,6 +26,7 @@ import {
     }),
     ActivityModule,
     FeedbackModule,
+    NotificationModule,
     ParticipationModule,
     StateModule,
     UserModule,
