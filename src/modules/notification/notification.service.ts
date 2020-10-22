@@ -22,15 +22,19 @@ export class NotificationService {
     const { first_name, gender, last_name } = await this.userRepository.findOne(
       userId,
     );
-    const { organizer } = await this.activityRepository.findOne(activityId, {
-      relations: ['organizer'],
-    });
+    const { organizer, type } = await this.activityRepository.findOne(
+      activityId,
+      {
+        relations: ['organizer'],
+      },
+    );
     const name = convertToLatin(`${first_name} ${last_name}`);
     const textMessage = await this.i18nService.__mf(
       { phrase, locale: organizer.locale },
       {
         GENDER: gender,
         name,
+        type,
       },
     );
     await this.bot.sendTextMessage(organizer.id, textMessage);
