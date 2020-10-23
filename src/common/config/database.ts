@@ -1,18 +1,18 @@
 import { registerAs } from '@nestjs/config';
 
-const options = {
-  cli: {
-    migrationsDir: 'database/migrations',
-  },
-  entities: ['dist/**/*.entity.js'],
-  keepConnectionAlive: true,
-  logging: false,
-  migrations: ['database/migrations/*.js'],
-  migrationsTableName: 'migrations',
-  synchronize: false,
-};
-
 export default registerAs('database', () => {
+  const options = {
+    cli: {
+      migrationsDir: 'database/migrations',
+    },
+    entities: ['dist/**/*.entity.js'],
+    keepConnectionAlive: true,
+    logging: false,
+    migrations: ['database/migrations/*.js'],
+    migrationsTableName: 'migrations',
+    synchronize: false,
+  };
+
   const environmentsConfig = {
     production: {
       ...options,

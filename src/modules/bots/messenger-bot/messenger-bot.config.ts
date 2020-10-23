@@ -30,45 +30,45 @@ import {
   UPDATE_LOCATION,
 } from './messenger-bot.constants';
 
-const EN_PERSISTENT_MENU: any = [
-  {
-    type: 'postback',
-    title: activityI18nEn[UPCOMING_ACTIVITIES],
-    payload: UPCOMING_ACTIVITIES_PAYLOAD,
-  },
-  {
-    type: 'postback',
-    title: activityI18nEn[JOINED_ACTIVITIES],
-    payload: JOINED_ACTIVITIES_PAYLOAD,
-  },
-  {
-    type: 'postback',
-    title: activityI18nEn[CREATED_ACTIVITIES],
-    payload: CREATED_ACTIVITIES_PAYLOAD,
-  },
-  {
-    type: 'postback',
-    title: activityI18nEn[INITIALIZE_ACTIVITY],
-    payload: INITIALIZE_ACTIVITY_PAYLOAD,
-  },
-  {
-    type: 'postback',
-    title: botI18nEn[NOTIFICATION_SUBSCRIPTION_BUTTON],
-    payload: NOTIFICATION_SUBSCRIPTION_PAYLOAD,
-  },
-  {
-    type: 'postback',
-    title: botI18nEn[FEEDBACK_BUTTON],
-    payload: INITIALIZE_FEEDBACK_PAYLOAD,
-  },
-  {
-    type: 'postback',
-    title: botI18nEn[ABOUT_ME],
-    payload: ABOUT_ME_PAYLOAD,
-  },
-];
-
 export default () => {
+  const EN_PERSISTENT_MENU: any = [
+    {
+      type: 'postback',
+      title: activityI18nEn[UPCOMING_ACTIVITIES],
+      payload: UPCOMING_ACTIVITIES_PAYLOAD,
+    },
+    {
+      type: 'postback',
+      title: activityI18nEn[JOINED_ACTIVITIES],
+      payload: JOINED_ACTIVITIES_PAYLOAD,
+    },
+    {
+      type: 'postback',
+      title: activityI18nEn[CREATED_ACTIVITIES],
+      payload: CREATED_ACTIVITIES_PAYLOAD,
+    },
+    {
+      type: 'postback',
+      title: activityI18nEn[INITIALIZE_ACTIVITY],
+      payload: INITIALIZE_ACTIVITY_PAYLOAD,
+    },
+    {
+      type: 'postback',
+      title: botI18nEn[NOTIFICATION_SUBSCRIPTION_BUTTON],
+      payload: NOTIFICATION_SUBSCRIPTION_PAYLOAD,
+    },
+    {
+      type: 'postback',
+      title: botI18nEn[FEEDBACK_BUTTON],
+      payload: INITIALIZE_FEEDBACK_PAYLOAD,
+    },
+    {
+      type: 'postback',
+      title: botI18nEn[ABOUT_ME],
+      payload: ABOUT_ME_PAYLOAD,
+    },
+  ];
+
   const EN_GB_PERSISTENT_MENU = [...EN_PERSISTENT_MENU];
   EN_GB_PERSISTENT_MENU.splice(4, 0, {
     type: 'web_url',

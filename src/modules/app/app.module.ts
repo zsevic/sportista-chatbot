@@ -24,26 +24,24 @@ import { NodeGeocoderModule } from 'modules/external/node-geocoder';
 import { WebhookModule } from 'modules/webhook/webhook.module';
 import { AppController } from './app.controller';
 
-const typeOrmConfig = {
-  imports: [
-    ConfigModule.forRoot({
-      load: [databaseConfig],
-    }),
-  ],
-  inject: [ConfigService],
-  useFactory: async (configService: ConfigService) => {
-    initializeTransactionalContext();
-    patchTypeORMRepositoryWithBaseRepository();
-    return configService.get('database');
-  },
-};
-
 @Module({
   imports: [
     ConfigModule.forRoot({
       load: [config],
     }),
-    TypeOrmModule.forRootAsync(typeOrmConfig),
+    TypeOrmModule.forRootAsync({
+      imports: [
+        ConfigModule.forRoot({
+          load: [databaseConfig],
+        }),
+      ],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        initializeTransactionalContext();
+        patchTypeORMRepositoryWithBaseRepository();
+        return configService.get('database');
+      },
+    }),
     BootbotModule.registerAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService): BootbotOptions => ({
