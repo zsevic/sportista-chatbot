@@ -1,7 +1,5 @@
 import { Logger } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
-import { methodTransformToDto } from 'common/decorators';
-import { Participation } from './participation.dto';
 import { ParticipationEntity } from './participation.entity';
 
 @EntityRepository(ParticipationEntity)
@@ -29,7 +27,6 @@ export class ParticipationRepository extends Repository<ParticipationEntity> {
     return Promise.resolve();
   };
 
-  @methodTransformToDto(Participation)
   async createParticipation(
     activity_id: string,
     participant_id: number,

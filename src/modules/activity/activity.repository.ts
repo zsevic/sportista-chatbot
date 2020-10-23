@@ -4,7 +4,6 @@ import {
   LOCATION_RADIUS_METERS,
   PAGE_SIZE,
 } from 'common/config/constants';
-import { methodTransformToDto } from 'common/decorators';
 import { PaginatedResponse, UserLocation } from 'common/dtos';
 import { getSkip } from 'common/utils';
 import { ParticipationEntity } from 'modules/participation/participation.entity';
@@ -13,7 +12,6 @@ import { ActivityEntity } from './activity.entity';
 
 @EntityRepository(ActivityEntity)
 export class ActivityRepository extends Repository<ActivityEntity> {
-  @methodTransformToDto(Activity)
   async addRemainingVacancies(
     activity_id: string,
     organizer_id?: number,
@@ -59,12 +57,10 @@ export class ActivityRepository extends Repository<ActivityEntity> {
     return Promise.resolve();
   };
 
-  @methodTransformToDto(Activity)
   async createActivity(activity: Activity): Promise<ActivityEntity> {
     return this.save(activity);
   }
 
-  @methodTransformToDto(Activity, true)
   async getCreatedActivities(
     organizer_id: number,
     page = FIRST_PAGE,
@@ -89,7 +85,6 @@ export class ActivityRepository extends Repository<ActivityEntity> {
     };
   }
 
-  @methodTransformToDto(Activity, true)
   async getJoinedActivities(
     user_id: number,
     page = FIRST_PAGE,
@@ -127,7 +122,6 @@ export class ActivityRepository extends Repository<ActivityEntity> {
     };
   }
 
-  @methodTransformToDto(Activity, true)
   async getUpcomingActivities(
     userLocation: UserLocation,
     page = FIRST_PAGE,
@@ -172,7 +166,6 @@ export class ActivityRepository extends Repository<ActivityEntity> {
     };
   }
 
-  @methodTransformToDto(Activity)
   async resetRemainingVacancies(
     activity_id: string,
     organizer_id: number,
@@ -195,7 +188,6 @@ export class ActivityRepository extends Repository<ActivityEntity> {
     });
   }
 
-  @methodTransformToDto(Activity)
   async subtractRemainingVacancies(
     activity_id: string,
     organizer_id?: number,

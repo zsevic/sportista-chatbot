@@ -1,12 +1,10 @@
 import { Logger } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
-import { classTransformToDto } from 'common/decorators';
 import { RESET_STATE } from './state.constants';
 import { State } from './state.dto';
 import { StateEntity } from './state.entity';
 
 @EntityRepository(StateEntity)
-@classTransformToDto(State)
 export class StateRepository extends Repository<StateEntity> {
   private readonly logger = new Logger(StateRepository.name);
 

@@ -1,6 +1,5 @@
 import { EntityRepository, Repository, SelectQueryBuilder } from 'typeorm';
 import { LOCATION_RADIUS_METERS } from 'common/config/constants';
-import { classTransformToDto } from 'common/decorators';
 import { UserLocation } from 'common/dtos';
 import { ActivityEntity } from 'modules/activity/activity.entity';
 import { ParticipationEntity } from 'modules/participation/participation.entity';
@@ -8,7 +7,6 @@ import { User } from './user.dto';
 import { UserEntity } from './user.entity';
 
 @EntityRepository(UserEntity)
-@classTransformToDto(User)
 export class UserRepository extends Repository<UserEntity> {
   async getLocation(userId: number): Promise<UserLocation> {
     const { location } = await this.findOne(userId, {
