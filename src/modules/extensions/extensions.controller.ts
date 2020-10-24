@@ -33,10 +33,10 @@ export class ExtensionsController {
 
   @Get('datetime')
   async getDatetimePage(@Res() res: Response, @Query() query) {
-    const { lang = I18N_FALLBACK_LANGUAGE } = query;
+    const { lang: locale = I18N_FALLBACK_LANGUAGE } = query;
     const datetimeButton = this.i18nService.__({
       phrase: STATE_DATETIME_BUTTON,
-      locale: lang,
+      locale,
     });
 
     return res.render('pages/datetime-picker.ejs', {
@@ -69,8 +69,8 @@ export class ExtensionsController {
 
   @Get('location')
   async getLocationPage(@Res() res: Response, @Query() query) {
-    const { lang = I18N_FALLBACK_LANGUAGE } = query;
-    const { user: userI18n } = this.i18nService.getCatalog(lang);
+    const { lang: locale = I18N_FALLBACK_LANGUAGE } = query;
+    const { user: userI18n } = this.i18nService.getCatalog(locale);
 
     return res.render('pages/location.ejs', {
       APP_ID: this.configService.get('FB_APP_ID'),

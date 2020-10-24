@@ -16,25 +16,26 @@ import {
   ABOUT_ME_1,
   ABOUT_ME_2,
   ACTIVITY_CANCEL_ACTIVITY_FAILURE,
+  ACTIVITY_CANCEL_ACTIVITY_SUCCESS,
   ACTIVITY_CANCEL_PARTICIPATION_FAILURE,
   ACTIVITY_JOIN_ACTIVITY_FAILURE,
   ACTIVITY_NO_PARTICIPANTS,
+  ACTIVITY_NO_REMAINING_VACANCIES,
+  ACTIVITY_NOTIFY_PARTICIPANTS,
   ACTIVITY_OPTIONS,
   ACTIVITY_OPTIONS_TYPE,
   ACTIVITY_RESET_REMAINING_VACANCIES,
   ACTIVITY_TYPE_QUESTION,
   ACTIVITY_UPDATE_REMAINING_VACANCIES_FAILURE,
+  ACTIVITY_UPDATED_REMAINING_VACANCIES,
   ACTIVITY_VIEW_MORE,
   ADD_REMAINING_VACANCIES,
   ADD_REMAINING_VACANCIES_TYPE,
-  ACTIVITY_NO_REMAINING_VACANCIES,
-  ACTIVITY_UPDATED_REMAINING_VACANCIES,
   BOT_CREATE_FEEDBACK,
   BOT_DEFAULT_MESSAGE,
   BOT_INITIALIZE_FEEDBACK,
   BOT_NOTIFICATION_SUBSCRIPTION_FAILURE,
   CANCEL_ACTIVITY,
-  CANCEL_ACTIVITY_SUCCESS,
   CANCEL_ACTIVITY_TYPE,
   CANCEL_PARTICIPATION,
   CANCEL_PARTICIPATION_SUCCESS,
@@ -60,7 +61,6 @@ import {
   LOCATION_INSTRUCTION,
   LOCATION_QUESTION,
   NOTIFY_ORGANIZER,
-  NOTIFY_PARTICIPANTS,
   NO_CREATED_ACTIVITIES,
   NO_JOINED_ACTIVITIES,
   NO_REMAINING_VACANCIES,
@@ -143,15 +143,15 @@ export class ResponseService {
     private readonly stateService: StateService,
   ) {}
 
-  getAboutMeResponse = (lang: string): string[] => {
-    const { bot: botI18n } = this.i18nService.getCatalog(lang);
+  getAboutMeResponse = (locale: string): string[] => {
+    const { bot: botI18n } = this.i18nService.getCatalog(locale);
 
     return [botI18n[ABOUT_ME_1], botI18n[ABOUT_ME_2]].map(
       (phrase: string): string =>
         this.i18nService.__(
           {
             phrase,
-            locale: lang,
+            locale,
           },
           {
             projectName: PROJECT_NAME,
@@ -160,8 +160,8 @@ export class ResponseService {
     );
   };
 
-  getActivityOptionsResponse = (activityId: string, lang: string) => {
-    const { activity: activityI18n } = this.i18nService.getCatalog(lang);
+  getActivityOptionsResponse = (activityId: string, locale: string) => {
+    const { activity: activityI18n } = this.i18nService.getCatalog(locale);
 
     return {
       text: activityI18n[ACTIVITY_OPTIONS],
@@ -195,7 +195,7 @@ export class ResponseService {
     isOrganizerShown,
     options,
   }) {
-    const { lang } = options;
+    const { locale } = options;
     const { results, page, total } = activityListData;
 
     if (results.length === 0) return noActivitiesText;
@@ -219,7 +219,7 @@ export class ResponseService {
     if (hasNextPage) {
       const viewMoreTitle = this.i18nService.__({
         phrase: ACTIVITY_VIEW_MORE,
-        locale: lang,
+        locale,
       });
       response.push({
         text: viewMoreActivitiesText,
@@ -236,8 +236,8 @@ export class ResponseService {
     return response;
   }
 
-  getActivityTypeOptions = (lang: string) => {
-    const { activity: activityI18n } = this.i18nService.getCatalog(lang);
+  getActivityTypeOptions = (locale: string) => {
+    const { activity: activityI18n } = this.i18nService.getCatalog(locale);
 
     return Object.keys(ACTIVITY_TYPES).map((type) => ({
       title: `${type} ${activityI18n[type]}`,
@@ -245,25 +245,19 @@ export class ResponseService {
     }));
   };
 
-  getCancelActivitySuccessResponse = (lang: string): string[] => {
-    const { activity: activityI18n } = this.i18nService.getCatalog(lang);
+  getCancelActivitySuccessResponse = (locale: string): string =>
+    this.i18nService.__({ phrase: ACTIVITY_CANCEL_ACTIVITY_SUCCESS, locale });
 
-    return [
-      activityI18n[CANCEL_ACTIVITY_SUCCESS],
-      activityI18n[NOTIFY_PARTICIPANTS],
-    ];
-  };
-
-  getCancelActivityFailureResponse = (lang: string): string =>
+  getCancelActivityFailureResponse = (locale: string): string =>
     this.i18nService.__({
       phrase: ACTIVITY_CANCEL_ACTIVITY_FAILURE,
-      locale: lang,
+      locale,
     });
 
-  getCancelParticipationFailureResponse = (lang: string): string =>
+  getCancelParticipationFailureResponse = (locale: string): string =>
     this.i18nService.__({
       phrase: ACTIVITY_CANCEL_PARTICIPATION_FAILURE,
-      locale: lang,
+      locale,
     });
 
   getCancelParticipationSuccessResponse = (options: I18nOptions): string[] => {
@@ -285,21 +279,21 @@ export class ResponseService {
     ];
   };
 
-  getCreateActivityResponse = (lang: string): string =>
+  getCreateActivityResponse = (locale: string): string =>
     this.i18nService.__({
       phrase: STATE_CREATE_ACTIVITY_CLOSING,
-      locale: lang,
+      locale,
     });
 
-  getCreateFeedbackResponse = (lang: string): string =>
-    this.i18nService.__({ phrase: BOT_CREATE_FEEDBACK, locale: lang });
+  getCreateFeedbackResponse = (locale: string): string =>
+    this.i18nService.__({ phrase: BOT_CREATE_FEEDBACK, locale });
 
   getCreatedActivitiesResponse = async (
     activityListData: PaginatedResponse<Activity>,
     options: DatetimeOptions,
   ) => {
     const { activity: activityI18n } = this.i18nService.getCatalog(
-      options.lang,
+      options.locale,
     );
 
     return this.getActivitiesResponse({
@@ -319,12 +313,12 @@ export class ResponseService {
     datetimeOptions: DatetimeOptions,
   ): string => {
     const formattedDatetime = formatDatetime(datetime, datetimeOptions);
-    const { lang } = datetimeOptions;
+    const { locale } = datetimeOptions;
 
     return this.i18nService.__(
       {
         phrase: STATE_DATETIME_CONFIRMATION,
-        locale: lang,
+        locale,
       },
       {
         datetime: formattedDatetime,
@@ -332,20 +326,20 @@ export class ResponseService {
     );
   };
 
-  getDatetimeQuestionI18n = (lang: string) => {
-    const { state: stateI18n } = this.i18nService.getCatalog(lang);
+  getDatetimeQuestionI18n = (locale: string) => {
+    const { state: stateI18n } = this.i18nService.getCatalog(locale);
 
     return this.getDatetimeQuestion(
       stateI18n[INVALID_DATETIME],
       stateI18n[DATETIME_BUTTON],
-      lang,
+      locale,
     );
   };
 
-  getDatetimeQuestion = (text: string, buttonTitle: string, lang: string) => {
+  getDatetimeQuestion = (text: string, buttonTitle: string, locale: string) => {
     const url = `${this.configService.get(
       'EXTENSIONS_URL',
-    )}/extensions/datetime?lang=${lang}`;
+    )}/extensions/datetime?lang=${locale}`;
 
     return {
       text,
@@ -361,12 +355,12 @@ export class ResponseService {
     };
   };
 
-  getDefaultResponse = (lang: string) => {
+  getDefaultResponse = (locale: string) => {
     const defaultMessage = this.i18nService.__({
       phrase: BOT_DEFAULT_MESSAGE,
-      locale: lang,
+      locale,
     });
-    const quickReplies = this.getDefaultResponseQuickReplies(lang);
+    const quickReplies = this.getDefaultResponseQuickReplies(locale);
 
     return {
       text: defaultMessage,
@@ -374,8 +368,8 @@ export class ResponseService {
     };
   };
 
-  getDefaultResponseQuickReplies = (lang: string) => {
-    const { activity: activityI18n } = this.i18nService.getCatalog(lang);
+  getDefaultResponseQuickReplies = (locale: string) => {
+    const { activity: activityI18n } = this.i18nService.getCatalog(locale);
 
     return [
       {
@@ -408,14 +402,13 @@ export class ResponseService {
     isOrganizerShown = true,
     options,
   }) {
-    const { activity: activityI18n } = this.i18nService.getCatalog(
-      options.lang,
-    );
+    const { locale } = options;
+    const { activity: activityI18n } = this.i18nService.getCatalog(locale);
 
     const title =
       activity.remaining_vacancies > 0
         ? this.i18nService.__(
-            { phrase: activityI18n[REMAINING_VACANCIES], locale: options.lang },
+            { phrase: activityI18n[REMAINING_VACANCIES], locale },
             {
               remainingVacancies: activity.remaining_vacancies,
               type: activity.type,
@@ -424,7 +417,7 @@ export class ResponseService {
         : this.i18nService.__(
             {
               phrase: activityI18n[NO_REMAINING_VACANCIES],
-              locale: options.lang,
+              locale,
             },
             {
               type: activity.type,
@@ -448,7 +441,7 @@ export class ResponseService {
     }
     const datetime = formatDatetime(activity.datetime, options);
     const price = new Intl.NumberFormat(
-      LOCALES[options.lang] || LOCALES[DEFAULT_LOCALE],
+      LOCALES[options.locale] || LOCALES[DEFAULT_LOCALE],
       { style: 'currency', currency: activity.price.currency_code },
     ).format(activity.price.value);
 
@@ -471,11 +464,11 @@ export class ResponseService {
     };
   }
 
-  getInitializeActivityResponse = (lang: string) => {
-    const quickReplies = this.getActivityTypeOptions(lang);
+  getInitializeActivityResponse = (locale: string) => {
+    const quickReplies = this.getActivityTypeOptions(locale);
     const activityTypeMessage = this.i18nService.__({
       phrase: STATE_ACTIVITY_TYPE_QUESTION,
-      locale: lang,
+      locale,
     });
 
     return {
@@ -484,17 +477,17 @@ export class ResponseService {
     };
   };
 
-  getInitializeFeedbackResponse = (lang: string): string =>
+  getInitializeFeedbackResponse = (locale: string): string =>
     this.i18nService.__({
       phrase: BOT_INITIALIZE_FEEDBACK,
-      locale: lang,
+      locale,
     });
 
-  getInvalidActivityTypeResponse = (lang: string) => {
-    const quickReplies = this.getActivityTypeOptions(lang);
+  getInvalidActivityTypeResponse = (locale: string) => {
+    const quickReplies = this.getActivityTypeOptions(locale);
     const text = this.i18nService.__({
       phrase: STATE_INVALID_ACTIVITY_TYPE,
-      locale: lang,
+      locale,
     });
 
     return {
@@ -503,37 +496,37 @@ export class ResponseService {
     };
   };
 
-  getInvalidLocationResponse = (lang: string): string =>
+  getInvalidLocationResponse = (locale: string): string =>
     this.i18nService.__(
-      { phrase: STATE_INVALID_LOCATION, locale: lang },
+      { phrase: STATE_INVALID_LOCATION, locale },
       {
         distance: LOCATION_RADIUS_METERS / 1000,
       },
     );
 
-  getInvalidPriceResponse = (lang: string): string =>
-    this.i18nService.__({ phrase: STATE_INVALID_PRICE, locale: lang });
+  getInvalidPriceResponse = (locale: string): string =>
+    this.i18nService.__({ phrase: STATE_INVALID_PRICE, locale });
 
-  getInvalidRemainingVacanciesResponse = (lang: string): string =>
+  getInvalidRemainingVacanciesResponse = (locale: string): string =>
     this.i18nService.__({
       phrase: STATE_INVALID_REMAINING_VACANCIES,
-      locale: lang,
+      locale,
     });
 
-  getInvalidUserLocationResponse = (lang: string) => {
-    const { user: userI18n } = this.i18nService.getCatalog(lang);
+  getInvalidUserLocationResponse = (locale: string) => {
+    const { user: userI18n } = this.i18nService.getCatalog(locale);
 
     return this.getUserLocationResponse({
       text: userI18n[INVALID_USER_LOCATION],
       buttonTitle: userI18n[USER_LOCATION_BUTTON],
-      lang,
+      locale,
     });
   };
 
-  getJoinActivityFailureResponse = (lang: string): string =>
+  getJoinActivityFailureResponse = (locale: string): string =>
     this.i18nService.__({
       phrase: ACTIVITY_JOIN_ACTIVITY_FAILURE,
-      locale: lang,
+      locale,
     });
 
   getJoinActivitySuccessResponse = (options: I18nOptions): string[] => {
@@ -557,7 +550,7 @@ export class ResponseService {
     options: DatetimeOptions,
   ) => {
     const { activity: activityI18n } = this.i18nService.getCatalog(
-      options.lang,
+      options.locale,
     );
 
     return this.getActivitiesResponse({
@@ -572,11 +565,23 @@ export class ResponseService {
     });
   };
 
-  getNotificationSubscriptionFailureResponse = (lang: string) =>
+  getNotificationSubscriptionFailureResponse = (locale: string) =>
     this.i18nService.__({
       phrase: BOT_NOTIFICATION_SUBSCRIPTION_FAILURE,
-      locale: lang,
+      locale,
     });
+
+  getNotifyParticipantsResponse = (
+    locale: string,
+    participantsCount: number,
+  ): string =>
+    this.i18nService.__mf(
+      {
+        phrase: ACTIVITY_NOTIFY_PARTICIPANTS,
+        locale,
+      },
+      { COUNT: participantsCount },
+    );
 
   getOrganizerResponse = (organizer: User) => {
     const elements = [this.getElementFromUser(organizer)];
@@ -586,10 +591,10 @@ export class ResponseService {
     return response;
   };
 
-  getParticipantListResponse = (participantList: User[], lang: string) => {
+  getParticipantListResponse = (participantList: User[], locale: string) => {
     const noParticipantsMessage = this.i18nService.__({
       phrase: ACTIVITY_NO_PARTICIPANTS,
-      locale: lang,
+      locale,
     });
     if (participantList.length === 0) return noParticipantsMessage;
 
@@ -601,11 +606,11 @@ export class ResponseService {
     return response;
   };
 
-  getRegisterUserSuccessResponse = (lang: string): string =>
-    this.i18nService.__({ phrase: USER_REGISTRATION_SUCCESS, locale: lang });
+  getRegisterUserSuccessResponse = (locale: string): string =>
+    this.i18nService.__({ phrase: USER_REGISTRATION_SUCCESS, locale });
 
-  getRegisterUserFailureResponse = (lang: string) => {
-    const { user: userI18n } = this.i18nService.getCatalog(lang);
+  getRegisterUserFailureResponse = (locale: string) => {
+    const { user: userI18n } = this.i18nService.getCatalog(locale);
 
     return {
       text: userI18n[REGISTRATION_FAILURE],
@@ -640,20 +645,20 @@ export class ResponseService {
     },
   ];
 
-  getResetRemainingVacanciesSuccessResponse = (lang: string): string =>
+  getResetRemainingVacanciesSuccessResponse = (locale: string): string =>
     this.i18nService.__({
       phrase: ACTIVITY_RESET_REMAINING_VACANCIES,
-      locale: lang,
+      locale,
     });
 
-  getSubscribeToNotificationsFailureResponse = (lang: string): string =>
+  getSubscribeToNotificationsFailureResponse = (locale: string): string =>
     this.i18nService.__({
       phrase: USER_SUBSCRIBE_TO_NOTIFICATIONS_FAILURE,
-      locale: lang,
+      locale,
     });
 
-  getSubscribeToNotificationsResponse = (lang: string) => {
-    const { user: userI18n } = this.i18nService.getCatalog(lang);
+  getSubscribeToNotificationsResponse = (locale: string) => {
+    const { user: userI18n } = this.i18nService.getCatalog(locale);
 
     return {
       text: userI18n[SUBSCRIBE_TO_NOTIFICATIONS_TEXT],
@@ -667,20 +672,20 @@ export class ResponseService {
     };
   };
 
-  getSubscribeToNotificationsSuccessResponse = (lang: string): string =>
+  getSubscribeToNotificationsSuccessResponse = (locale: string): string =>
     this.i18nService.__({
       phrase: USER_SUBSCRIBE_TO_NOTIFICATIONS_SUCCESS,
-      locale: lang,
+      locale,
     });
 
-  getUnsubscribeToNotificationsFailureResponse = (lang: string): string =>
+  getUnsubscribeToNotificationsFailureResponse = (locale: string): string =>
     this.i18nService.__({
       phrase: USER_UNSUBSCRIBE_TO_NOTIFICATIONS_FAILURE,
-      locale: lang,
+      locale,
     });
 
-  getUnsubscribeToNotificationsResponse = (lang: string) => {
-    const { user: userI18n } = this.i18nService.getCatalog(lang);
+  getUnsubscribeToNotificationsResponse = (locale: string) => {
+    const { user: userI18n } = this.i18nService.getCatalog(locale);
 
     return {
       text: userI18n[UNSUBSCRIBE_TO_NOTIFICATIONS_TEXT],
@@ -694,10 +699,10 @@ export class ResponseService {
     };
   };
 
-  getUnsubscribeToNotificationsSuccessResponse = (lang: string): string =>
+  getUnsubscribeToNotificationsSuccessResponse = (locale: string): string =>
     this.i18nService.__({
       phrase: USER_UNSUBSCRIBE_TO_NOTIFICATIONS_SUCCESS,
-      locale: lang,
+      locale,
     });
 
   getUpcomingActivitiesResponse = async (
@@ -705,7 +710,7 @@ export class ResponseService {
     options: DatetimeOptions,
   ) => {
     const { activity: activityI18n } = this.i18nService.getCatalog(
-      options.lang,
+      options.locale,
     );
 
     return this.getActivitiesResponse({
@@ -720,11 +725,14 @@ export class ResponseService {
     });
   };
 
-  getUpdateLocationSuccessResponse = (lang: string): string =>
-    this.i18nService.__({ phrase: USER_UPDATE_LOCATION_SUCCESS, locale: lang });
+  getUpdateLocationSuccessResponse = (locale: string): string =>
+    this.i18nService.__({ phrase: USER_UPDATE_LOCATION_SUCCESS, locale });
 
-  getUpdateRemainingVacanciesResponse = (activityId: string, lang: string) => {
-    const { activity: activityI18n } = this.i18nService.getCatalog(lang);
+  getUpdateRemainingVacanciesResponse = (
+    activityId: string,
+    locale: string,
+  ) => {
+    const { activity: activityI18n } = this.i18nService.getCatalog(locale);
 
     return {
       text: activityI18n[UPDATE_REMAINING_VACANCIES],
@@ -732,47 +740,47 @@ export class ResponseService {
     };
   };
 
-  getUpdateRemainingVacanciesFailureResponse = (lang: string): string =>
+  getUpdateRemainingVacanciesFailureResponse = (locale: string): string =>
     this.i18nService.__({
       phrase: ACTIVITY_UPDATE_REMAINING_VACANCIES_FAILURE,
-      locale: lang,
+      locale,
     });
 
   getUpdateRemainingVacanciesSuccessResponse = (
     activity: Activity,
-    lang: string,
+    locale: string,
   ) => {
     if (!activity || activity.remaining_vacancies === 0)
       return this.i18nService.__(
-        { phrase: ACTIVITY_NO_REMAINING_VACANCIES, locale: lang },
+        { phrase: ACTIVITY_NO_REMAINING_VACANCIES, locale },
         {
           type: activity.type,
         },
       );
     const updatedRemainingVacanciesText = this.i18nService.__(
-      { phrase: ACTIVITY_UPDATED_REMAINING_VACANCIES, locale: lang },
+      { phrase: ACTIVITY_UPDATED_REMAINING_VACANCIES, locale },
       {
         remainingVacancies: activity.remaining_vacancies,
         type: activity.type,
       },
     );
 
-    const { activity: activityI18n } = this.i18nService.getCatalog(lang);
+    const { activity: activityI18n } = this.i18nService.getCatalog(locale);
     return {
       text: updatedRemainingVacanciesText,
       buttons: this.getRemainingVacanciesButtons(activity.id, activityI18n),
     };
   };
 
-  getUpdateStateResponse = (currentState: string, lang: string) => {
+  getUpdateStateResponse = (currentState: string, locale: string) => {
     if (!this.messages[currentState]) return;
 
-    const { state: stateI18n } = this.i18nService.getCatalog(lang);
+    const { state: stateI18n } = this.i18nService.getCatalog(locale);
     if (currentState === this.stateService.states.datetime) {
       return this.getDatetimeQuestion(
         stateI18n[DATETIME_QUESTION],
         stateI18n[DATETIME_BUTTON],
-        lang,
+        locale,
       );
     }
     return this.messages[currentState].map(
@@ -780,14 +788,14 @@ export class ResponseService {
     );
   };
 
-  getUserLocationI18n = (lang: string) => {
-    const { user: userI18n } = this.i18nService.getCatalog(lang);
+  getUserLocationI18n = (locale: string) => {
+    const { user: userI18n } = this.i18nService.getCatalog(locale);
 
     return this.getUserLocationResponse({
       text: userI18n[USER_LOCATION_TEXT],
       buttonTitle: userI18n[USER_LOCATION_BUTTON],
       descriptionText: userI18n[USER_LOCATION_DESCRIPTION_TEXT],
-      lang,
+      locale,
     });
   };
 
@@ -795,11 +803,11 @@ export class ResponseService {
     text,
     buttonTitle,
     descriptionText = null,
-    lang,
+    locale,
   }) => {
     const url = `${this.configService.get(
       'EXTENSIONS_URL',
-    )}/extensions/location?lang=${lang}`;
+    )}/extensions/location?lang=${locale}`;
 
     const response: any = [
       {

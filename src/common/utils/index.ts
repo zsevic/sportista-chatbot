@@ -6,7 +6,7 @@ export const formatDatetime = (
   datetime: string,
   datetimeOptions: DatetimeOptions,
 ) => {
-  const { lang, timezone } = datetimeOptions;
+  const { locale, timezone } = datetimeOptions;
   const options = {
     weekday: 'long',
     year: 'numeric',
@@ -17,7 +17,7 @@ export const formatDatetime = (
   };
 
   return utcToZonedTime(datetime, timezone).toLocaleDateString(
-    LOCALES[lang] || LOCALES[DEFAULT_LOCALE],
+    LOCALES[locale] || LOCALES[DEFAULT_LOCALE],
     options,
   );
 };

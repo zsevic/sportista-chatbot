@@ -1,4 +1,4 @@
 export type DatetimeOptions = {
-  lang: string;
+  locale: string;
   timezone: string;
 };

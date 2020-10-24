@@ -21,4 +21,10 @@ export class ParticipationService {
     );
     await this.activityRepository.addRemainingVacancies(activityId);
   }
+
+  getParticipationsAndCount = async (activityId: string) =>
+    this.participationRepository.findAndCount({
+      where: { activity_id: activityId },
+      relations: ['activity', 'participant'],
+    });
 }

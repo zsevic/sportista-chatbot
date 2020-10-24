@@ -60,8 +60,23 @@ export class ResolverService {
     locale: string,
   ): Promise<string | string[]> => {
     try {
+      const [
+        participations,
+        participantsCount,
+      ] = await this.participationService.getParticipationsAndCount(activityId);
       await this.activityService.cancelActivity(activityId, organizerId);
-      return this.responseService.getCancelActivitySuccessResponse(locale);
+      const response = this.responseService.getCancelActivitySuccessResponse(
+        locale,
+      );
+      if (participantsCount > 0) {
+        await this.notificationService.notifyParticipants(participations);
+        const notifyParticipantsResponse = this.responseService.getNotifyParticipantsResponse(
+          locale,
+          participantsCount,
+        );
+        return [response, notifyParticipantsResponse];
+      }
+      return response;
     } catch {
       return this.responseService.getCancelActivityFailureResponse(locale);
     }
@@ -124,7 +139,7 @@ export class ResolverService {
         ...activityListData,
         page,
       },
-      { lang: locale, timezone },
+      { locale, timezone },
     );
   };
 
@@ -146,7 +161,7 @@ export class ResolverService {
         ...activityListData,
         page,
       },
-      { lang: locale, timezone },
+      { locale, timezone },
     );
   };
 
@@ -187,7 +202,7 @@ export class ResolverService {
         page,
       },
       {
-        lang: locale,
+        locale,
         timezone,
       },
     );
