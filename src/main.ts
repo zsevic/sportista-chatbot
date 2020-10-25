@@ -2,6 +2,7 @@ import 'newrelic';
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import morgan from 'morgan';
 import throng from 'throng';
 import { setupApiDocs } from 'common/config/api-docs';
 import { AllExceptionsFilter } from 'common/filters';
@@ -18,6 +19,7 @@ async function bootstrap(): Promise<void> {
   app.get(AppModule).subscribeToShutdown(() => app.close());
 
   app.use(sslRedirect());
+  app.use(morgan('combined'));
   app.setViewEngine('ejs');
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalPipes(
