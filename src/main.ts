@@ -2,6 +2,7 @@ import 'newrelic';
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import throng from 'throng';
 import { setupApiDocs } from 'common/config/api-docs';
 import { AllExceptionsFilter } from 'common/filters';
 import { sslRedirect } from 'common/middlewares';
@@ -33,7 +34,11 @@ async function bootstrap(): Promise<void> {
   });
 }
 
-bootstrap();
+throng({
+  count: process.env.WEB_CONCURRENCY || 1,
+  lifetime: Infinity,
+  worker: bootstrap,
+});
 
 process.on('unhandledRejection', function handleUnhandledRejection(
   err: Error,
