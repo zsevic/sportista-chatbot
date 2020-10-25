@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { FIRST_PAGE } from 'common/config/constants';
+import { Activity } from 'modules/activity/activity.dto';
 import { ActivityService } from 'modules/activity/activity.service';
 import {
   BOT_CANCEL_PARTICIPATION_NOTIFICATION,
@@ -69,7 +70,9 @@ export class ResolverService {
         locale,
       );
       if (participantsCount > 0) {
-        await this.notificationService.notifyParticipants(participations);
+        await this.notificationService.notifyParticipantsAboutCanceledActivity(
+          participations,
+        );
         const notifyParticipantsResponse = this.responseService.getNotifyParticipantsResponse(
           locale,
           participantsCount,
@@ -91,7 +94,7 @@ export class ResolverService {
       await this.participationService
         .cancelParticipation(activityId, userId)
         .then(async () =>
-          this.notificationService.notifyOrganizer(
+          this.notificationService.notifyOrganizerAboutParticipantUpdate(
             activityId,
             userId,
             BOT_CANCEL_PARTICIPATION_NOTIFICATION,
@@ -108,7 +111,13 @@ export class ResolverService {
   };
 
   createActivity = async (newActivity: any, locale: string) => {
-    await this.activityService.createActivity(newActivity);
+    await this.activityService
+      .createActivity(newActivity)
+      .then((createdActivity: Activity) =>
+        this.notificationService.notifySubscribedUsersAboutNewActivityNearby(
+          createdActivity,
+        ),
+      );
 
     return this.responseService.getCreateActivityResponse(locale);
   };
@@ -294,7 +303,7 @@ export class ResolverService {
       await this.activityService
         .joinActivity(activityId, userId)
         .then(async () =>
-          this.notificationService.notifyOrganizer(
+          this.notificationService.notifyOrganizerAboutParticipantUpdate(
             activityId,
             userId,
             BOT_JOIN_ACTIVITY_NOTIFICATION,

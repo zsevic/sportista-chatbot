@@ -114,7 +114,10 @@ import {
   I18n,
   I18nOptions,
 } from 'modules/bots/messenger-bot/messenger-bot.types';
-import { getLocationUrl } from 'modules/bots/messenger-bot/messenger-bot.utils';
+import {
+  getImageUrl,
+  getLocationUrl,
+} from 'modules/bots/messenger-bot/messenger-bot.utils';
 import { I18N_OPTIONS_FACTORY } from 'modules/external/i18n';
 import { StateService } from 'modules/state/state.service';
 import { User } from 'modules/user/user.dto';
@@ -185,7 +188,7 @@ export class ResponseService {
     };
   };
 
-  private async getActivitiesResponse({
+  private getActivitiesResponse({
     activityListData,
     activityTypeText,
     activityType,
@@ -200,7 +203,7 @@ export class ResponseService {
 
     if (results.length === 0) return noActivitiesText;
 
-    const elements = results.map((activity: Activity) =>
+    const cards = results.map((activity: Activity) =>
       this.getElementFromActivity({
         activity,
         buttonTitle: activityTypeText,
@@ -209,7 +212,6 @@ export class ResponseService {
         options,
       }),
     );
-    const cards = await Promise.all(elements);
 
     const hasNextPage = PAGE_SIZE * page < total;
     const nextPage = page + 1;
@@ -288,7 +290,7 @@ export class ResponseService {
   getCreateFeedbackResponse = (locale: string): string =>
     this.i18nService.__({ phrase: BOT_CREATE_FEEDBACK, locale });
 
-  getCreatedActivitiesResponse = async (
+  getCreatedActivitiesResponse = (
     activityListData: PaginatedResponse<Activity>,
     options: DatetimeOptions,
   ) => {
@@ -449,9 +451,7 @@ export class ResponseService {
       title,
       subtitle: `${datetime}, ${activity.location.title}, ${price}`,
       ...(ACTIVITY_TYPES[activity.type] && {
-        image_url: `https://loremflickr.com/320/240/${
-          ACTIVITY_TYPES[activity.type]
-        }`,
+        image_url: getImageUrl(ACTIVITY_TYPES[activity.type]),
       }),
       buttons,
     };
@@ -545,7 +545,7 @@ export class ResponseService {
     ];
   };
 
-  getJoinedActivitiesResponse = async (
+  getJoinedActivitiesResponse = (
     activityListData: PaginatedResponse<Activity>,
     options: DatetimeOptions,
   ) => {
@@ -705,7 +705,7 @@ export class ResponseService {
       locale,
     });
 
-  getUpcomingActivitiesResponse = async (
+  getUpcomingActivitiesResponse = (
     activityListData: PaginatedResponse<Activity>,
     options: DatetimeOptions,
   ) => {

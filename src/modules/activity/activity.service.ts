@@ -34,7 +34,7 @@ export class ActivityService {
   }
 
   @Transactional()
-  async createActivity(activity: any): Promise<void> {
+  async createActivity(activity: any): Promise<Activity> {
     const location = await this.locationService.findOrCreate({
       latitude: activity.location_latitude,
       longitude: activity.location_longitude,
@@ -44,7 +44,7 @@ export class ActivityService {
       value: activity.price,
       currency_code: location.currency_code,
     });
-    await this.activityRepository.createActivity({
+    const createdActivity = await this.activityRepository.createActivity({
       organizer_id: activity.organizer_id,
       location_id: location.id,
       price_id: price.id,
@@ -53,6 +53,8 @@ export class ActivityService {
       type: activity.type,
     });
     await this.stateRepository.resetState(activity.organizer_id);
+
+    return { ...createdActivity, location, price };
   }
 
   getCreatedActivities = async (

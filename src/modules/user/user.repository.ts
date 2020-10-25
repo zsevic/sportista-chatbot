@@ -43,6 +43,20 @@ export class UserRepository extends Repository<UserEntity> {
       .getMany();
   }
 
+  getSubscribedUsersNearby = async (latitude: number, longitude: number) =>
+    this.createQueryBuilder('user')
+      .leftJoinAndSelect('user.location', 'location')
+      .where('user.is_subscribed = :isSubscribed', { isSubscribed: true })
+      .andWhere(
+        'ST_Distance(ST_Point(location.longitude, location.latitude)::geography, ST_Point(:longitude, :latitude)::geography) < :distance',
+        {
+          latitude,
+          longitude,
+          distance: LOCATION_RADIUS_METERS,
+        },
+      )
+      .getMany();
+
   async getUser(id: number): Promise<UserEntity> {
     const user = await this.findOne(id);
     if (!user) throw new Error("User doesn't exist");

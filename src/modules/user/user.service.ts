@@ -36,6 +36,12 @@ export class UserService {
   getParticipantList = async (activityId: string): Promise<User[]> =>
     this.userRepository.getParticipantListByActivity(activityId);
 
+  getSubscribedUsersNearby = async (
+    latitude: number,
+    longitude: number,
+  ): Promise<User[]> =>
+    this.userRepository.getSubscribedUsersNearby(latitude, longitude);
+
   getUser = async (id: number): Promise<User> =>
     this.userRepository.getUser(id);
 
