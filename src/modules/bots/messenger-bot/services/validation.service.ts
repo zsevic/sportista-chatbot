@@ -32,14 +32,7 @@ export class ValidationService {
     const { quick_reply, text } = message;
 
     if (!state || !state.current_state) {
-      if (
-        quick_reply?.payload &&
-        SKIPPED_QUICK_REPLY_PAYLOADS.includes(quick_reply.payload)
-      )
-        return;
-      else {
-        return this.responseService.getDefaultResponse(locale);
-      }
+      return this.responseService.getDefaultResponse(locale);
     }
 
     if (state.current_state === this.stateService.states.activity_type) {

@@ -103,6 +103,18 @@ export class MessengerBotController {
       sender: { id: userId },
     } = payload;
 
+    switch (message.quick_reply?.payload) {
+      case CREATED_ACTIVITIES_PAYLOAD:
+        return this.createdActivitiesHandler(payload, chat);
+      case INITIALIZE_ACTIVITY_PAYLOAD:
+        return this.initializeActivityHandler(payload, chat);
+      case JOINED_ACTIVITIES_PAYLOAD:
+        return this.joinedActivitiesHandler(payload, chat);
+      case UPCOMING_ACTIVITIES_PAYLOAD:
+        return this.upcomingActivitiesHandler(payload, chat);
+      default:
+    }
+
     const response = await this.messageService.handleMessage(message, userId);
     if (!response) return;
 
