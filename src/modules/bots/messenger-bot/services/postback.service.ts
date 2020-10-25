@@ -11,7 +11,6 @@ import {
   ORGANIZER_TYPE,
   PARTICIPANT_LIST_TYPE,
   RESET_REMAINING_VACANCIES_TYPE,
-  SKIPPED_POSTBACK_PAYLOADS,
   SUBTRACT_REMAINING_VACANCIES_TYPE,
   UPCOMING_ACTIVITIES_TYPE,
   UPDATE_REMAINING_VACANCIES_TYPE,
@@ -30,8 +29,6 @@ export class PostbackService {
   ) {}
 
   handlePostback = async (buttonPayload: string, userId: number) => {
-    if (SKIPPED_POSTBACK_PAYLOADS.includes(buttonPayload)) return;
-
     const { gender, locale } = await this.userService.getUser(userId);
     const { activity_id, type, page, user_id, latitude, longitude } = parse(
       buttonPayload,

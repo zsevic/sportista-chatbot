@@ -1,17 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
-  ABOUT_ME_PAYLOAD,
-  CREATED_ACTIVITIES_PAYLOAD,
   GET_STARTED_PAYLOAD,
   GREETING_TEXT,
-  INITIALIZE_ACTIVITY_PAYLOAD,
-  INITIALIZE_FEEDBACK_PAYLOAD,
-  JOINED_ACTIVITIES_PAYLOAD,
-  NOTIFICATION_SUBSCRIPTION_PAYLOAD,
-  SUBSCRIBE_TO_NOTIFICATIONS_PAYLOAD,
-  UNSUBSCRIBE_TO_NOTIFICATIONS_PAYLOAD,
-  UPCOMING_ACTIVITIES_PAYLOAD,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { MessengerBotController } from 'modules/bots/messenger-bot/messenger-bot.controller';
 import { BOOTBOT_OPTIONS_FACTORY } from 'modules/external/bootbot';
@@ -45,7 +36,6 @@ export class MessengerBotService {
   init = (): void => {
     const persistentMenu = this.configService.get('persistentMenu');
     this.bot.setGreetingText(GREETING_TEXT);
-    this.bot.setGetStartedButton(this.controller.getStartedButtonHandler);
     this.bot.setPersistentMenu(persistentMenu);
 
     this.bot.on(
@@ -53,57 +43,24 @@ export class MessengerBotService {
       this.asyncWrap(this.controller.attachmentHandler),
     );
 
-    this.bot.on(`postback:${ABOUT_ME_PAYLOAD}`, this.controller.aboutMeHandler);
-    this.bot.on(
-      `postback:${CREATED_ACTIVITIES_PAYLOAD}`,
-      this.controller.createdActivitiesHandler,
-    );
-    this.bot.on(
-      `postback:${INITIALIZE_ACTIVITY_PAYLOAD}`,
-      this.controller.initializeActivityHandler,
-    );
-    this.bot.on(
-      `postback:${INITIALIZE_FEEDBACK_PAYLOAD}`,
-      this.controller.initializeFeedbackHandler,
-    );
-    this.bot.on(
-      `postback:${JOINED_ACTIVITIES_PAYLOAD}`,
-      this.controller.joinedActivitiesHandler,
-    );
-    this.bot.on(
-      `postback:${NOTIFICATION_SUBSCRIPTION_PAYLOAD}`,
-      this.controller.notificationSubscriptionHandler,
-    );
-    this.bot.on(
-      `postback:${SUBSCRIBE_TO_NOTIFICATIONS_PAYLOAD}`,
-      this.controller.subscribeToNotificationsHandler,
-    );
-    this.bot.on(
-      `postback:${UNSUBSCRIBE_TO_NOTIFICATIONS_PAYLOAD}`,
-      this.controller.unsubscribeToNotificationsHandler,
-    );
-    this.bot.on(
-      `postback:${UPCOMING_ACTIVITIES_PAYLOAD}`,
-      this.controller.upcomingActivitiesHandler,
-    );
     this.bot.on('postback', this.asyncWrap(this.controller.postbackHandler));
 
-    this.bot.on(
-      `quick_reply:${CREATED_ACTIVITIES_PAYLOAD}`,
-      this.controller.createdActivitiesHandler,
-    );
-    this.bot.on(
-      `quick_reply:${INITIALIZE_ACTIVITY_PAYLOAD}`,
-      this.controller.initializeActivityHandler,
-    );
-    this.bot.on(
-      `quick_reply:${JOINED_ACTIVITIES_PAYLOAD}`,
-      this.controller.joinedActivitiesHandler,
-    );
-    this.bot.on(
-      `quick_reply:${UPCOMING_ACTIVITIES_PAYLOAD}`,
-      this.controller.upcomingActivitiesHandler,
-    );
+    // this.bot.on(
+    //   `quick_reply:${CREATED_ACTIVITIES_PAYLOAD}`,
+    //   this.controller.createdActivitiesHandler,
+    // );
+    // this.bot.on(
+    //   `quick_reply:${INITIALIZE_ACTIVITY_PAYLOAD}`,
+    //   this.controller.initializeActivityHandler,
+    // );
+    // this.bot.on(
+    //   `quick_reply:${JOINED_ACTIVITIES_PAYLOAD}`,
+    //   this.controller.joinedActivitiesHandler,
+    // );
+    // this.bot.on(
+    //   `quick_reply:${UPCOMING_ACTIVITIES_PAYLOAD}`,
+    //   this.controller.upcomingActivitiesHandler,
+    // );
 
     this.bot.on('message', this.asyncWrap(this.controller.messageHandler));
   };
