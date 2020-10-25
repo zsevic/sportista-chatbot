@@ -103,17 +103,11 @@ export class MessengerBotController {
       sender: { id: userId },
     } = payload;
 
-    switch (message.quick_reply?.payload) {
-      case CREATED_ACTIVITIES_PAYLOAD:
-        return this.createdActivitiesHandler(payload, chat);
-      case INITIALIZE_ACTIVITY_PAYLOAD:
-        return this.initializeActivityHandler(payload, chat);
-      case JOINED_ACTIVITIES_PAYLOAD:
-        return this.joinedActivitiesHandler(payload, chat);
-      case UPCOMING_ACTIVITIES_PAYLOAD:
-        return this.upcomingActivitiesHandler(payload, chat);
-      default:
-    }
+    if (this.quickReplyHandlers[message.quick_reply?.payload])
+      return this.quickReplyHandlers[message.quick_reply.payload](
+        payload,
+        chat,
+      );
 
     const response = await this.messageService.handleMessage(message, userId);
     if (!response) return;
@@ -135,29 +129,8 @@ export class MessengerBotController {
       sender: { id: userId },
     } = payload;
 
-    switch (buttonPayload) {
-      case ABOUT_ME_PAYLOAD:
-        return this.aboutMeHandler(payload, chat);
-      case CREATED_ACTIVITIES_PAYLOAD:
-        return this.createdActivitiesHandler(payload, chat);
-      case GET_STARTED_PAYLOAD:
-        return this.getStartedButtonHandler(payload, chat);
-      case INITIALIZE_ACTIVITY_PAYLOAD:
-        return this.initializeActivityHandler(payload, chat);
-      case INITIALIZE_FEEDBACK_PAYLOAD:
-        return this.initializeFeedbackHandler(payload, chat);
-      case JOINED_ACTIVITIES_PAYLOAD:
-        return this.joinedActivitiesHandler(payload, chat);
-      case NOTIFICATION_SUBSCRIPTION_PAYLOAD:
-        return this.notificationSubscriptionHandler(payload, chat);
-      case SUBSCRIBE_TO_NOTIFICATIONS_PAYLOAD:
-        return this.subscribeToNotificationsHandler(payload, chat);
-      case UNSUBSCRIBE_TO_NOTIFICATIONS_PAYLOAD:
-        return this.unsubscribeToNotificationsHandler(payload, chat);
-      case UPCOMING_ACTIVITIES_PAYLOAD:
-        return this.upcomingActivitiesHandler(payload, chat);
-      default:
-    }
+    if (this.postbackHandlers[buttonPayload])
+      return this.postbackHandlers[buttonPayload](payload, chat);
 
     const response = await this.postbackService.handlePostback(
       buttonPayload,
@@ -189,5 +162,26 @@ export class MessengerBotController {
       payload.sender.id,
     );
     return chat.say(response);
+  };
+
+  postbackHandlers = {
+    [ABOUT_ME_PAYLOAD]: this.aboutMeHandler,
+    [CREATED_ACTIVITIES_PAYLOAD]: this.createdActivitiesHandler,
+    [GET_STARTED_PAYLOAD]: this.getStartedButtonHandler,
+    [INITIALIZE_ACTIVITY_PAYLOAD]: this.initializeActivityHandler,
+    [INITIALIZE_FEEDBACK_PAYLOAD]: this.initializeFeedbackHandler,
+    [JOINED_ACTIVITIES_PAYLOAD]: this.joinedActivitiesHandler,
+    [NOTIFICATION_SUBSCRIPTION_PAYLOAD]: this.notificationSubscriptionHandler,
+    [SUBSCRIBE_TO_NOTIFICATIONS_PAYLOAD]: this.subscribeToNotificationsHandler,
+    [UNSUBSCRIBE_TO_NOTIFICATIONS_PAYLOAD]: this
+      .unsubscribeToNotificationsHandler,
+    [UPCOMING_ACTIVITIES_PAYLOAD]: this.upcomingActivitiesHandler,
+  };
+
+  quickReplyHandlers = {
+    [CREATED_ACTIVITIES_PAYLOAD]: this.createdActivitiesHandler,
+    [INITIALIZE_ACTIVITY_PAYLOAD]: this.initializeActivityHandler,
+    [JOINED_ACTIVITIES_PAYLOAD]: this.joinedActivitiesHandler,
+    [UPCOMING_ACTIVITIES_PAYLOAD]: this.upcomingActivitiesHandler,
   };
 }
