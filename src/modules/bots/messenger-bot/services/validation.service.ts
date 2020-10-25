@@ -4,7 +4,6 @@ import {
   ACTIVITY_TYPES,
   MIN_REMAINING_VACANCIES,
 } from 'modules/activity/activity.constants';
-import { SKIPPED_QUICK_REPLY_PAYLOADS } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { State } from 'modules/state/state.dto';
 import { StateService } from 'modules/state/state.service';
 import { parse } from 'querystring';
