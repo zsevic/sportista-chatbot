@@ -6,13 +6,7 @@ import { UserRepository } from 'modules/user/user.repository';
 import { NotificationService } from './notification.service';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      ActivityRepository,
-      ParticipationRepository,
-      UserRepository,
-    ]),
-  ],
+  imports: [TypeOrmModule.forFeature([ActivityRepository, UserRepository])],
   providers: [NotificationService],
   exports: [NotificationService],
 })

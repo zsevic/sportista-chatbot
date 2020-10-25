@@ -1,14 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import convertToLatin from 'cyrillic-to-latin';
 import { formatDatetime } from 'common/utils';
-import { Activity } from 'modules/activity/activity.dto';
 import { ActivityRepository } from 'modules/activity/activity.repository';
+import { BOT_CANCEL_ACTIVITY_NOTIFICATION } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { BOOTBOT_OPTIONS_FACTORY } from 'modules/external/bootbot';
 import { I18N_OPTIONS_FACTORY } from 'modules/external/i18n';
 import { Participation } from 'modules/participation/participation.dto';
-import { ParticipationRepository } from 'modules/participation/participation.repository';
 import { UserRepository } from 'modules/user/user.repository';
-import { BOT_CANCEL_ACTIVITY_NOTIFICATION } from 'modules/bots/messenger-bot/messenger-bot.constants';
 
 @Injectable()
 export class NotificationService {
@@ -16,7 +14,6 @@ export class NotificationService {
     private readonly activityRepository: ActivityRepository,
     @Inject(BOOTBOT_OPTIONS_FACTORY) private readonly bot,
     @Inject(I18N_OPTIONS_FACTORY) private readonly i18nService,
-    private readonly participationRepository: ParticipationRepository,
     private readonly userRepository: UserRepository,
   ) {}
 
