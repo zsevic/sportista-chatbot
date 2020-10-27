@@ -2,6 +2,7 @@ import 'newrelic';
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import bodyParser from 'body-parser';
 import compression from 'compression';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -33,6 +34,7 @@ async function bootstrap(): Promise<void> {
       whitelist: true,
     }),
   );
+  app.use('/webhook', bodyParser.raw({ type: 'application/json' }));
   setupApiDocs(app);
 
   await app.listen(configService.get('PORT')).then(() => {

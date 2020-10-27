@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   ForbiddenException,
@@ -9,7 +10,9 @@ import {
   Logger,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from 'common/guards/auth.guard';
 import { BOOTBOT_OPTIONS_FACTORY } from 'modules/external/bootbot';
 
 @Controller('webhook')
@@ -34,11 +37,13 @@ export class WebhookController {
     }
   }
 
+  @UseGuards(AuthGuard)
   @Post()
   @HttpCode(HttpStatus.OK)
-  async handleWebhook(@Body() data) {
+  async handleWebhook(@Body() rawBody) {
+    const data = JSON.parse(rawBody.toString());
     if (data.object !== 'page') {
-      return;
+      throw new BadRequestException();
     }
 
     this.bot.handleFacebookData(data);
