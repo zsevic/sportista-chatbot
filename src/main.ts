@@ -2,6 +2,8 @@ import 'newrelic';
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import compression from 'compression';
+import helmet from 'helmet';
 import morgan from 'morgan';
 import throng from 'throng';
 import { setupApiDocs } from 'common/config/api-docs';
@@ -19,6 +21,8 @@ async function bootstrap(): Promise<void> {
   app.get(AppModule).subscribeToShutdown(() => app.close());
 
   app.use(sslRedirect());
+  app.use(compression());
+  app.use(helmet());
   app.use(morgan('combined'));
   app.setViewEngine('ejs');
   app.useGlobalFilters(new AllExceptionsFilter());
