@@ -27,9 +27,22 @@ async function bootstrap(): Promise<void> {
 
   app.use(sslRedirect());
   app.use(compression());
-  app.use(helmet({
-    contentSecurityPolicy: false,
-  }));
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrcElem: [
+            "'self'",
+            "'unsafe-inline'",
+            'https://connect.facebook.com',
+            'https://connect.facebook.net',
+          ],
+          styleSrcElem: ["'self'", 'https://stackpath.bootstrapcdn.com'],
+        },
+      },
+    }),
+  );
   app.use(morgan('combined'));
   app.setViewEngine('ejs');
   app.useGlobalFilters(new AllExceptionsFilter());
