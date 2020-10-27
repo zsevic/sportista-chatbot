@@ -67,7 +67,7 @@
     "INVALID_LOCATION": "Location should be in radius of {{distance}}km, try again",
     "INVALID_PRICE": "Price is not good, try again",
     "INVALID_REMAINING_VACANCIES": "Fill out the number of remaining vacancies",
-    "LOCATION_INSTRUCTION": "Click on 4 dots on the left side in Messenger menu and choose location",
+    "LOCATION_INSTRUCTION": "Click on message input, after that click on the first icon with 4 dots on the left side in Messenger app and choose location",
     "LOCATION_QUESTION": "Where is the activity hosted? Send location",
     "PRICE_QUESTION": "How much does it cost per player? Type a number",
     "REMAINING_VACANCIES_QUESTION": "How many remaining vacancies are left? Type a number"

@@ -67,7 +67,7 @@
     "INVALID_LOCATION": "Lokacija treba da bude u krugu od {{distance}}km, probaj ponovo",
     "INVALID_PRICE": "Cena nije dobra, pokušaj ponovo",
     "INVALID_REMAINING_VACANCIES": "Unesi broj potrebnih Sportista",
-    "LOCATION_INSTRUCTION": "Sa leve strane u Messenger aplikaciji klikni na 4 tačkice i izaberi lokaciju",
+    "LOCATION_INSTRUCTION": "Klikni na polje za kucanje poruke, zatim sa leve strane u Messenger aplikaciji klikni na ikonicu sa 4 tačkice i izaberi lokaciju",
     "LOCATION_QUESTION": "Gde se igra? Pošalji lokaciju",
     "PRICE_QUESTION": "Koliko plaća svaki Sportista? Unesi cifru",
     "REMAINING_VACANCIES_QUESTION": "Koliko ima slobodnih mesta? Unesi cifru"
