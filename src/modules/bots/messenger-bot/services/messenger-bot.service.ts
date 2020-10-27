@@ -19,7 +19,7 @@ export class MessengerBotService {
     private readonly userService: UserService,
   ) {}
 
-  asyncWrap = (fn) => async (payload, chat) => {
+  private asyncWrap = (fn) => async (payload, chat) => {
     const user = await this.userService.validateUser(payload.sender.id);
 
     if (!user && payload?.postback?.payload !== GET_STARTED_PAYLOAD) {
@@ -43,25 +43,8 @@ export class MessengerBotService {
       this.asyncWrap(this.controller.attachmentHandler),
     );
 
-    this.bot.on('postback', this.asyncWrap(this.controller.postbackHandler));
-
-    // this.bot.on(
-    //   `quick_reply:${CREATED_ACTIVITIES_PAYLOAD}`,
-    //   this.controller.createdActivitiesHandler,
-    // );
-    // this.bot.on(
-    //   `quick_reply:${INITIALIZE_ACTIVITY_PAYLOAD}`,
-    //   this.controller.initializeActivityHandler,
-    // );
-    // this.bot.on(
-    //   `quick_reply:${JOINED_ACTIVITIES_PAYLOAD}`,
-    //   this.controller.joinedActivitiesHandler,
-    // );
-    // this.bot.on(
-    //   `quick_reply:${UPCOMING_ACTIVITIES_PAYLOAD}`,
-    //   this.controller.upcomingActivitiesHandler,
-    // );
-
     this.bot.on('message', this.asyncWrap(this.controller.messageHandler));
+
+    this.bot.on('postback', this.asyncWrap(this.controller.postbackHandler));
   };
 }

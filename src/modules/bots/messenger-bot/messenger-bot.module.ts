@@ -42,6 +42,6 @@ import {
     ResponseService,
     ValidationService,
   ],
-  exports: [MessengerBotController, MessengerBotService],
+  exports: [MessengerBotService],
 })
 export class MessengerBotModule {}
