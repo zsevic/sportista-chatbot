@@ -24,6 +24,8 @@ export class MessengerBotService {
 
     if (!user && payload?.postback?.payload !== GET_STARTED_PAYLOAD) {
       const { locale } = await chat.getUserProfile();
+      if (!locale) return;
+
       const response = await this.responseService.getRegisterUserFailureResponse(
         locale,
       );
