@@ -6,6 +6,8 @@ import {
   HttpStatus,
   Logger,
 } from '@nestjs/common';
+import * as Sentry from '@sentry/node';
+import { checkIsProdEnv } from 'common/utils';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -21,6 +23,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
         : HttpStatus.INTERNAL_SERVER_ERROR;
     if (status >= 500) {
       this.logger.error(exception.stack);
+      const isProdEnv = checkIsProdEnv();
+      if (isProdEnv) {
+        Sentry.captureException(exception);
+      }
     } else {
       this.logger.error(exception.message);
     }

@@ -2,6 +2,8 @@ import { utcToZonedTime } from 'date-fns-tz';
 import { DEFAULT_LOCALE, LOCALES, PAGE_SIZE } from 'common/config/constants';
 import { DatetimeOptions } from 'common/types';
 
+export const checkIsProdEnv = () => process.env.NODE_ENV === 'production';
+
 export const formatDatetime = (
   datetime: string,
   datetimeOptions: DatetimeOptions,

@@ -2,6 +2,7 @@ import 'newrelic';
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import * as Sentry from '@sentry/node';
 import bodyParser from 'body-parser';
 import compression from 'compression';
 import helmet from 'helmet';
@@ -11,7 +12,10 @@ import { setupApiDocs } from 'common/config/api-docs';
 import { AllExceptionsFilter } from 'common/filters';
 import { sslRedirect } from 'common/middlewares';
 import { CustomValidationPipe } from 'common/pipes';
+import { checkIsProdEnv } from 'common/utils';
 import { AppModule } from 'modules/app/app.module';
+
+const isProdEnv = checkIsProdEnv();
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -37,6 +41,12 @@ async function bootstrap(): Promise<void> {
   app.use('/webhook', bodyParser.raw({ type: 'application/json' }));
   setupApiDocs(app);
 
+  if (isProdEnv) {
+    Sentry.init({
+      dsn: configService.get('SENTRY_DSN'),
+    });
+  }
+
   await app.listen(configService.get('PORT')).then(() => {
     logger.log(`Server is running on port ${configService.get('PORT')}`);
   });
@@ -53,4 +63,7 @@ process.on('unhandledRejection', function handleUnhandledRejection(
 ): void {
   const logger = new Logger(handleUnhandledRejection.name);
   logger.error(err.stack);
+  if (isProdEnv) {
+    Sentry.captureException(err);
+  }
 });

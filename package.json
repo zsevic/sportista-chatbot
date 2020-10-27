@@ -34,6 +34,7 @@
     "@nestjs/platform-express": "^7.4.4",
     "@nestjs/swagger": "^4.6.1",
     "@nestjs/typeorm": "^7.1.4",
+    "@sentry/node": "^5.27.1",
     "body-parser": "^1.19.0",
     "bootbot": "^1.1.0",
     "class-transformer": "^0.3.1",
