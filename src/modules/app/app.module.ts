@@ -2,11 +2,15 @@ import path from 'path';
 import {
   Injectable,
   Logger,
+  MiddlewareConsumer,
   Module,
+  NestModule,
   OnApplicationShutdown,
+  RequestMethod,
 } from '@nestjs/common';
 import { ConfigService, ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import rateLimit from 'express-rate-limit';
 import { Subject } from 'rxjs';
 import { Connection } from 'typeorm';
 import {
@@ -16,6 +20,7 @@ import {
 import config from 'common/config';
 import { I18N_FALLBACKS, NODEGEOCODER_PROVIDER } from 'common/config/constants';
 import databaseConfig from 'common/config/database';
+import { RATE_LIMIT_REQUESTS, RATE_LIMIT_TIME } from 'common/config/rate-limit';
 import { BotsModule } from 'modules/bots/bots.module';
 import { ExtensionsModule } from 'modules/extensions/extensions.module';
 import { BootbotModule, BootbotOptions } from 'modules/external/bootbot';
@@ -76,7 +81,7 @@ import { AppController } from './app.controller';
   ],
 })
 @Injectable()
-export class AppModule implements OnApplicationShutdown {
+export class AppModule implements NestModule, OnApplicationShutdown {
   private readonly logger = new Logger(AppModule.name);
   private readonly shutdownListener$: Subject<void> = new Subject();
 
@@ -90,6 +95,17 @@ export class AppModule implements OnApplicationShutdown {
       this.logger.error(error.message);
     }
   };
+
+  configure = (consumer: MiddlewareConsumer): void => {
+    const rateLimitMiddleware = rateLimit({
+      windowMs: RATE_LIMIT_TIME,
+      max: RATE_LIMIT_REQUESTS,
+    });
+    consumer.apply(rateLimitMiddleware).forRoutes({
+      path: '/',
+      method: RequestMethod.GET,
+    });
+  }
 
   onApplicationShutdown = async (signal: string): Promise<void> => {
     if (!signal) return;

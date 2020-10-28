@@ -23,6 +23,7 @@ async function bootstrap(): Promise<void> {
   const logger = new Logger(bootstrap.name);
   const configService = app.get('configService');
 
+  app.enable('trust proxy'); // used for rate limiter
   app.enableShutdownHooks();
   app.get(AppModule).subscribeToShutdown(() => app.close());
 
