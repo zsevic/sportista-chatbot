@@ -7,6 +7,7 @@ import {
   Inject,
   Post,
   Query,
+  Req,
   Res,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -32,7 +33,7 @@ export class ExtensionsController {
   ) {}
 
   @Get('datetime')
-  async getDatetimePage(@Res() res: Response, @Query() query) {
+  async getDatetimePage(@Res() res: Response, @Req() req, @Query() query) {
     const { lang: locale = I18N_FALLBACK_LANGUAGE } = query;
     const datetimeButton = this.i18nService.__({
       phrase: STATE_DATETIME_BUTTON,
@@ -42,6 +43,7 @@ export class ExtensionsController {
     return res.render('pages/datetime-picker.ejs', {
       APP_ID: this.configService.get('FB_APP_ID'),
       DATETIME_BUTTON: datetimeButton,
+      csrfToken: req.csrfToken(),
     });
   }
 
@@ -68,7 +70,7 @@ export class ExtensionsController {
   }
 
   @Get('location')
-  async getLocationPage(@Res() res: Response, @Query() query) {
+  async getLocationPage(@Res() res: Response, @Req() req, @Query() query) {
     const { lang: locale = I18N_FALLBACK_LANGUAGE } = query;
     const { user: userI18n } = this.i18nService.getCatalog(locale);
 
@@ -77,6 +79,7 @@ export class ExtensionsController {
       USER_LOCATION_FAILURE: userI18n[USER_LOCATION_FAILURE],
       USER_LOCATION_PAGE_TEXT: userI18n[USER_LOCATION_PAGE_TEXT],
       USER_LOCATION_SETTINGS_FAILURE: userI18n[USER_LOCATION_SETTINGS_FAILURE],
+      csrfToken: req.csrfToken(),
     });
   }
 

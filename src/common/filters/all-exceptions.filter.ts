@@ -21,6 +21,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
       exception instanceof HttpException
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
+    if (exception?.code === 'EBADCSRFTOKEN')
+      return response.sendStatus(HttpStatus.FORBIDDEN);
+
     if (status >= 500) {
       this.logger.error(exception.stack);
       const isProdEnv = checkIsProdEnv();

@@ -7,4 +7,7 @@ export class DatetimeMessageDto {
 
   @IsNotEmpty()
   user_id: number;
+
+  @IsNotEmpty()
+  _csrf: string;
 }

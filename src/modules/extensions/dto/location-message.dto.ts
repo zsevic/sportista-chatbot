@@ -9,4 +9,7 @@ export class LocationMessageDto {
 
   @IsNotEmpty()
   user_id: number;
+
+  @IsNotEmpty()
+  _csrf: string;
 }

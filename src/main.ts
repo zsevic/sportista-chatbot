@@ -5,6 +5,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import * as Sentry from '@sentry/node';
 import bodyParser from 'body-parser';
 import compression from 'compression';
+import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import throng from 'throng';
@@ -27,6 +28,7 @@ async function bootstrap(): Promise<void> {
 
   app.use(sslRedirect());
   app.use(compression());
+  app.use(cookieParser());
   app.use(
     helmet({
       contentSecurityPolicy: {

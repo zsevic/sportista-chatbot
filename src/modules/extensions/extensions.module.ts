@@ -1,5 +1,12 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
+import { RouteInfo } from '@nestjs/common/interfaces';
 import { ConfigModule } from '@nestjs/config';
+import csurf from 'csurf';
 import config from 'common/config';
 import { ExtensionsController } from './extensions.controller';
 
@@ -11,4 +18,25 @@ import { ExtensionsController } from './extensions.controller';
   ],
   controllers: [ExtensionsController],
 })
-export class ExtensionsModule {}
+export class ExtensionsModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    const csrfMiddleware = csurf({
+      cookie: {
+        httpOnly: true,
+        sameSite: 'strict',
+        secure: true,
+      },
+    });
+    const routes: RouteInfo[] = [
+      {
+        path: '/extensions/datetime',
+        method: RequestMethod.ALL,
+      },
+      {
+        path: '/extensions/location',
+        method: RequestMethod.ALL,
+      },
+    ];
+    consumer.apply(csrfMiddleware).forRoutes(...routes);
+  }
+}
