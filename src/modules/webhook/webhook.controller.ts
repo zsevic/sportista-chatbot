@@ -22,7 +22,7 @@ export class WebhookController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  async validateWebhook(@Query() query) {
+  validateWebhook(@Query() query) {
     if (
       query['hub.mode'] === 'subscribe' &&
       query['hub.verify_token'] === this.bot.verifyToken
@@ -40,7 +40,7 @@ export class WebhookController {
   @UseGuards(AuthGuard)
   @Post()
   @HttpCode(HttpStatus.OK)
-  async handleWebhook(@Body() rawBody) {
+  handleWebhook(@Body() rawBody) {
     const data = JSON.parse(rawBody.toString());
     if (data.object !== 'page') {
       throw new BadRequestException();
