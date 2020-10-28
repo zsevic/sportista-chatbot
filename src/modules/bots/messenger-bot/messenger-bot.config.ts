@@ -76,6 +76,7 @@ export default () => {
     url: `${process.env.EXTENSIONS_URL}/extensions/location?lang=${EN_GB_LOCALE}`,
     messenger_extensions: true,
     webview_height_ratio: 'compact',
+    webview_share_button: 'hide',
   });
 
   const EN_US_PERSISTENT_MENU = [...EN_PERSISTENT_MENU];
@@ -85,6 +86,7 @@ export default () => {
     url: `${process.env.EXTENSIONS_URL}/extensions/location?lang=${EN_US_LOCALE}`,
     messenger_extensions: true,
     webview_height_ratio: 'compact',
+    webview_share_button: 'hide',
   });
 
   const SR_PERSISTENT_MENU = [
@@ -119,6 +121,7 @@ export default () => {
       url: `${process.env.EXTENSIONS_URL}/extensions/location?lang=${SR_RS_LOCALE}`,
       messenger_extensions: true,
       webview_height_ratio: 'compact',
+      webview_share_button: 'hide',
     },
     {
       type: 'postback',

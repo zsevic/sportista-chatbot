@@ -352,6 +352,7 @@ export class ResponseService {
           url,
           messenger_extensions: true,
           webview_height_ratio: 'compact',
+          webview_share_button: 'hide',
         },
       ],
     };
@@ -819,6 +820,7 @@ export class ResponseService {
             url,
             messenger_extensions: true,
             webview_height_ratio: 'compact',
+            webview_share_button: 'hide',
           },
         ],
       },
