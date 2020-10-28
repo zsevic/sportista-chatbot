@@ -8,6 +8,7 @@ import {
   OnApplicationShutdown,
   RequestMethod,
 } from '@nestjs/common';
+import { RouteInfo } from '@nestjs/common/interfaces';
 import { ConfigService, ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import rateLimit from 'express-rate-limit';
@@ -101,11 +102,18 @@ export class AppModule implements NestModule, OnApplicationShutdown {
       windowMs: RATE_LIMIT_TIME,
       max: RATE_LIMIT_REQUESTS,
     });
-    consumer.apply(rateLimitMiddleware).forRoutes({
-      path: '/',
-      method: RequestMethod.GET,
-    });
-  }
+    const routes: RouteInfo[] = [
+      {
+        path: '/',
+        method: RequestMethod.GET,
+      },
+      {
+        path: '/webhook',
+        method: RequestMethod.GET,
+      },
+    ];
+    consumer.apply(rateLimitMiddleware).forRoutes(...routes);
+  };
 
   onApplicationShutdown = async (signal: string): Promise<void> => {
     if (!signal) return;
