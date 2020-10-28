@@ -64,6 +64,6 @@ export class LocationService {
   getLocationTitle = (location: any): string => {
     if (!location.streetName || !location.streetNumber) return location.city;
 
-    return `${location.streetName} ${location.streetNumber}, ${location.city}`;
+    return `${location.streetName} ${location.streetNumber}`;
   };
 }
