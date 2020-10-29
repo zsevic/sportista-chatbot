@@ -7,11 +7,12 @@ import bodyParser from 'body-parser';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
-import morgan from 'morgan';
+import { WinstonModule } from 'nest-winston';
 import throng from 'throng';
+import { format, transports } from 'winston';
 import { setupApiDocs } from 'common/config/api-docs';
 import { AllExceptionsFilter } from 'common/filters';
-import { sslRedirect } from 'common/middlewares';
+import { loggerMiddleware, sslRedirect } from 'common/middlewares';
 import { CustomValidationPipe } from 'common/pipes';
 import { checkIsProdEnv } from 'common/utils';
 import { AppModule } from 'modules/app/app.module';
@@ -19,7 +20,19 @@ import { AppModule } from 'modules/app/app.module';
 const isProdEnv = checkIsProdEnv();
 
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    logger: WinstonModule.createLogger({
+      format: format.combine(
+        format.timestamp(),
+        format.json(),
+      ),
+      transports: [
+        new (transports.Console)({
+          level: process.env.LOG_LEVEL || 'info',
+        }),
+      ],
+    })
+  });
   const logger = new Logger(bootstrap.name);
   const configService = app.get('configService');
 
@@ -46,7 +59,7 @@ async function bootstrap(): Promise<void> {
       },
     }),
   );
-  app.use(morgan('combined'));
+  app.use(loggerMiddleware);
   app.setViewEngine('ejs');
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalPipes(
