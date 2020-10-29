@@ -42,7 +42,7 @@ async function bootstrap(): Promise<void> {
 
   app.use(sslRedirect());
   app.use(compression());
-  app.use(cookieParser());
+  app.use(cookieParser(configService.get('COOKIE_SECRET')));
   app.use(
     helmet({
       contentSecurityPolicy: {

@@ -1,4 +1,5 @@
 export default () => ({
+  COOKIE_SECRET: process.env.COOKIE_SECRET,
   EXTENSIONS_URL: process.env.EXTENSIONS_URL,
   FB_APP_ID: process.env.FB_APP_ID,
   FB_APP_SECRET: process.env.FB_APP_SECRET,

@@ -25,6 +25,7 @@ export class ExtensionsModule implements NestModule {
         httpOnly: true,
         sameSite: 'strict',
         secure: true,
+        signed: true,
       },
     });
     const routes: RouteInfo[] = [
