@@ -14,10 +14,10 @@ import { setupApiDocs } from 'common/config/api-docs';
 import { AllExceptionsFilter } from 'common/filters';
 import { loggerMiddleware, sslRedirect } from 'common/middlewares';
 import { CustomValidationPipe } from 'common/pipes';
-import { checkIsProdEnv } from 'common/utils';
+import { isEnv } from 'common/utils';
 import { AppModule } from 'modules/app/app.module';
 
-const isProdEnv = checkIsProdEnv();
+const isProdEnv = isEnv('production');
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
