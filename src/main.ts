@@ -1,4 +1,5 @@
 import 'newrelic';
+import path from 'path';
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
@@ -54,7 +55,6 @@ async function bootstrap(): Promise<void> {
     }),
   );
   app.use(loggerMiddleware);
-  app.setViewEngine('ejs');
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalPipes(
     new CustomValidationPipe({
@@ -64,6 +64,10 @@ async function bootstrap(): Promise<void> {
     }),
   );
   app.use('/webhook', bodyParser.raw({ type: 'application/json' }));
+
+  app.useStaticAssets(path.join(process.cwd(), 'public'));
+  app.setViewEngine('ejs');
+
   setupApiDocs(app);
 
   if (isEnv('production')) {
