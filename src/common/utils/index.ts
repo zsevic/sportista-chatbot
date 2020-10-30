@@ -24,4 +24,5 @@ export const formatDatetime = (
 
 export const getSkip = (page: number): number => (page - 1) * PAGE_SIZE;
 
-export const isEnv = (environment: string): boolean => process.env.NODE_ENV === environment;
+export const isEnv = (environment: string): boolean =>
+  process.env.NODE_ENV === environment;

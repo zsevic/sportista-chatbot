@@ -10,6 +10,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { DbAwareColumn } from 'common/utils/database';
 import { LocationEntity } from 'modules/location/location.entity';
 import { UserEntity } from 'modules/user/user.entity';
 import { PriceEntity } from './price/price.entity';
@@ -24,7 +25,7 @@ export class ActivityEntity {
   })
   organizer_id: number;
 
-  @Column({
+  @DbAwareColumn({
     type: 'timestamp',
   })
   datetime: string;

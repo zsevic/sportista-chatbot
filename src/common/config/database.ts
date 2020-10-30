@@ -24,6 +24,13 @@ export default registerAs('database', () => {
       type: 'postgres',
       url: process.env.DATABASE_URL,
     },
+    test: {
+      ...options,
+      type: 'sqlite',
+      database: 'database.sqlite',
+      entities: ['src/**/*.entity.ts'],
+      synchronize: true,
+    },
   };
   const currentEnvironment = process.env.NODE_ENV || 'development';
 

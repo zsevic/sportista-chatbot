@@ -20,16 +20,13 @@ import { AppModule } from 'modules/app/app.module';
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: WinstonModule.createLogger({
-      format: format.combine(
-        format.timestamp(),
-        format.json(),
-      ),
+      format: format.combine(format.timestamp(), format.json()),
       transports: [
-        new (transports.Console)({
+        new transports.Console({
           level: process.env.LOG_LEVEL || 'info',
         }),
       ],
-    })
+    }),
   });
   const logger = new Logger(bootstrap.name);
   const configService = app.get('configService');

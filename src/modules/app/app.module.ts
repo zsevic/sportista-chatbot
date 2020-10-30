@@ -22,6 +22,7 @@ import config from 'common/config';
 import { I18N_FALLBACKS, NODEGEOCODER_PROVIDER } from 'common/config/constants';
 import databaseConfig from 'common/config/database';
 import { RATE_LIMIT_REQUESTS, RATE_LIMIT_TIME } from 'common/config/rate-limit';
+import { isEnv } from 'common/utils';
 import { BotsModule } from 'modules/bots/bots.module';
 import { ExtensionsModule } from 'modules/extensions/extensions.module';
 import { BootbotModule, BootbotOptions } from 'modules/external/bootbot';
@@ -58,11 +59,15 @@ import { AppController } from './app.controller';
       }),
     }),
     I18nModule.registerAsync({
-      useFactory: () => ({
-        directory: path.join(__dirname, '../../../locales'),
-        fallbacks: I18N_FALLBACKS,
-        objectNotation: true,
-      }),
+      useFactory: () => {
+        const directory = isEnv('test') ? 'src/locales' : 'dist/locales';
+
+        return {
+          directory: path.join(process.cwd(), directory),
+          fallbacks: I18N_FALLBACKS,
+          objectNotation: true,
+        };
+      },
     }),
     NodeGeocoderModule.registerAsync({
       useFactory: () => ({
