@@ -17,8 +17,6 @@ import { CustomValidationPipe } from 'common/pipes';
 import { isEnv } from 'common/utils';
 import { AppModule } from 'modules/app/app.module';
 
-const isProdEnv = isEnv('production');
-
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: WinstonModule.createLogger({
@@ -72,7 +70,7 @@ async function bootstrap(): Promise<void> {
   app.use('/webhook', bodyParser.raw({ type: 'application/json' }));
   setupApiDocs(app);
 
-  if (isProdEnv) {
+  if (isEnv('production')) {
     Sentry.init({
       dsn: configService.get('SENTRY_DSN'),
     });
@@ -94,7 +92,4 @@ process.on('unhandledRejection', function handleUnhandledRejection(
 ): void {
   const logger = new Logger(handleUnhandledRejection.name);
   logger.error(err.stack);
-  if (isProdEnv) {
-    Sentry.captureException(err);
-  }
 });
