@@ -38,7 +38,6 @@ async function bootstrap(): Promise<void> {
   app.enableShutdownHooks();
   app.get(AppModule).subscribeToShutdown(() => app.close());
 
-  app.use(sslRedirect());
   app.use(compression());
   app.use(cookieParser(configService.get('COOKIE_SECRET')));
   app.use(
@@ -71,6 +70,7 @@ async function bootstrap(): Promise<void> {
   setupApiDocs(app);
 
   if (isEnv('production')) {
+    app.use(sslRedirect());
     Sentry.init({
       dsn: configService.get('SENTRY_DSN'),
     });

@@ -6,6 +6,8 @@ import {
   HttpStatus,
   Logger,
 } from '@nestjs/common';
+import * as Sentry from '@sentry/node';
+import { isEnv } from 'common/utils';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -24,6 +26,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     if (status >= 500) {
       this.logger.error(exception.stack);
+      if (isEnv('production')) {
+        Sentry.captureException(exception);
+      }
     } else {
       this.logger.error(exception.message);
     }
