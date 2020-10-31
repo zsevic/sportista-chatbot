@@ -10,6 +10,7 @@ import {
   SUBSCRIBE_TO_NOTIFICATIONS_PAYLOAD,
   UNSUBSCRIBE_TO_NOTIFICATIONS_PAYLOAD,
   UPCOMING_ACTIVITIES_PAYLOAD,
+  UPDATE_USER_LOCATION_PAYLOAD,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { AttachmentService } from './services/attachment.service';
 import { MessageService } from './services/message.service';
@@ -164,6 +165,14 @@ export class MessengerBotController {
     return chat.say(response);
   };
 
+  private updateUserLocationHandler = async (payload, chat) => {
+    const response = await this.resolverService.updateUserLocation(
+      payload.sender.id,
+    );
+
+    return chat.say(response);
+  };
+
   postbackHandlers = {
     [ABOUT_ME_PAYLOAD]: this.aboutMeHandler,
     [CREATED_ACTIVITIES_PAYLOAD]: this.createdActivitiesHandler,
@@ -176,6 +185,7 @@ export class MessengerBotController {
     [UNSUBSCRIBE_TO_NOTIFICATIONS_PAYLOAD]: this
       .unsubscribeToNotificationsHandler,
     [UPCOMING_ACTIVITIES_PAYLOAD]: this.upcomingActivitiesHandler,
+    [UPDATE_USER_LOCATION_PAYLOAD]: this.updateUserLocationHandler,
   };
 
   quickReplyHandlers = {

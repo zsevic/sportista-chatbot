@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import config from 'common/config';
 import { ActivityModule } from 'modules/activity/activity.module';
-import messengerBotConfig from 'modules/bots/messenger-bot/messenger-bot.config';
 import { FeedbackModule } from 'modules/feedback/feedback.module';
 import { NotificationModule } from 'modules/notification/notification.module';
 import { ParticipationModule } from 'modules/participation/participation.module';
@@ -22,7 +21,7 @@ import {
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [config, messengerBotConfig],
+      load: [config],
     }),
     ActivityModule,
     FeedbackModule,

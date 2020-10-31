@@ -1,4 +1,3 @@
-import 'newrelic';
 import path from 'path';
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';

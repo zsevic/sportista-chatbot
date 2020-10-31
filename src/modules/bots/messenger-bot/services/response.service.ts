@@ -45,7 +45,6 @@ import {
   CREATED_ACTIVITIES_TYPE,
   CREATE_ACTIVITY_CLOSING,
   DATETIME_BUTTON,
-  DATETIME_INSTRUCTION,
   DATETIME_QUESTION,
   GET_STARTED_PAYLOAD,
   INITIALIZE_ACTIVITY,
@@ -100,7 +99,7 @@ import {
   USER_LOCATION_DESCRIPTION_TEXT,
   USER_LOCATION_TEXT,
   USER_REGISTRATION_SUCCESS,
-  USER_UPDATE_LOCATION_SUCCESS,
+  USER_UPDATE_USER_LOCATION_SUCCESS,
   VIEW_MORE_CREATED_ACTIVITIES,
   VIEW_MORE_JOINED_ACTIVITIES,
   VIEW_MORE_UPCOMING_ACTIVITIES,
@@ -728,7 +727,7 @@ export class ResponseService {
   };
 
   getUpdateLocationSuccessResponse = (locale: string): string =>
-    this.i18nService.__({ phrase: USER_UPDATE_LOCATION_SUCCESS, locale });
+    this.i18nService.__({ phrase: USER_UPDATE_USER_LOCATION_SUCCESS, locale });
 
   getUpdateRemainingVacanciesResponse = (
     activityId: string,
@@ -777,7 +776,10 @@ export class ResponseService {
   getUpdateStateResponse = (currentState: string, locale: string) => {
     if (!this.messages[currentState]) return;
 
-    const { state: stateI18n } = this.i18nService.getCatalog(locale);
+    const {
+      state: stateI18n,
+      bot: { MESSENGER_INFO },
+    } = this.i18nService.getCatalog(locale);
     if (currentState === this.stateService.states.datetime) {
       return [
         this.getDatetimeQuestion(
@@ -785,7 +787,7 @@ export class ResponseService {
           stateI18n[DATETIME_BUTTON],
           locale,
         ),
-        stateI18n[DATETIME_INSTRUCTION],
+        MESSENGER_INFO,
       ];
     }
     return this.messages[currentState].map(

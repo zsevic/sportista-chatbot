@@ -421,4 +421,10 @@ export class ResolverService {
       locale,
     );
   };
+
+  updateUserLocation = async (userId: number) => {
+    const locale = await this.userService.getLocale(userId);
+
+    return this.responseService.getUserLocationI18n(locale);
+  };
 }

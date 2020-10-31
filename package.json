@@ -19,7 +19,7 @@
     "start": "nest start",
     "start:dev": "NODE_ENV=development TZ=UTC nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "NODE_PATH=./dist/src NODE_ENV=production TZ=UTC node dist/src/main.js",
+    "start:prod": "NODE_PATH=./dist/src NODE_ENV=production TZ=UTC node -r newrelic dist/src/main.js",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",

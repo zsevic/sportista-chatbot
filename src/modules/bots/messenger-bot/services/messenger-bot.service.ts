@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import {
   GET_STARTED_PAYLOAD,
   GREETING_TEXT,
+  PERSISTENT_MENU,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { MessengerBotController } from 'modules/bots/messenger-bot/messenger-bot.controller';
 import { BOOTBOT_OPTIONS_FACTORY } from 'modules/external/bootbot';
@@ -13,7 +13,6 @@ import { ResponseService } from './response.service';
 export class MessengerBotService {
   constructor(
     @Inject(BOOTBOT_OPTIONS_FACTORY) private readonly bot,
-    private readonly configService: ConfigService,
     private readonly controller: MessengerBotController,
     private readonly responseService: ResponseService,
     private readonly userService: UserService,
@@ -36,9 +35,8 @@ export class MessengerBotService {
   };
 
   init = (): void => {
-    const persistentMenu = this.configService.get('persistentMenu');
     this.bot.setGreetingText(GREETING_TEXT);
-    this.bot.setPersistentMenu(persistentMenu);
+    this.bot.setPersistentMenu(PERSISTENT_MENU);
 
     this.bot.on(
       'attachment',

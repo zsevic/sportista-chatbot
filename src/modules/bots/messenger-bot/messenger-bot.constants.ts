@@ -1,4 +1,14 @@
 import { PROJECT_NAME } from 'common/config/constants';
+import {
+  activity as activityI18nEn,
+  bot as botI18nEn,
+  user as userI18nEn,
+} from 'locales/en.json';
+import {
+  activity as activityI18nSr,
+  bot as botI18nSr,
+  user as userI18nSr,
+} from 'locales/sr.json';
 
 export const ABOUT_ME_PAYLOAD = 'ABOUT_ME_PAYLOAD';
 export const CREATED_ACTIVITIES_PAYLOAD = 'CREATED_ACTIVITIES_PAYLOAD';
@@ -9,6 +19,7 @@ export const JOINED_ACTIVITIES_PAYLOAD = 'JOINED_ACTIVITIES_PAYLOAD';
 export const NOTIFICATION_SUBSCRIPTION_PAYLOAD =
   'NOTIFICATION_SUBSCRIPTION_PAYLOAD';
 export const UPCOMING_ACTIVITIES_PAYLOAD = 'UPCOMING_ACTIVITIES_PAYLOAD';
+export const UPDATE_USER_LOCATION_PAYLOAD = 'UPDATE_USER_LOCATION_PAYLOAD';
 
 export const ADD_REMAINING_VACANCIES_TYPE = 'ADD_REMAINING_VACANCIES_TYPE';
 export const RESET_REMAINING_VACANCIES_TYPE = 'RESET_REMAINING_VACANCIES_TYPE';
@@ -130,7 +141,6 @@ export const BOT_CANCEL_PARTICIPATION_NOTIFICATION = `bot.${CANCEL_PARTICIPATION
 const JOIN_ACTIVITY_NOTIFICATION = 'JOIN_ACTIVITY_NOTIFICATION';
 export const BOT_JOIN_ACTIVITY_NOTIFICATION = `bot.${JOIN_ACTIVITY_NOTIFICATION}`;
 
-export const DATETIME_INSTRUCTION = 'DATETIME_INSTRUCTION';
 export const DATETIME_QUESTION = 'DATETIME_QUESTION';
 export const INVALID_DATETIME = 'INVALID_DATETIME';
 export const LOCATION_INSTRUCTION = 'LOCATION_INSTRUCTION';
@@ -166,9 +176,9 @@ export const UNSUBSCRIBE_TO_NOTIFICATIONS_BUTTON =
   'UNSUBSCRIBE_TO_NOTIFICATIONS_BUTTON';
 export const UNSUBSCRIBE_TO_NOTIFICATIONS_TEXT =
   'UNSUBSCRIBE_TO_NOTIFICATIONS_TEXT';
-export const UPDATE_LOCATION = 'UPDATE_LOCATION';
-const UPDATE_LOCATION_SUCCESS = 'UPDATE_LOCATION_SUCCESS';
-export const USER_UPDATE_LOCATION_SUCCESS = `user.${UPDATE_LOCATION_SUCCESS}`;
+export const UPDATE_USER_LOCATION = 'UPDATE_USER_LOCATION';
+const UPDATE_USER_LOCATION_SUCCESS = 'UPDATE_USER_LOCATION_SUCCESS';
+export const USER_UPDATE_USER_LOCATION_SUCCESS = `user.${UPDATE_USER_LOCATION_SUCCESS}`;
 export const USER_LOCATION_BUTTON = 'USER_LOCATION_BUTTON';
 export const USER_LOCATION_DESCRIPTION_TEXT = 'USER_LOCATION_DESCRIPTION_TEXT';
 export const USER_LOCATION_FAILURE = 'USER_LOCATION_FAILURE';
@@ -186,3 +196,108 @@ export const USER_UNSUBSCRIBE_TO_NOTIFICATIONS_FAILURE = `user.${UNSUBSCRIBE_TO_
 const UNSUBSCRIBE_TO_NOTIFICATIONS_SUCCESS =
   'UNSUBSCRIBE_TO_NOTIFICATIONS_SUCCESS';
 export const USER_UNSUBSCRIBE_TO_NOTIFICATIONS_SUCCESS = `user.${UNSUBSCRIBE_TO_NOTIFICATIONS_SUCCESS}`;
+
+const EN_PERSISTENT_MENU = [
+  {
+    type: 'postback',
+    title: activityI18nEn[UPCOMING_ACTIVITIES],
+    payload: UPCOMING_ACTIVITIES_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: activityI18nEn[JOINED_ACTIVITIES],
+    payload: JOINED_ACTIVITIES_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: activityI18nEn[CREATED_ACTIVITIES],
+    payload: CREATED_ACTIVITIES_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: activityI18nEn[INITIALIZE_ACTIVITY],
+    payload: INITIALIZE_ACTIVITY_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: userI18nEn[UPDATE_USER_LOCATION],
+    payload: UPDATE_USER_LOCATION_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: botI18nEn[NOTIFICATION_SUBSCRIPTION_BUTTON],
+    payload: NOTIFICATION_SUBSCRIPTION_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: botI18nEn[FEEDBACK_BUTTON],
+    payload: INITIALIZE_FEEDBACK_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: botI18nEn[ABOUT_ME],
+    payload: ABOUT_ME_PAYLOAD,
+  },
+];
+
+const SR_PERSISTENT_MENU = [
+  {
+    type: 'postback',
+    title: activityI18nSr[UPCOMING_ACTIVITIES],
+    payload: UPCOMING_ACTIVITIES_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: activityI18nSr[JOINED_ACTIVITIES],
+    payload: JOINED_ACTIVITIES_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: activityI18nSr[CREATED_ACTIVITIES],
+    payload: CREATED_ACTIVITIES_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: activityI18nSr[INITIALIZE_ACTIVITY],
+    payload: INITIALIZE_ACTIVITY_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: botI18nSr[NOTIFICATION_SUBSCRIPTION_BUTTON],
+    payload: NOTIFICATION_SUBSCRIPTION_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: userI18nSr[UPDATE_USER_LOCATION],
+    payload: UPDATE_USER_LOCATION_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: botI18nSr[FEEDBACK_BUTTON],
+    payload: INITIALIZE_FEEDBACK_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: botI18nSr[ABOUT_ME],
+    payload: ABOUT_ME_PAYLOAD,
+  },
+];
+
+export const PERSISTENT_MENU = [
+  {
+    locale: EN_GB_LOCALE,
+    call_to_actions: EN_PERSISTENT_MENU,
+  },
+  {
+    locale: EN_US_LOCALE,
+    call_to_actions: EN_PERSISTENT_MENU,
+  },
+  {
+    locale: SR_RS_LOCALE,
+    call_to_actions: SR_PERSISTENT_MENU,
+  },
+  {
+    locale: DEFAULT,
+    call_to_actions: SR_PERSISTENT_MENU,
+  },
+];
