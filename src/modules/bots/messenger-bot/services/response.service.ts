@@ -45,6 +45,7 @@ import {
   CREATED_ACTIVITIES_TYPE,
   CREATE_ACTIVITY_CLOSING,
   DATETIME_BUTTON,
+  DATETIME_INSTRUCTION,
   DATETIME_QUESTION,
   GET_STARTED_PAYLOAD,
   INITIALIZE_ACTIVITY,
@@ -778,11 +779,14 @@ export class ResponseService {
 
     const { state: stateI18n } = this.i18nService.getCatalog(locale);
     if (currentState === this.stateService.states.datetime) {
-      return this.getDatetimeQuestion(
-        stateI18n[DATETIME_QUESTION],
-        stateI18n[DATETIME_BUTTON],
-        locale,
-      );
+      return [
+        this.getDatetimeQuestion(
+          stateI18n[DATETIME_QUESTION],
+          stateI18n[DATETIME_BUTTON],
+          locale,
+        ),
+        stateI18n[DATETIME_INSTRUCTION],
+      ];
     }
     return this.messages[currentState].map(
       (message: string): string => stateI18n[message],
