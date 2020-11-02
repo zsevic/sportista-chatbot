@@ -57,7 +57,7 @@ export const GREETING_TEXT = [
   },
   {
     locale: EN_US_LOCALE,
-    text: EN_GREETING_TEXT,
+    text: SR_GREETING_TEXT,
   },
   {
     locale: SR_RS_LOCALE,
@@ -290,7 +290,7 @@ export const PERSISTENT_MENU = [
   },
   {
     locale: EN_US_LOCALE,
-    call_to_actions: EN_PERSISTENT_MENU,
+    call_to_actions: SR_PERSISTENT_MENU,
   },
   {
     locale: SR_RS_LOCALE,

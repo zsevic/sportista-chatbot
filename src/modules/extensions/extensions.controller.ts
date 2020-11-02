@@ -9,10 +9,8 @@ import {
   Query,
   Render,
   Req,
-  Res,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Response } from 'express';
 import { I18N_FALLBACK_LANGUAGE } from 'common/config/constants';
 import {
   STATE_DATETIME_BUTTON,
@@ -35,7 +33,7 @@ export class ExtensionsController {
 
   @Get('datetime')
   @Render('pages/datetime-picker')
-  async getDatetimePage(@Res() res: Response, @Req() req, @Query() query) {
+  async getDatetimePage(@Req() req, @Query() query) {
     const { lang: locale = I18N_FALLBACK_LANGUAGE } = query;
     const datetimeButton = this.i18nService.__({
       phrase: STATE_DATETIME_BUTTON,
@@ -73,7 +71,7 @@ export class ExtensionsController {
 
   @Get('location')
   @Render('pages/location')
-  async getLocationPage(@Res() res: Response, @Req() req, @Query() query) {
+  async getLocationPage(@Req() req, @Query() query) {
     const { lang: locale = I18N_FALLBACK_LANGUAGE } = query;
     const { user: userI18n } = this.i18nService.getCatalog(locale);
 
