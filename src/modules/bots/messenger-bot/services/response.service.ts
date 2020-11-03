@@ -117,6 +117,7 @@ import {
   getLocationUrl,
 } from 'modules/bots/messenger-bot/messenger-bot.utils';
 import { I18N_OPTIONS_FACTORY } from 'modules/external/i18n';
+import { Participation } from 'modules/participation/participation.dto';
 import { StateService } from 'modules/state/state.service';
 import { User } from 'modules/user/user.dto';
 
@@ -651,6 +652,27 @@ export class ResponseService {
       phrase: ACTIVITY_RESET_REMAINING_VACANCIES,
       locale,
     });
+
+  getSentParticipationRequestListResponse = (
+    activityListData: PaginatedResponse<Activity>,
+    options: User,
+  ) => {
+    const {
+      activity: activityI18n,
+      participation: { CANCEL_PARTICIPATION: activityTypeText },
+    } = this.i18nService.getCatalog(options.locale);
+
+    return this.getActivitiesResponse({
+      activityListData,
+      noActivitiesText: activityI18n[NO_JOINED_ACTIVITIES],
+      activityTypeText,
+      activityType: CANCEL_PARTICIPATION_TYPE,
+      viewMoreActivitiesText: activityI18n[VIEW_MORE_JOINED_ACTIVITIES],
+      buttonPayloadActivityType: JOINED_ACTIVITIES_TYPE,
+      isOrganizerShown: true,
+      options,
+    });
+  };
 
   getSubscribeToNotificationsFailureResponse = (locale: string): string =>
     this.i18nService.__({

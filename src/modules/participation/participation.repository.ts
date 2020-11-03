@@ -7,10 +7,7 @@ import { PARTICIPATION_STATUS } from './participation.enums';
 export class ParticipationRepository extends Repository<ParticipationEntity> {
   private readonly logger = new Logger(ParticipationRepository.name);
 
-  cancelParticipation = async (
-    activity_id: string,
-    participant_id: number,
-  ): Promise<void> => {
+  cancelParticipation = async (activity_id: string, participant_id: number) => {
     const participation = await this.createQueryBuilder('participation')
       .leftJoin('participation.activity', 'activity')
       .leftJoin('participation.participant', 'participant')
@@ -24,8 +21,10 @@ export class ParticipationRepository extends Repository<ParticipationEntity> {
       .getOne();
     if (!participation) throw new Error("Participation doesn't exist");
 
-    await this.softRemove(participation);
-    return Promise.resolve();
+    return this.save({
+      ...participation,
+      status: PARTICIPATION_STATUS.CANCELED,
+    });
   };
 
   async createParticipation(

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { ActivityRepository } from 'modules/activity/activity.repository';
+import { PARTICIPATION_STATUS } from './participation.enums';
 import { ParticipationRepository } from './participation.repository';
 
 @Injectable()
@@ -25,6 +26,12 @@ export class ParticipationService {
   getParticipationsAndCount = async (activityId: string) =>
     this.participationRepository.findAndCount({
       where: { activity_id: activityId },
+      relations: ['activity', 'participant'],
+    });
+
+  getSentParticipationRequestList = async (userId: number) =>
+    this.participationRepository.findAndCount({
+      where: { participant_id: userId, status: PARTICIPATION_STATUS.PENDING },
       relations: ['activity', 'participant'],
     });
 }

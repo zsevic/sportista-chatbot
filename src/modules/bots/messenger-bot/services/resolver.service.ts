@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { FIRST_PAGE } from 'common/config/constants';
+import { PaginatedResponse } from 'common/dtos';
 import { Activity } from 'modules/activity/activity.dto';
 import { ActivityService } from 'modules/activity/activity.service';
 import {
@@ -10,6 +11,7 @@ import { I18nOptions } from 'modules/bots/messenger-bot/messenger-bot.types';
 import { Feedback } from 'modules/feedback/feedback.dto';
 import { FeedbackService } from 'modules/feedback/feedback.service';
 import { NotificationService } from 'modules/notification/notification.service';
+import { Participation } from 'modules/participation/participation.dto';
 import { ParticipationService } from 'modules/participation/participation.service';
 import { RESET_STATE } from 'modules/state/state.constants';
 import { State } from 'modules/state/state.dto';
@@ -51,6 +53,29 @@ export class ResolverService {
     } catch {
       return this.responseService.getUpdateRemainingVacanciesFailureResponse(
         locale,
+      );
+    }
+  };
+
+  applyForActivity = async (
+    activityId: string,
+    userId: number,
+    options: I18nOptions,
+  ): Promise<string | string[]> => {
+    try {
+      await this.activityService
+        .applyForActivity(activityId, userId)
+        .then(async () =>
+          this.notificationService.notifyOrganizerAboutParticipantUpdate(
+            activityId,
+            userId,
+            BOT_JOIN_ACTIVITY_NOTIFICATION,
+          ),
+        );
+      return this.responseService.getJoinActivitySuccessResponse(options);
+    } catch {
+      return this.responseService.getJoinActivityFailureResponse(
+        options.locale,
       );
     }
   };
@@ -189,6 +214,30 @@ export class ResolverService {
     );
   };
 
+  getSentParticipationRequestList = async (userId: number) => {
+    const userData = await this.userService.getUser(userId);
+
+    const [
+      requestList,
+      total,
+    ] = await this.participationService.getSentParticipationRequestList(userId);
+    const activities = requestList.reduce(
+      (
+        acc: PaginatedResponse<Activity>,
+        current: Participation,
+      ): PaginatedResponse<Activity> => {
+        acc.results.push(current.activity);
+        return acc;
+      },
+      { results: [], page: 0, total },
+    );
+
+    return this.responseService.getSentParticipationRequestListResponse(
+      activities,
+      userData,
+    );
+  };
+
   getUpcomingActivities = async (userId: number, page = FIRST_PAGE) => {
     const { locale, timezone } = await this.userService.getUser(userId);
     const userLocation = await this.userService.getLocation(userId);
@@ -292,29 +341,6 @@ export class ResolverService {
     });
 
     return this.responseService.getInitializeFeedbackResponse(locale);
-  };
-
-  applyForActivity = async (
-    activityId: string,
-    userId: number,
-    options: I18nOptions,
-  ): Promise<string | string[]> => {
-    try {
-      await this.activityService
-        .applyForActivity(activityId, userId)
-        .then(async () =>
-          this.notificationService.notifyOrganizerAboutParticipantUpdate(
-            activityId,
-            userId,
-            BOT_JOIN_ACTIVITY_NOTIFICATION,
-          ),
-        );
-      return this.responseService.getJoinActivitySuccessResponse(options);
-    } catch {
-      return this.responseService.getJoinActivityFailureResponse(
-        options.locale,
-      );
-    }
   };
 
   registerUser = async (userDto: User) => {
