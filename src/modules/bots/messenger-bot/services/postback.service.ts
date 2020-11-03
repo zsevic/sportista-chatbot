@@ -3,11 +3,11 @@ import { parse } from 'querystring';
 import {
   ACTIVITY_OPTIONS_TYPE,
   ADD_REMAINING_VACANCIES_TYPE,
+  APPLY_FOR_ACTIVITY_TYPE,
   CANCEL_ACTIVITY_TYPE,
   CANCEL_PARTICIPATION_TYPE,
   CREATED_ACTIVITIES_TYPE,
   JOINED_ACTIVITIES_TYPE,
-  JOIN_ACTIVITY_TYPE,
   ORGANIZER_TYPE,
   PARTICIPANT_LIST_TYPE,
   RESET_REMAINING_VACANCIES_TYPE,
@@ -50,6 +50,13 @@ export class PostbackService {
           locale,
         );
       }
+      case APPLY_FOR_ACTIVITY_TYPE: {
+        return this.resolverService.applyForActivity(
+          activity_id.toString(),
+          userId,
+          { gender, locale },
+        );
+      }
       case CANCEL_ACTIVITY_TYPE: {
         return this.resolverService.cancelActivity(
           activity_id.toString(),
@@ -66,13 +73,6 @@ export class PostbackService {
       }
       case CREATED_ACTIVITIES_TYPE: {
         return this.resolverService.getCreatedActivities(userId, +page);
-      }
-      case JOIN_ACTIVITY_TYPE: {
-        return this.resolverService.joinActivity(
-          activity_id.toString(),
-          userId,
-          { gender, locale },
-        );
       }
       case JOINED_ACTIVITIES_TYPE: {
         return this.resolverService.getJoinedActivities(userId, +page);

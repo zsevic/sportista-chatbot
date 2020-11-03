@@ -7,9 +7,9 @@ import { Activity } from 'modules/activity/activity.dto';
 import { ActivityRepository } from 'modules/activity/activity.repository';
 import {
   ACTIVITY_REMAINING_VACANCIES,
+  APPLY_FOR_ACTIVITY,
+  APPLY_FOR_ACTIVITY_TYPE,
   BOT_CANCEL_ACTIVITY_NOTIFICATION,
-  JOIN_ACTIVITY,
-  JOIN_ACTIVITY_TYPE,
   LOCATION,
   ORGANIZER,
   ORGANIZER_TYPE,
@@ -122,7 +122,7 @@ export class NotificationService {
       },
     );
     const { activity: activityI18n } = this.i18nService.getCatalog(locale);
-    const buttonPayload = `type=${JOIN_ACTIVITY_TYPE}&activity_id=${activity.id}`;
+    const buttonPayload = `type=${APPLY_FOR_ACTIVITY_TYPE}&activity_id=${activity.id}`;
     const url = getLocationUrl(
       activity.location.latitude,
       activity.location.longitude,
@@ -131,7 +131,7 @@ export class NotificationService {
     const buttons = [
       {
         type: 'postback',
-        title: activityI18n[JOIN_ACTIVITY],
+        title: activityI18n[APPLY_FOR_ACTIVITY],
         payload: buttonPayload,
       },
       { type: 'web_url', title: activityI18n[LOCATION], url },

@@ -294,14 +294,14 @@ export class ResolverService {
     return this.responseService.getInitializeFeedbackResponse(locale);
   };
 
-  joinActivity = async (
+  applyForActivity = async (
     activityId: string,
     userId: number,
     options: I18nOptions,
   ): Promise<string | string[]> => {
     try {
       await this.activityService
-        .joinActivity(activityId, userId)
+        .applyForActivity(activityId, userId)
         .then(async () =>
           this.notificationService.notifyOrganizerAboutParticipantUpdate(
             activityId,

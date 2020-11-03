@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
 import { ParticipationEntity } from './participation.entity';
+import { PARTICIPATION_STATUS } from './participation.enums';
 
 @EntityRepository(ParticipationEntity)
 export class ParticipationRepository extends Repository<ParticipationEntity> {
@@ -52,7 +53,11 @@ export class ParticipationRepository extends Repository<ParticipationEntity> {
       throw new Error('User already joined the activity');
     }
 
-    return this.save({ activity_id, participant_id });
+    return this.save({
+      activity_id,
+      participant_id,
+      status: PARTICIPATION_STATUS.PENDING,
+    });
   }
 
   removeParticipationList = async (activity_id: string): Promise<void> => {

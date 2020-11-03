@@ -79,7 +79,7 @@ export class ActivityService {
   }
 
   @Transactional()
-  async joinActivity(activityId: string, userId: number): Promise<void> {
+  async applyForActivity(activityId: string, userId: number): Promise<void> {
     const { location } = await this.activityRepository.findOne(activityId, {
       relations: ['location'],
     });
