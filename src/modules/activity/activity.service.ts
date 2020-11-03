@@ -90,7 +90,6 @@ export class ActivityService {
     );
     if (!isValidLocation) throw new Error('Location is not valid');
     await this.participationRepository.createParticipation(activityId, userId);
-    await this.activityRepository.subtractRemainingVacancies(activityId);
   }
 
   resetRemainingVacancies = async (

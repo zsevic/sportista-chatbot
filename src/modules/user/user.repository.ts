@@ -37,11 +37,11 @@ export class UserRepository extends Repository<UserEntity> {
           .where('participation.activity_id = CAST(:activity_id AS uuid)', {
             activity_id,
           })
+          .andWhere('participation.status = :status', {
+            status: PARTICIPATION_STATUS.ACCEPTED,
+          })
           .getQuery();
         return `participations.id IN ${subQuery}`;
-      })
-      .andWhere('participations.status = :status', {
-        status: PARTICIPATION_STATUS.ACCEPTED,
       })
       .andWhere('participations.deleted_at IS NULL')
       .getMany();

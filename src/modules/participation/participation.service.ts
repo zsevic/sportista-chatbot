@@ -32,6 +32,11 @@ export class ParticipationService {
   getSentParticipationRequestList = async (userId: number) =>
     this.participationRepository.findAndCount({
       where: { participant_id: userId, status: PARTICIPATION_STATUS.PENDING },
-      relations: ['activity', 'participant'],
+      relations: [
+        'activity',
+        'participant',
+        'activity.location',
+        'activity.price',
+      ],
     });
 }
