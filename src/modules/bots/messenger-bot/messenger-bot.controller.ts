@@ -7,6 +7,8 @@ import {
   INITIALIZE_FEEDBACK_PAYLOAD,
   JOINED_ACTIVITIES_PAYLOAD,
   NOTIFICATION_SUBSCRIPTION_PAYLOAD,
+  RECEIVED_PARTICIPATION_REQUESTS_PAYLOAD,
+  SENT_PARTICIPATION_REQUESTS_PAYLOAD,
   SUBSCRIBE_TO_NOTIFICATIONS_PAYLOAD,
   UNSUBSCRIBE_TO_NOTIFICATIONS_PAYLOAD,
   UPCOMING_ACTIVITIES_PAYLOAD,
@@ -142,6 +144,12 @@ export class MessengerBotController {
     return chat.say(response);
   };
 
+  private receivedParticipationRequestsHandler = async (payload, chat) =>
+    chat.say('received requests');
+
+  private sentParticipationRequestsHandler = async (payload, chat) =>
+    chat.say('sent requests');
+
   private subscribeToNotificationsHandler = async (payload, chat) => {
     const response = await this.resolverService.subscribeToNotifications(
       payload.sender.id,
@@ -181,6 +189,10 @@ export class MessengerBotController {
     [INITIALIZE_FEEDBACK_PAYLOAD]: this.initializeFeedbackHandler,
     [JOINED_ACTIVITIES_PAYLOAD]: this.joinedActivitiesHandler,
     [NOTIFICATION_SUBSCRIPTION_PAYLOAD]: this.notificationSubscriptionHandler,
+    [RECEIVED_PARTICIPATION_REQUESTS_PAYLOAD]: this
+      .receivedParticipationRequestsHandler,
+    [SENT_PARTICIPATION_REQUESTS_PAYLOAD]: this
+      .sentParticipationRequestsHandler,
     [SUBSCRIBE_TO_NOTIFICATIONS_PAYLOAD]: this.subscribeToNotificationsHandler,
     [UNSUBSCRIBE_TO_NOTIFICATIONS_PAYLOAD]: this
       .unsubscribeToNotificationsHandler,

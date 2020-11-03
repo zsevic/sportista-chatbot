@@ -2,11 +2,13 @@ import { PROJECT_NAME } from 'common/config/constants';
 import {
   activity as activityI18nEn,
   bot as botI18nEn,
+  participation as participationI18nEn,
   user as userI18nEn,
 } from 'locales/en.json';
 import {
   activity as activityI18nSr,
   bot as botI18nSr,
+  participation as participationI18nSr,
   user as userI18nSr,
 } from 'locales/sr.json';
 
@@ -18,6 +20,10 @@ export const INITIALIZE_FEEDBACK_PAYLOAD = 'INITIALIZE_FEEDBACK_PAYLOAD';
 export const JOINED_ACTIVITIES_PAYLOAD = 'JOINED_ACTIVITIES_PAYLOAD';
 export const NOTIFICATION_SUBSCRIPTION_PAYLOAD =
   'NOTIFICATION_SUBSCRIPTION_PAYLOAD';
+export const RECEIVED_PARTICIPATION_REQUESTS_PAYLOAD =
+  'RECEIVED_PARTICIPATION_REQUESTS_PAYLOAD';
+export const SENT_PARTICIPATION_REQUESTS_PAYLOAD =
+  'SENT_PARTICIPATION_REQUESTS_PAYLOAD';
 export const UPCOMING_ACTIVITIES_PAYLOAD = 'UPCOMING_ACTIVITIES_PAYLOAD';
 export const UPDATE_USER_LOCATION_PAYLOAD = 'UPDATE_USER_LOCATION_PAYLOAD';
 
@@ -139,6 +145,8 @@ export const BOT_JOIN_ACTIVITY_NOTIFICATION = `bot.${JOIN_ACTIVITY_NOTIFICATION}
 
 const CANCEL_PARTICIPATION_FAILURE = 'CANCEL_PARTICIPATION_FAILURE';
 export const PARTICIPATION_CANCEL_PARTICIPATION_FAILURE = `participation.${CANCEL_PARTICIPATION_FAILURE}`;
+const RECEIVED_PARTICIPATION_REQUESTS = 'RECEIVED_PARTICIPATION_REQUESTS';
+const SENT_PARTICIPATION_REQUESTS = 'SENT_PARTICIPATION_REQUESTS';
 
 export const DATETIME_QUESTION = 'DATETIME_QUESTION';
 export const INVALID_DATETIME = 'INVALID_DATETIME';
@@ -219,6 +227,16 @@ const EN_PERSISTENT_MENU = [
   },
   {
     type: 'postback',
+    title: participationI18nEn[SENT_PARTICIPATION_REQUESTS],
+    payload: SENT_PARTICIPATION_REQUESTS_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: participationI18nEn[RECEIVED_PARTICIPATION_REQUESTS],
+    payload: RECEIVED_PARTICIPATION_REQUESTS_PAYLOAD,
+  },
+  {
+    type: 'postback',
     title: userI18nEn[UPDATE_USER_LOCATION],
     payload: UPDATE_USER_LOCATION_PAYLOAD,
   },
@@ -259,6 +277,16 @@ const SR_PERSISTENT_MENU = [
     type: 'postback',
     title: activityI18nSr[CREATED_ACTIVITIES],
     payload: CREATED_ACTIVITIES_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: participationI18nSr[SENT_PARTICIPATION_REQUESTS],
+    payload: SENT_PARTICIPATION_REQUESTS_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: participationI18nSr[RECEIVED_PARTICIPATION_REQUESTS],
+    payload: RECEIVED_PARTICIPATION_REQUESTS_PAYLOAD,
   },
   {
     type: 'postback',
