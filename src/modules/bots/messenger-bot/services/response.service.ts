@@ -17,7 +17,6 @@ import {
   ABOUT_ME_2,
   ACTIVITY_CANCEL_ACTIVITY_FAILURE,
   ACTIVITY_CANCEL_ACTIVITY_SUCCESS,
-  ACTIVITY_CANCEL_PARTICIPATION_FAILURE,
   ACTIVITY_JOIN_ACTIVITY_FAILURE,
   ACTIVITY_NO_PARTICIPANTS,
   ACTIVITY_NO_REMAINING_VACANCIES,
@@ -37,8 +36,6 @@ import {
   BOT_NOTIFICATION_SUBSCRIPTION_FAILURE,
   CANCEL_ACTIVITY,
   CANCEL_ACTIVITY_TYPE,
-  CANCEL_PARTICIPATION,
-  CANCEL_PARTICIPATION_SUCCESS,
   CANCEL_PARTICIPATION_TYPE,
   CREATED_ACTIVITIES,
   CREATED_ACTIVITIES_PAYLOAD,
@@ -71,6 +68,7 @@ import {
   ORGANIZER_TYPE,
   PARTICIPANT_LIST,
   PARTICIPANT_LIST_TYPE,
+  PARTICIPATION_CANCEL_PARTICIPATION_FAILURE,
   PRICE_QUESTION,
   REGISTRATION,
   REGISTRATION_FAILURE,
@@ -258,19 +256,20 @@ export class ResponseService {
 
   getCancelParticipationFailureResponse = (locale: string): string =>
     this.i18nService.__({
-      phrase: ACTIVITY_CANCEL_PARTICIPATION_FAILURE,
+      phrase: PARTICIPATION_CANCEL_PARTICIPATION_FAILURE,
       locale,
     });
 
   getCancelParticipationSuccessResponse = (options: I18nOptions): string[] => {
-    const { activity: activityI18n } = this.i18nService.getCatalog(
-      options.locale,
-    );
+    const {
+      activity: activityI18n,
+      participation: { CANCEL_PARTICIPATION_SUCCESS: phrase },
+    } = this.i18nService.getCatalog(options.locale);
 
     return [
       this.i18nService.__mf(
         {
-          phrase: activityI18n[CANCEL_PARTICIPATION_SUCCESS],
+          phrase,
           locale: options.locale,
         },
         {
@@ -550,14 +549,15 @@ export class ResponseService {
     activityListData: PaginatedResponse<Activity>,
     options: DatetimeOptions,
   ) => {
-    const { activity: activityI18n } = this.i18nService.getCatalog(
-      options.locale,
-    );
+    const {
+      activity: activityI18n,
+      participation: { CANCEL_PARTICIPATION: activityTypeText },
+    } = this.i18nService.getCatalog(options.locale);
 
     return this.getActivitiesResponse({
       activityListData,
       noActivitiesText: activityI18n[NO_JOINED_ACTIVITIES],
-      activityTypeText: activityI18n[CANCEL_PARTICIPATION],
+      activityTypeText,
       activityType: CANCEL_PARTICIPATION_TYPE,
       viewMoreActivitiesText: activityI18n[VIEW_MORE_JOINED_ACTIVITIES],
       buttonPayloadActivityType: JOINED_ACTIVITIES_TYPE,

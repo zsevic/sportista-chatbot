@@ -7,6 +7,7 @@ import {
 import { PaginatedResponse, UserLocation } from 'common/dtos';
 import { getSkip } from 'common/utils';
 import { ParticipationEntity } from 'modules/participation/participation.entity';
+import { PARTICIPATION_STATUS } from 'modules/participation/participation.enums';
 import { Activity } from './activity.dto';
 import { ActivityEntity } from './activity.entity';
 
@@ -102,6 +103,9 @@ export class ActivityRepository extends Repository<ActivityEntity> {
           .from(ParticipationEntity, 'participation')
           .where('participation.participant_id = CAST(:user_id AS bigint)', {
             user_id,
+          })
+          .andWhere('participation.status = :status', {
+            status: PARTICIPATION_STATUS.ACCEPTED,
           })
           .getQuery();
         return `activity.id IN ${subQuery}`;

@@ -9,9 +9,6 @@
     "CANCEL_ACTIVITY": "Otkaži",
     "CANCEL_ACTIVITY_FAILURE": "Otkazivanje termina nije uspelo",
     "CANCEL_ACTIVITY_SUCCESS": "Termin je uspešno otkazan",
-    "CANCEL_PARTICIPATION": "Otkaži",
-    "CANCEL_PARTICIPATION_FAILURE": "Otkazivanje nije uspelo",
-    "CANCEL_PARTICIPATION_SUCCESS": "Uspešno si {GENDER, select, male {otkazao} female {otkazala} other {otkazao}}",
     "CREATED_ACTIVITIES": "📑 Pregled prijava",
     "INITIALIZE_ACTIVITY": "🗓 Nađi Sportiste",
     "JOIN_ACTIVITY": "Prijavi se",
@@ -56,6 +53,11 @@
     "MESSENGER_INFO": "Ova funkcionalnost je dostupna jedino preko Messenger aplikacije",
     "NOTIFICATION_SUBSCRIPTION_BUTTON": "🔔 Pretplata",
     "NOTIFICATION_SUBSCRIPTION_FAILURE": "Pokušaj ponovo"
+  },
+  "participation": {
+    "CANCEL_PARTICIPATION": "Otkaži",
+    "CANCEL_PARTICIPATION_FAILURE": "Otkazivanje nije uspelo",
+    "CANCEL_PARTICIPATION_SUCCESS": "Uspešno si {GENDER, select, male {otkazao} female {otkazala} other {otkazao}}"
   },
   "state": {
     "ACTIVITY_TYPE_QUESTION": "Za koji sport tražiš igrače?",

@@ -9,9 +9,6 @@
     "CANCEL_ACTIVITY": "Cancel",
     "CANCEL_ACTIVITY_FAILURE": "Canceling activity failed",
     "CANCEL_ACTIVITY_SUCCESS": "Canceling activity succeeded",
-    "CANCEL_PARTICIPATION": "Cancel",
-    "CANCEL_PARTICIPATION_FAILURE": "Canceling participation failed",
-    "CANCEL_PARTICIPATION_SUCCESS": "You successfully {GENDER, select, other {canceled}} the participation",
     "CREATED_ACTIVITIES": "📑 Check who applied",
     "INITIALIZE_ACTIVITY": "🗓 Find playmates",
     "JOIN_ACTIVITY": "Apply",
@@ -56,6 +53,11 @@
     "MESSENGER_INFO": "This functionality is available only within Messenger app",
     "NOTIFICATION_SUBSCRIPTION_BUTTON": "🔔 Subscription",
     "NOTIFICATION_SUBSCRIPTION_FAILURE": "Notification subscription failed, try again"
+  },
+  "participation": {
+    "CANCEL_PARTICIPATION": "Cancel",
+    "CANCEL_PARTICIPATION_FAILURE": "Canceling participation failed",
+    "CANCEL_PARTICIPATION_SUCCESS": "You successfully {GENDER, select, other {canceled}} the participation"
   },
   "state": {
     "ACTIVITY_TYPE_QUESTION": "For which activity type you need players?",
