@@ -229,7 +229,7 @@ export class ResolverService {
         acc.results.push(current.activity);
         return acc;
       },
-      { results: [], page: 0, total },
+      { results: [], page: FIRST_PAGE, total },
     );
 
     return this.responseService.getSentParticipationRequestListResponse(

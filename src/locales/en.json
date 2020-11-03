@@ -58,6 +58,7 @@
     "CANCEL_PARTICIPATION": "Cancel",
     "CANCEL_PARTICIPATION_FAILURE": "Canceling participation failed",
     "CANCEL_PARTICIPATION_SUCCESS": "You successfully {GENDER, select, other {canceled}} the participation",
+    "NO_SENT_REQUESTS": "There are no sent requests",
     "RECEIVED_PARTICIPATION_REQUESTS": "👥 Received requests",
     "SENT_PARTICIPATION_REQUESTS": "👤 Sent requests"
   },

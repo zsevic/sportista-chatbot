@@ -659,12 +659,15 @@ export class ResponseService {
   ) => {
     const {
       activity: activityI18n,
-      participation: { CANCEL_PARTICIPATION: activityTypeText },
+      participation: {
+        CANCEL_PARTICIPATION: activityTypeText,
+        NO_SENT_REQUESTS: noActivitiesText,
+      },
     } = this.i18nService.getCatalog(options.locale);
 
     return this.getActivitiesResponse({
       activityListData,
-      noActivitiesText: activityI18n[NO_JOINED_ACTIVITIES],
+      noActivitiesText,
       activityTypeText,
       activityType: CANCEL_PARTICIPATION_TYPE,
       viewMoreActivitiesText: activityI18n[VIEW_MORE_JOINED_ACTIVITIES],
