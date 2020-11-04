@@ -59,6 +59,21 @@ export class ParticipationRepository extends Repository<ParticipationEntity> {
     });
   }
 
+  getReceivedParticipationRequestList = async (userId: number) =>
+    this.createQueryBuilder('participation')
+      .leftJoinAndSelect('participation.participant', 'participant')
+      .leftJoinAndSelect('participation.activity', 'activity')
+      .leftJoinAndSelect('activity.location', 'location')
+      .leftJoinAndSelect('activity.organizer', 'organizer')
+      .leftJoinAndSelect('activity.price', 'price')
+      .where('activity.organizer_id = CAST(:organizerId AS bigint)', {
+        organizerId: userId,
+      })
+      .andWhere('participation.status = :status', {
+        status: PARTICIPATION_STATUS.PENDING,
+      })
+      .getManyAndCount();
+
   removeParticipationList = async (activity_id: string): Promise<void> => {
     const participationList = await this.find({ where: { activity_id } });
 

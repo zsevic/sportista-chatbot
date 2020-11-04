@@ -144,8 +144,13 @@ export class MessengerBotController {
     return chat.say(response);
   };
 
-  private receivedParticipationRequestsHandler = async (payload, chat) =>
-    chat.say('received requests');
+  private receivedParticipationRequestsHandler = async (payload, chat) => {
+    const response = await this.resolverService.getReceivedParticipationRequestList(
+      payload.sender.id,
+    );
+
+    return chat.say(response);
+  };
 
   private sentParticipationRequestsHandler = async (payload, chat) => {
     const response = await this.resolverService.getSentParticipationRequestList(

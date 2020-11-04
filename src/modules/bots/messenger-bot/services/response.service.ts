@@ -69,6 +69,7 @@ import {
   PARTICIPANT_LIST,
   PARTICIPANT_LIST_TYPE,
   PARTICIPATION_CANCEL_PARTICIPATION_FAILURE,
+  PARTICIPATION_NO_RECEIVED_REQUESTS,
   PRICE_QUESTION,
   REGISTRATION,
   REGISTRATION_FAILURE,
@@ -189,8 +190,8 @@ export class ResponseService {
 
   private getActivitiesResponse({
     activityListData,
-    activityTypeText,
-    activityType,
+    activityTypeText = null,
+    activityType = null,
     noActivitiesText,
     viewMoreActivitiesText,
     buttonPayloadActivityType,
@@ -202,15 +203,20 @@ export class ResponseService {
 
     if (results.length === 0) return noActivitiesText;
 
-    const cards = results.map((activity: Activity) =>
-      this.getElementFromActivity({
-        activity,
-        buttonTitle: activityTypeText,
-        buttonPayload: `type=${activityType}&activity_id=${activity.id}`,
+    let cards;
+    if (activityTypeText && activityType) {
+      cards = this.getCardsFromActivities(
+        results,
+        activityTypeText,
+        activityType,
         isOrganizerShown,
         options,
-      }),
-    );
+      );
+    } else {
+      cards = results.map((participation: Participation) =>
+        this.getElementFromReceivedRequest(participation),
+      );
+    }
 
     const hasNextPage = PAGE_SIZE * page < total;
     const nextPage = page + 1;
@@ -280,6 +286,23 @@ export class ResponseService {
       activityI18n[NOTIFY_ORGANIZER],
     ];
   };
+
+  private getCardsFromActivities = (
+    activities: Activity[],
+    buttonTitle: string,
+    payloadType: string,
+    isOrganizerShown: boolean,
+    options: DatetimeOptions,
+  ) =>
+    activities.map((activity: Activity) =>
+      this.getElementFromActivity({
+        activity,
+        buttonTitle,
+        buttonPayload: `type=${payloadType}&activity_id=${activity.id}`,
+        isOrganizerShown,
+        options,
+      }),
+    );
 
   getCreateActivityResponse = (locale: string): string =>
     this.i18nService.__({
@@ -397,6 +420,39 @@ export class ResponseService {
       },
     ];
   };
+
+  private getElementFromReceivedRequest(participation: Participation) {
+    const {
+      activity: {
+        datetime,
+        organizer: { locale, timezone },
+        type,
+        remaining_vacancies,
+      },
+      participant: { first_name, image_url, last_name },
+    } = participation;
+    const title = `${first_name} ${last_name} (fali ${remaining_vacancies} za ${type})`;
+    const subtitle = formatDatetime(datetime, { locale, timezone });
+    const buttons = [
+      {
+        type: 'postback',
+        title: 'potvrdi',
+        payload: 'payload',
+      },
+      {
+        type: 'postback',
+        title: 'izbriši',
+        payload: 'payload',
+      },
+    ];
+
+    return {
+      title,
+      subtitle,
+      image_url,
+      buttons,
+    };
+  }
 
   private getElementFromActivity({
     activity,
@@ -652,6 +708,25 @@ export class ResponseService {
       phrase: ACTIVITY_RESET_REMAINING_VACANCIES,
       locale,
     });
+
+  getReceivedParticipationRequestListResponse = (
+    requestList: PaginatedResponse<Participation>,
+    options: User,
+  ) => {
+    const noRequestsText = this.i18nService.__({
+      phrase: PARTICIPATION_NO_RECEIVED_REQUESTS,
+      locale: options.locale,
+    });
+
+    return this.getActivitiesResponse({
+      activityListData: requestList,
+      noActivitiesText: noRequestsText,
+      viewMoreActivitiesText: 'view more',
+      buttonPayloadActivityType: 'payload',
+      isOrganizerShown: false,
+      options,
+    });
+  };
 
   getSentParticipationRequestListResponse = (
     activityListData: PaginatedResponse<Activity>,

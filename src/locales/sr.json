@@ -55,11 +55,14 @@
     "NOTIFICATION_SUBSCRIPTION_FAILURE": "Pokušaj ponovo"
   },
   "participation": {
+    "ACCEPT_PARTICIPATION": "Potvrdi",
     "CANCEL_PARTICIPATION": "Otkaži",
     "CANCEL_PARTICIPATION_FAILURE": "Otkazivanje nije uspelo",
     "CANCEL_PARTICIPATION_SUCCESS": "Uspešno si {GENDER, select, male {otkazao} female {otkazala} other {otkazao}}",
+    "NO_RECEIVED_REQUESTS": "There are no received requests",
     "NO_SENT_REQUESTS": "Nema poslatih zahteva",
     "RECEIVED_PARTICIPATION_REQUESTS": "👥 Primljeni zahtevi",
+    "REJECT_PARTICIPATION": "Izbriši",
     "SENT_PARTICIPATION_REQUESTS": "👤 Poslati zahtevi"
   },
   "state": {

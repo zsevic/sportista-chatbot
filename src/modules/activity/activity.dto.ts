@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import { Location } from 'modules/location/location.dto';
+import { User } from 'modules/user/user.dto';
 import { Price } from './price/price.dto';
 
 export class Activity {
@@ -19,6 +20,9 @@ export class Activity {
 
   @Type(() => Location)
   location?: Location;
+
+  @Type(() => User)
+  organizer?: User;
 
   price_id?: string;
 

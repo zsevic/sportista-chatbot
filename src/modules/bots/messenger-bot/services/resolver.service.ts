@@ -214,6 +214,27 @@ export class ResolverService {
     );
   };
 
+  getReceivedParticipationRequestList = async (userId: number) => {
+    const userData = await this.userService.getUser(userId);
+
+    const [
+      requestList,
+      total,
+    ] = await this.participationService.getReceivedParticipationRequestList(
+      userId,
+    );
+    const result = {
+      results: requestList,
+      page: FIRST_PAGE,
+      total,
+    };
+
+    return this.responseService.getReceivedParticipationRequestListResponse(
+      result,
+      userData,
+    );
+  };
+
   getSentParticipationRequestList = async (userId: number) => {
     const userData = await this.userService.getUser(userId);
 
