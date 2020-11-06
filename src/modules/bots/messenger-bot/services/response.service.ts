@@ -16,9 +16,10 @@ import {
   ABOUT_ME_1,
   ABOUT_ME_2,
   ACCEPT_PARTICIPATION_TYPE,
+  ACTIVITY_ACTIVITY_APPLICATION_FAILURE,
+  ACTIVITY_APPLICATION_SUCCESS,
   ACTIVITY_CANCEL_ACTIVITY_FAILURE,
   ACTIVITY_CANCEL_ACTIVITY_SUCCESS,
-  ACTIVITY_JOIN_ACTIVITY_FAILURE,
   ACTIVITY_NO_PARTICIPANTS,
   ACTIVITY_NO_REMAINING_VACANCIES,
   ACTIVITY_NOTIFY_PARTICIPANTS,
@@ -54,7 +55,6 @@ import {
   JOINED_ACTIVITIES,
   JOINED_ACTIVITIES_PAYLOAD,
   JOINED_ACTIVITIES_TYPE,
-  JOIN_ACTIVITY_SUCCESS,
   LOCATION,
   LOCATION_INSTRUCTION,
   LOCATION_QUESTION,
@@ -608,7 +608,7 @@ export class ResponseService {
 
   getJoinActivityFailureResponse = (locale: string): string =>
     this.i18nService.__({
-      phrase: ACTIVITY_JOIN_ACTIVITY_FAILURE,
+      phrase: ACTIVITY_ACTIVITY_APPLICATION_FAILURE,
       locale,
     });
 
@@ -619,7 +619,10 @@ export class ResponseService {
 
     return [
       this.i18nService.__mf(
-        { phrase: activityI18n[JOIN_ACTIVITY_SUCCESS], locale: options.locale },
+        {
+          phrase: activityI18n[ACTIVITY_APPLICATION_SUCCESS],
+          locale: options.locale,
+        },
         {
           GENDER: options.gender,
         },

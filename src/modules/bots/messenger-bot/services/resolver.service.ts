@@ -3,10 +3,6 @@ import { FIRST_PAGE } from 'common/config/constants';
 import { PaginatedResponse } from 'common/dtos';
 import { Activity } from 'modules/activity/activity.dto';
 import { ActivityService } from 'modules/activity/activity.service';
-import {
-  BOT_CANCEL_PARTICIPATION_NOTIFICATION,
-  BOT_JOIN_ACTIVITY_NOTIFICATION,
-} from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { I18nOptions } from 'modules/bots/messenger-bot/messenger-bot.types';
 import { Feedback } from 'modules/feedback/feedback.dto';
 import { FeedbackService } from 'modules/feedback/feedback.service';
@@ -82,10 +78,9 @@ export class ResolverService {
       await this.activityService
         .applyForActivity(activityId, userId)
         .then(async () =>
-          this.notificationService.notifyOrganizerAboutParticipantUpdate(
+          this.notificationService.notifyOrganizerAboutParticipantApplication(
             activityId,
             userId,
-            BOT_JOIN_ACTIVITY_NOTIFICATION,
           ),
         );
       return this.responseService.getJoinActivitySuccessResponse(options);
@@ -137,10 +132,9 @@ export class ResolverService {
       await this.participationService
         .cancelParticipation(activityId, userId)
         .then(async () =>
-          this.notificationService.notifyOrganizerAboutParticipantUpdate(
+          this.notificationService.notifyOrganizerAboutParticipantCancelation(
             activityId,
             userId,
-            BOT_CANCEL_PARTICIPATION_NOTIFICATION,
           ),
         );
       return this.responseService.getCancelParticipationSuccessResponse(

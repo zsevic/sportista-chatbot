@@ -9,7 +9,9 @@ import {
   ACTIVITY_REMAINING_VACANCIES,
   APPLY_FOR_ACTIVITY,
   APPLY_FOR_ACTIVITY_TYPE,
+  BOT_ACTIVITY_APPLICATION_NOTIFICATION,
   BOT_CANCEL_ACTIVITY_NOTIFICATION,
+  BOT_CANCEL_PARTICIPATION_NOTIFICATION,
   LOCATION,
   ORGANIZER,
   ORGANIZER_TYPE,
@@ -34,10 +36,9 @@ export class NotificationService {
     private readonly userService: UserService,
   ) {}
 
-  notifyOrganizerAboutParticipantUpdate = async (
+  notifyOrganizerAboutParticipantApplication = async (
     activityId: string,
     userId: number,
-    notification: string,
   ) => {
     const { first_name, gender, last_name } = await this.userService.getUser(
       userId,
@@ -54,7 +55,43 @@ export class NotificationService {
       timezone: organizer.timezone,
     });
     const textMessage = this.i18nService.__mf(
-      { phrase: notification, locale: organizer.locale },
+      {
+        phrase: BOT_ACTIVITY_APPLICATION_NOTIFICATION,
+        locale: organizer.locale,
+      },
+      {
+        GENDER: gender,
+        name,
+        type,
+        datetime: formattedDatetime,
+      },
+    );
+    await this.bot.sendTextMessage(organizer.id, textMessage);
+  };
+
+  notifyOrganizerAboutParticipantCancelation = async (
+    activityId: string,
+    userId: number,
+  ) => {
+    const { first_name, gender, last_name } = await this.userService.getUser(
+      userId,
+    );
+    const { organizer, datetime, type } = await this.activityRepository.findOne(
+      activityId,
+      {
+        relations: ['organizer'],
+      },
+    );
+    const name = convertToLatin(`${first_name} ${last_name}`);
+    const formattedDatetime = formatDatetime(datetime, {
+      locale: organizer.locale,
+      timezone: organizer.timezone,
+    });
+    const textMessage = this.i18nService.__mf(
+      {
+        phrase: BOT_CANCEL_PARTICIPATION_NOTIFICATION,
+        locale: organizer.locale,
+      },
       {
         GENDER: gender,
         name,
