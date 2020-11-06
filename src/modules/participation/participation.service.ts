@@ -23,23 +23,15 @@ export class ParticipationService {
     await this.activityRepository.addRemainingVacancies(activityId);
   }
 
-  getParticipationsAndCount = async (activityId: string) =>
+  getParticipationListAndCount = async (activityId: string) =>
     this.participationRepository.findAndCount({
       where: { activity_id: activityId },
       relations: ['activity', 'participant'],
     });
 
-  getReceivedParticipationRequestList = async (userId: number) =>
-    this.participationRepository.getReceivedParticipationRequestList(userId);
+  getReceivedRequestList = async (userId: number, page: number) =>
+    this.participationRepository.getReceivedRequestList(userId, page);
 
-  getSentParticipationRequestList = async (userId: number) =>
-    this.participationRepository.findAndCount({
-      where: { participant_id: userId, status: PARTICIPATION_STATUS.PENDING },
-      relations: [
-        'activity',
-        'participant',
-        'activity.location',
-        'activity.price',
-      ],
-    });
+  getSentRequestList = async (userId: number, page: number) =>
+    this.participationRepository.getSentRequestList(userId, page);
 }

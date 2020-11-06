@@ -631,14 +631,14 @@ export class ResponseService {
 
   getNotifyParticipantsResponse = (
     locale: string,
-    participantsCount: number,
+    participantCount: number,
   ): string =>
     this.i18nService.__mf(
       {
         phrase: ACTIVITY_NOTIFY_PARTICIPANTS,
         locale,
       },
-      { COUNT: participantsCount },
+      { COUNT: participantCount },
     );
 
   getOrganizerResponse = (organizer: User) => {

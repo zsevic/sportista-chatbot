@@ -1,4 +1,6 @@
 import { Logger } from '@nestjs/common';
+import { PAGE_SIZE } from 'common/config/constants';
+import { getSkip } from 'common/utils';
 import { EntityRepository, Repository } from 'typeorm';
 import { ParticipationEntity } from './participation.entity';
 import { PARTICIPATION_STATUS } from './participation.enums';
@@ -59,8 +61,10 @@ export class ParticipationRepository extends Repository<ParticipationEntity> {
     });
   }
 
-  getReceivedParticipationRequestList = async (userId: number) =>
-    this.createQueryBuilder('participation')
+  getReceivedRequestList = async (userId: number, page: number) => {
+    const skip = getSkip(page);
+
+    return this.createQueryBuilder('participation')
       .leftJoinAndSelect('participation.participant', 'participant')
       .leftJoinAndSelect('participation.activity', 'activity')
       .leftJoinAndSelect('activity.location', 'location')
@@ -72,7 +76,26 @@ export class ParticipationRepository extends Repository<ParticipationEntity> {
       .andWhere('participation.status = :status', {
         status: PARTICIPATION_STATUS.PENDING,
       })
+      .skip(skip)
+      .take(PAGE_SIZE)
       .getManyAndCount();
+  };
+
+  getSentRequestList = async (userId: number, page: number) => {
+    const skip = getSkip(page);
+
+    return this.findAndCount({
+      where: { participant_id: userId, status: PARTICIPATION_STATUS.PENDING },
+      relations: [
+        'activity',
+        'participant',
+        'activity.location',
+        'activity.price',
+      ],
+      skip,
+      take: PAGE_SIZE,
+    });
+  };
 
   removeParticipationList = async (activity_id: string): Promise<void> => {
     const participationList = await this.find({ where: { activity_id } });

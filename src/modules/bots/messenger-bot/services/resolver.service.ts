@@ -87,20 +87,22 @@ export class ResolverService {
   ): Promise<string | string[]> => {
     try {
       const [
-        participations,
-        participantsCount,
-      ] = await this.participationService.getParticipationsAndCount(activityId);
+        participationList,
+        participantCount,
+      ] = await this.participationService.getParticipationListAndCount(
+        activityId,
+      );
       await this.activityService.cancelActivity(activityId, organizerId);
       const response = this.responseService.getCancelActivitySuccessResponse(
         locale,
       );
-      if (participantsCount > 0) {
+      if (participantCount > 0) {
         await this.notificationService.notifyParticipantsAboutCanceledActivity(
-          participations,
+          participationList,
         );
         const notifyParticipantsResponse = this.responseService.getNotifyParticipantsResponse(
           locale,
-          participantsCount,
+          participantCount,
         );
         return [response, notifyParticipantsResponse];
       }
@@ -214,18 +216,19 @@ export class ResolverService {
     );
   };
 
-  getReceivedParticipationRequestList = async (userId: number) => {
+  getReceivedParticipationRequestList = async (
+    userId: number,
+    page = FIRST_PAGE,
+  ) => {
     const userData = await this.userService.getUser(userId);
 
     const [
       requestList,
       total,
-    ] = await this.participationService.getReceivedParticipationRequestList(
-      userId,
-    );
+    ] = await this.participationService.getReceivedRequestList(userId, page);
     const result = {
       results: requestList,
-      page: FIRST_PAGE,
+      page,
       total,
     };
 
@@ -235,13 +238,16 @@ export class ResolverService {
     );
   };
 
-  getSentParticipationRequestList = async (userId: number) => {
+  getSentParticipationRequestList = async (
+    userId: number,
+    page = FIRST_PAGE,
+  ) => {
     const userData = await this.userService.getUser(userId);
 
     const [
       requestList,
       total,
-    ] = await this.participationService.getSentParticipationRequestList(userId);
+    ] = await this.participationService.getSentRequestList(userId, page);
     const activities = requestList.reduce(
       (
         acc: PaginatedResponse<Activity>,
@@ -250,7 +256,7 @@ export class ResolverService {
         acc.results.push(current.activity);
         return acc;
       },
-      { results: [], page: FIRST_PAGE, total },
+      { results: [], page, total },
     );
 
     return this.responseService.getSentParticipationRequestListResponse(
