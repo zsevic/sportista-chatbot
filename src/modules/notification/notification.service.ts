@@ -101,27 +101,27 @@ export class NotificationService {
   };
 
   notifyOrganizerAboutParticipantCancelation = async (
-    activityId: string,
-    userId: number,
+    participationId: string,
   ) => {
-    const { first_name, gender, last_name } = await this.userService.getUser(
-      userId,
-    );
-    const { organizer, datetime, type } = await this.activityRepository.findOne(
-      activityId,
-      {
-        relations: ['organizer'],
+    const {
+      activity: {
+        datetime,
+        organizer: { id: organizerId, locale, timezone },
+        type,
       },
-    );
+      participant: { first_name, gender, last_name },
+    } = await this.participationRepository.findOne(participationId, {
+      relations: ['activity', 'activity.organizer', 'participant'],
+    });
     const name = convertToLatin(`${first_name} ${last_name}`);
     const formattedDatetime = formatDatetime(datetime, {
-      locale: organizer.locale,
-      timezone: organizer.timezone,
+      locale,
+      timezone,
     });
     const textMessage = this.i18nService.__mf(
       {
         phrase: BOT_CANCEL_PARTICIPATION_NOTIFICATION,
-        locale: organizer.locale,
+        locale,
       },
       {
         GENDER: gender,
@@ -130,7 +130,7 @@ export class NotificationService {
         datetime: formattedDatetime,
       },
     );
-    await this.bot.sendTextMessage(organizer.id, textMessage);
+    await this.bot.sendTextMessage(organizerId, textMessage);
   };
 
   notifyParticipantAboutAcceptedParticipation = async (

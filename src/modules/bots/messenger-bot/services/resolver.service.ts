@@ -133,10 +133,9 @@ export class ResolverService {
     try {
       await this.participationService
         .cancelParticipation(activityId, userId)
-        .then(async () =>
+        .then(async (participation: Participation) =>
           this.notificationService.notifyOrganizerAboutParticipantCancelation(
-            activityId,
-            userId,
+            participation.id,
           ),
         );
       return this.responseService.getCancelParticipationSuccessResponse(
