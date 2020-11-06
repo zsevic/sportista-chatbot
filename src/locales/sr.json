@@ -63,7 +63,9 @@
     "NO_SENT_REQUESTS": "Nema poslatih zahteva",
     "RECEIVED_PARTICIPATION_REQUESTS": "👥 Primljeni zahtevi",
     "REJECT_PARTICIPATION": "Izbriši",
-    "SENT_PARTICIPATION_REQUESTS": "👤 Poslati zahtevi"
+    "SENT_PARTICIPATION_REQUESTS": "👤 Poslati zahtevi",
+    "VIEW_MORE_RECEIVED_REQUESTS": "Pogledaj i ostale primljene zahteve",
+    "VIEW_MORE_SENT_REQUESTS": "Pogledaj i ostale poslate zahteve"
   },
   "state": {
     "ACTIVITY_TYPE_QUESTION": "Za koji sport tražiš igrače?",

@@ -433,15 +433,21 @@ export class ResponseService {
     } = participation;
     const title = `${first_name} ${last_name} (fali ${remaining_vacancies} za ${type})`;
     const subtitle = formatDatetime(datetime, { locale, timezone });
+    const {
+      participation: {
+        ACCEPT_PARTICIPATION: acceptParticipationTitle,
+        REJECT_PARTICIPATION: rejectParticipationTitle,
+      },
+    } = this.i18nService.getCatalog(locale);
     const buttons = [
       {
         type: 'postback',
-        title: 'potvrdi',
+        title: acceptParticipationTitle,
         payload: 'payload',
       },
       {
         type: 'postback',
-        title: 'izbriši',
+        title: rejectParticipationTitle,
         payload: 'payload',
       },
     ];
@@ -713,15 +719,17 @@ export class ResponseService {
     requestList: PaginatedResponse<Participation>,
     options: User,
   ) => {
-    const noRequestsText = this.i18nService.__({
-      phrase: PARTICIPATION_NO_RECEIVED_REQUESTS,
-      locale: options.locale,
-    });
+    const {
+      participation: {
+        NO_RECEIVED_REQUESTS: noActivitiesText,
+        VIEW_MORE_RECEIVED_REQUESTS: viewMoreActivitiesText,
+      },
+    } = this.i18nService.getCatalog(options.locale);
 
     return this.getActivitiesResponse({
       activityListData: requestList,
-      noActivitiesText: noRequestsText,
-      viewMoreActivitiesText: 'view more',
+      noActivitiesText,
+      viewMoreActivitiesText,
       buttonPayloadActivityType: 'payload',
       isOrganizerShown: false,
       options,
@@ -733,10 +741,10 @@ export class ResponseService {
     options: User,
   ) => {
     const {
-      activity: activityI18n,
       participation: {
         CANCEL_PARTICIPATION: activityTypeText,
         NO_SENT_REQUESTS: noActivitiesText,
+        VIEW_MORE_SENT_REQUESTS: viewMoreActivitiesText,
       },
     } = this.i18nService.getCatalog(options.locale);
 
@@ -745,8 +753,8 @@ export class ResponseService {
       noActivitiesText,
       activityTypeText,
       activityType: CANCEL_PARTICIPATION_TYPE,
-      viewMoreActivitiesText: activityI18n[VIEW_MORE_JOINED_ACTIVITIES],
-      buttonPayloadActivityType: JOINED_ACTIVITIES_TYPE,
+      viewMoreActivitiesText,
+      buttonPayloadActivityType: 'payload',
       isOrganizerShown: true,
       options,
     });

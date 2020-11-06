@@ -63,7 +63,9 @@
     "NO_SENT_REQUESTS": "There are no sent requests",
     "RECEIVED_PARTICIPATION_REQUESTS": "👥 Received requests",
     "REJECT_PARTICIPATION": "Accept",
-    "SENT_PARTICIPATION_REQUESTS": "👤 Sent requests"
+    "SENT_PARTICIPATION_REQUESTS": "👤 Sent requests",
+    "VIEW_MORE_RECEIVED_REQUESTS": "Check other received requests",
+    "VIEW_MORE_SENT_REQUESTS": "Check other sent requests"
   },
   "state": {
     "ACTIVITY_TYPE_QUESTION": "For which activity type you need players?",
