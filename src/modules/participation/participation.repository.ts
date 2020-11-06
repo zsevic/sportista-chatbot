@@ -71,9 +71,9 @@ export class ParticipationRepository extends Repository<ParticipationEntity> {
 
     if (participation) {
       this.logger.log(
-        `User ${participant_id} already joined activity ${activity_id}`,
+        `User ${participant_id} already applied for activity ${activity_id}`,
       );
-      throw new Error('User already joined the activity');
+      throw new Error('User already applied for the activity');
     }
 
     return this.save({
@@ -116,6 +116,28 @@ export class ParticipationRepository extends Repository<ParticipationEntity> {
       ],
       skip,
       take: PAGE_SIZE,
+    });
+  };
+
+  rejectParticipation = async (id: string, organizer_id: number) => {
+    const participation = await this.createQueryBuilder('participation')
+      .leftJoinAndSelect('participation.activity', 'activity')
+      .where('participation.id = CAST(:id AS uuid)', {
+        id,
+      })
+      .andWhere('activity.organizer_id = CAST(:organizer_id AS bigint)', {
+        organizer_id,
+      })
+      .andWhere('participation.status = :status', {
+        status: PARTICIPATION_STATUS.PENDING,
+      })
+      .getOne();
+
+    if (!participation) throw new Error('Participation is not valid');
+
+    return this.save({
+      ...participation,
+      status: PARTICIPATION_STATUS.REJECTED,
     });
   };
 

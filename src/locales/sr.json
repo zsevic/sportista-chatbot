@@ -56,18 +56,20 @@
   },
   "participation": {
     "ACCEPT_PARTICIPATION": "Potvrdi",
-    "ACCEPT_PARTICIPATION_FAILURE": "Prihvatanje zahteva nije uspelo",
-    "ACCEPT_PARTICIPATION_SUCCESS": "Zahtev je prihvaćen",
+    "ACCEPT_PARTICIPATION_FAILURE": "Prihvatanje prijave nije uspelo",
+    "ACCEPT_PARTICIPATION_SUCCESS": "Prijava je prihvaćena",
     "CANCEL_PARTICIPATION": "Otkaži",
     "CANCEL_PARTICIPATION_FAILURE": "Otkazivanje nije uspelo",
     "CANCEL_PARTICIPATION_SUCCESS": "Uspešno si {GENDER, select, male {otkazao} female {otkazala} other {otkazao}}",
-    "NO_RECEIVED_REQUESTS": "There are no received requests",
-    "NO_SENT_REQUESTS": "Nema poslatih zahteva",
-    "RECEIVED_PARTICIPATION_REQUESTS": "👥 Primljeni zahtevi",
+    "NO_RECEIVED_REQUESTS": "Nema primljenih prijava",
+    "NO_SENT_REQUESTS": "Nema poslatih prijava",
+    "RECEIVED_PARTICIPATION_REQUESTS": "👥 Primljeni prijave",
     "REJECT_PARTICIPATION": "Izbriši",
-    "SENT_PARTICIPATION_REQUESTS": "👤 Poslati zahtevi",
-    "VIEW_MORE_RECEIVED_REQUESTS": "Pogledaj i ostale primljene zahteve",
-    "VIEW_MORE_SENT_REQUESTS": "Pogledaj i ostale poslate zahteve"
+    "REJECT_PARTICIPATION_FAILURE": "Brisanje prijave nije uspelo",
+    "REJECT_PARTICIPATION_SUCCESS": "Prijava je izbrisana",
+    "SENT_PARTICIPATION_REQUESTS": "👤 Poslate prijave",
+    "VIEW_MORE_RECEIVED_REQUESTS": "Pogledaj i ostale primljene prijave",
+    "VIEW_MORE_SENT_REQUESTS": "Pogledaj i ostale poslate prijave"
   },
   "state": {
     "ACTIVITY_TYPE_QUESTION": "Za koji sport tražiš igrače?",

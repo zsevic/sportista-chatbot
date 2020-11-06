@@ -69,7 +69,11 @@ import {
   ORGANIZER_TYPE,
   PARTICIPANT_LIST,
   PARTICIPANT_LIST_TYPE,
+  PARTICIPATION_ACCEPT_PARTICIPATION_SUCCESS,
+  PARTICIPATION_ACCEPT_PARTICIPATION_FAILURE,
   PARTICIPATION_CANCEL_PARTICIPATION_FAILURE,
+  PARTICIPATION_REJECT_PARTICIPATION_FAILURE,
+  PARTICIPATION_REJECT_PARTICIPATION_SUCCESS,
   PRICE_QUESTION,
   RECEIVED_PARTICIPATION_REQUESTS_TYPE,
   REGISTRATION,
@@ -111,8 +115,6 @@ import {
   USER_SUBSCRIBE_TO_NOTIFICATIONS_SUCCESS,
   USER_UNSUBSCRIBE_TO_NOTIFICATIONS_SUCCESS,
   USER_UNSUBSCRIBE_TO_NOTIFICATIONS_FAILURE,
-  PARTICIPATION_ACCEPT_PARTICIPATION_SUCCESS,
-  PARTICIPATION_ACCEPT_PARTICIPATION_FAILURE,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import {
   I18n,
@@ -705,6 +707,18 @@ export class ResponseService {
       ],
     };
   };
+
+  getRejectParticipationFailureResponse = (locale: string): string =>
+    this.i18nService.__({
+      phrase: PARTICIPATION_REJECT_PARTICIPATION_FAILURE,
+      locale,
+    });
+
+  getRejectParticipationSuccessResponse = (locale: string): string =>
+    this.i18nService.__({
+      phrase: PARTICIPATION_REJECT_PARTICIPATION_SUCCESS,
+      locale,
+    });
 
   private getRemainingVacanciesButtons = (
     activityId: string,

@@ -39,20 +39,16 @@ export class ResolverService {
   acceptParticipation = async (
     participationId: string,
     organizerId: number,
-    options: I18nOptions,
+    locale: string,
   ): Promise<string> => {
     try {
       await this.participationService.acceptParticipation(
         participationId,
         organizerId,
       );
-      return this.responseService.getAcceptParticipationSuccessResponse(
-        options.locale,
-      );
+      return this.responseService.getAcceptParticipationSuccessResponse(locale);
     } catch {
-      return this.responseService.getAcceptParticipationFailureResponse(
-        options.locale,
-      );
+      return this.responseService.getAcceptParticipationFailureResponse(locale);
     }
   };
 
@@ -401,6 +397,22 @@ export class ResolverService {
       return this.responseService.getRegisterUserFailureResponse(
         userDto.locale,
       );
+    }
+  };
+
+  rejectParticipation = async (
+    participationId: string,
+    organizerId: number,
+    locale: string,
+  ): Promise<string> => {
+    try {
+      await this.participationService.rejectParticipation(
+        participationId,
+        organizerId,
+      );
+      return this.responseService.getRejectParticipationSuccessResponse(locale);
+    } catch {
+      return this.responseService.getRejectParticipationFailureResponse(locale);
     }
   };
 

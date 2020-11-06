@@ -12,6 +12,7 @@ import {
   ORGANIZER_TYPE,
   PARTICIPANT_LIST_TYPE,
   RECEIVED_PARTICIPATION_REQUESTS_TYPE,
+  REJECT_PARTICIPATION_TYPE,
   RESET_REMAINING_VACANCIES_TYPE,
   SENT_PARTICIPATION_REQUESTS_TYPE,
   SUBTRACT_REMAINING_VACANCIES_TYPE,
@@ -32,7 +33,7 @@ export class PostbackService {
   ) {}
 
   handlePostback = async (buttonPayload: string, userId: number) => {
-    const { gender, locale, timezone } = await this.userService.getUser(userId);
+    const { gender, locale } = await this.userService.getUser(userId);
     const {
       activity_id,
       participation_id,
@@ -50,7 +51,7 @@ export class PostbackService {
         return this.resolverService.acceptParticipation(
           participation_id.toString(),
           userId,
-          { locale, timezone },
+          locale,
         );
       case ACTIVITY_OPTIONS_TYPE: {
         return this.responseService.getActivityOptionsResponse(
@@ -105,6 +106,12 @@ export class PostbackService {
         return this.resolverService.getReceivedParticipationRequestList(
           userId,
           +page,
+        );
+      case REJECT_PARTICIPATION_TYPE:
+        return this.resolverService.rejectParticipation(
+          participation_id.toString(),
+          userId,
+          locale,
         );
       case RESET_REMAINING_VACANCIES_TYPE: {
         return this.resolverService.resetRemainingVacancies(
