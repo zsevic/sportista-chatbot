@@ -75,7 +75,8 @@ export class PostbackService {
         );
       }
       case CANCEL_ACCEPTED_PARTICIPATION_TYPE: {
-        return this.resolverService.cancelAcceptedParticipation(
+        return this.resolverService.cancelParticipation(
+          type,
           activity_id.toString(),
           userId,
           { gender, locale },
@@ -89,7 +90,8 @@ export class PostbackService {
         );
       }
       case CANCEL_PENDING_PARTICIPATION_TYPE: {
-        return this.resolverService.cancelPendingParticipation(
+        return this.resolverService.cancelParticipation(
+          type,
           activity_id.toString(),
           userId,
           { gender, locale },
