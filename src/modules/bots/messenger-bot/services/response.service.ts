@@ -271,6 +271,31 @@ export class ResponseService {
     }));
   };
 
+  getApplyForActivityFailureResponse = (locale: string): string =>
+    this.i18nService.__({
+      phrase: ACTIVITY_ACTIVITY_APPLICATION_FAILURE,
+      locale,
+    });
+
+  getApplyForActivitySuccessResponse = (options: I18nOptions): string[] => {
+    const { activity: activityI18n } = this.i18nService.getCatalog(
+      options.locale,
+    );
+
+    return [
+      this.i18nService.__mf(
+        {
+          phrase: activityI18n[ACTIVITY_APPLICATION_SUCCESS],
+          locale: options.locale,
+        },
+        {
+          GENDER: options.gender,
+        },
+      ),
+      activityI18n[NOTIFY_ORGANIZER],
+    ];
+  };
+
   getCancelActivitySuccessResponse = (locale: string): string =>
     this.i18nService.__({ phrase: ACTIVITY_CANCEL_ACTIVITY_SUCCESS, locale });
 
@@ -604,31 +629,6 @@ export class ResponseService {
       buttonTitle: userI18n[USER_LOCATION_BUTTON],
       locale,
     });
-  };
-
-  getJoinActivityFailureResponse = (locale: string): string =>
-    this.i18nService.__({
-      phrase: ACTIVITY_ACTIVITY_APPLICATION_FAILURE,
-      locale,
-    });
-
-  getJoinActivitySuccessResponse = (options: I18nOptions): string[] => {
-    const { activity: activityI18n } = this.i18nService.getCatalog(
-      options.locale,
-    );
-
-    return [
-      this.i18nService.__mf(
-        {
-          phrase: activityI18n[ACTIVITY_APPLICATION_SUCCESS],
-          locale: options.locale,
-        },
-        {
-          GENDER: options.gender,
-        },
-      ),
-      activityI18n[NOTIFY_ORGANIZER],
-    ];
   };
 
   getJoinedActivitiesResponse = (

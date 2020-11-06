@@ -85,9 +85,9 @@ export class ResolverService {
             participation.id,
           ),
         );
-      return this.responseService.getJoinActivitySuccessResponse(options);
+      return this.responseService.getApplyForActivitySuccessResponse(options);
     } catch {
-      return this.responseService.getJoinActivityFailureResponse(
+      return this.responseService.getApplyForActivityFailureResponse(
         options.locale,
       );
     }

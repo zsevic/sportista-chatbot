@@ -64,7 +64,7 @@
     "CANCEL_PARTICIPATION_SUCCESS": "Uspešno si {GENDER, select, male {otkazao} female {otkazala} other {otkazao}}",
     "NO_RECEIVED_REQUESTS": "Nema primljenih prijava",
     "NO_SENT_REQUESTS": "Nema poslatih prijava",
-    "RECEIVED_PARTICIPATION_REQUESTS": "👥 Primljeni prijave",
+    "RECEIVED_PARTICIPATION_REQUESTS": "👥 Primljene prijave",
     "REJECT_PARTICIPATION": "Izbriši",
     "REJECT_PARTICIPATION_FAILURE": "Brisanje prijave nije uspelo",
     "REJECT_PARTICIPATION_SUCCESS": "Prijava je izbrisana",

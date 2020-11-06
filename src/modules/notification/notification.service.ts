@@ -51,7 +51,7 @@ export class NotificationService {
         organizer: { id: organizerId, locale, timezone },
         type,
       },
-      participant: { first_name, gender, last_name },
+      participant: { first_name, gender, image_url, last_name },
     } = await this.participationRepository.findOne(participationId, {
       relations: ['activity', 'activity.organizer', 'participant'],
     });
@@ -77,10 +77,11 @@ export class NotificationService {
         ACCEPT_PARTICIPATION: acceptParticipationTitle,
         REJECT_PARTICIPATION: rejectParticipationTitle,
       },
-    } = this.i18nService.getLocale(locale);
+    } = this.i18nService.getCatalog(locale);
     const message = [
       {
         title: messageTitle,
+        image_url,
         buttons: [
           {
             type: 'postback',
