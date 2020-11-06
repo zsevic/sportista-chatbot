@@ -80,10 +80,9 @@ export class ResolverService {
     try {
       await this.activityService
         .applyForActivity(activityId, userId)
-        .then(async () =>
+        .then(async (participation: Participation) =>
           this.notificationService.notifyOrganizerAboutParticipantApplication(
-            activityId,
-            userId,
+            participation.id,
           ),
         );
       return this.responseService.getJoinActivitySuccessResponse(options);

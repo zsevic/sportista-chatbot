@@ -79,7 +79,7 @@ export class ActivityService {
   }
 
   @Transactional()
-  async applyForActivity(activityId: string, userId: number): Promise<void> {
+  async applyForActivity(activityId: string, userId: number) {
     const { location } = await this.activityRepository.findOne(activityId, {
       relations: ['location'],
     });
@@ -89,7 +89,7 @@ export class ActivityService {
       location.longitude,
     );
     if (!isValidLocation) throw new Error('Location is not valid');
-    await this.participationRepository.createParticipation(activityId, userId);
+    return this.participationRepository.createParticipation(activityId, userId);
   }
 
   resetRemainingVacancies = async (

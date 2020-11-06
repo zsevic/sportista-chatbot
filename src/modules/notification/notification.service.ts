@@ -6,6 +6,7 @@ import { ACTIVITY_TYPES } from 'modules/activity/activity.constants';
 import { Activity } from 'modules/activity/activity.dto';
 import { ActivityRepository } from 'modules/activity/activity.repository';
 import {
+  ACCEPT_PARTICIPATION_TYPE,
   ACTIVITY_LOCATION,
   ACTIVITY_REMAINING_VACANCIES,
   APPLY_FOR_ACTIVITY,
@@ -17,6 +18,7 @@ import {
   LOCATION,
   ORGANIZER,
   ORGANIZER_TYPE,
+  REJECT_PARTICIPATION_TYPE,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { BOOTBOT_OPTIONS_FACTORY } from 'modules/external/bootbot';
 import { I18N_OPTIONS_FACTORY } from 'modules/external/i18n';
@@ -41,27 +43,27 @@ export class NotificationService {
   ) {}
 
   notifyOrganizerAboutParticipantApplication = async (
-    activityId: string,
-    userId: number,
+    participationId: string,
   ) => {
-    const { first_name, gender, last_name } = await this.userService.getUser(
-      userId,
-    );
-    const { organizer, datetime, type } = await this.activityRepository.findOne(
-      activityId,
-      {
-        relations: ['organizer'],
+    const {
+      activity: {
+        datetime,
+        organizer: { id: organizerId, locale, timezone },
+        type,
       },
-    );
+      participant: { first_name, gender, last_name },
+    } = await this.participationRepository.findOne(participationId, {
+      relations: ['activity', 'activity.organizer', 'participant'],
+    });
     const name = convertToLatin(`${first_name} ${last_name}`);
     const formattedDatetime = formatDatetime(datetime, {
-      locale: organizer.locale,
-      timezone: organizer.timezone,
+      locale,
+      timezone,
     });
-    const textMessage = this.i18nService.__mf(
+    const messageTitle = this.i18nService.__mf(
       {
         phrase: BOT_ACTIVITY_APPLICATION_NOTIFICATION,
-        locale: organizer.locale,
+        locale,
       },
       {
         GENDER: gender,
@@ -70,7 +72,31 @@ export class NotificationService {
         datetime: formattedDatetime,
       },
     );
-    await this.bot.sendTextMessage(organizer.id, textMessage);
+    const {
+      participation: {
+        ACCEPT_PARTICIPATION: acceptParticipationTitle,
+        REJECT_PARTICIPATION: rejectParticipationTitle,
+      },
+    } = this.i18nService.getLocale(locale);
+    const message = [
+      {
+        title: messageTitle,
+        buttons: [
+          {
+            type: 'postback',
+            title: acceptParticipationTitle,
+            payload: `type=${ACCEPT_PARTICIPATION_TYPE}&participation_id=${participationId}`,
+          },
+          {
+            type: 'postback',
+            title: rejectParticipationTitle,
+            payload: `type=${REJECT_PARTICIPATION_TYPE}&participation_id=${participationId}`,
+          },
+        ],
+      },
+    ];
+
+    return this.bot.sendGenericTemplate(organizerId, message);
   };
 
   notifyOrganizerAboutParticipantCancelation = async (
