@@ -10,7 +10,9 @@ import {
   JOINED_ACTIVITIES_TYPE,
   ORGANIZER_TYPE,
   PARTICIPANT_LIST_TYPE,
+  RECEIVED_PARTICIPATION_REQUESTS_TYPE,
   RESET_REMAINING_VACANCIES_TYPE,
+  SENT_PARTICIPATION_REQUESTS_TYPE,
   SUBTRACT_REMAINING_VACANCIES_TYPE,
   UPCOMING_ACTIVITIES_TYPE,
   UPDATE_REMAINING_VACANCIES_TYPE,
@@ -86,6 +88,11 @@ export class PostbackService {
           locale,
         );
       }
+      case RECEIVED_PARTICIPATION_REQUESTS_TYPE:
+        return this.resolverService.getReceivedParticipationRequestList(
+          userId,
+          +page,
+        );
       case RESET_REMAINING_VACANCIES_TYPE: {
         return this.resolverService.resetRemainingVacancies(
           activity_id.toString(),
@@ -93,6 +100,11 @@ export class PostbackService {
           locale,
         );
       }
+      case SENT_PARTICIPATION_REQUESTS_TYPE:
+        return this.resolverService.getSentParticipationRequestList(
+          userId,
+          +page,
+        );
       case SUBTRACT_REMAINING_VACANCIES_TYPE: {
         return this.resolverService.subtractRemainingVacancies(
           activity_id.toString(),
