@@ -26,7 +26,7 @@ export class ParticipationService {
   }
 
   @Transactional()
-  async cancelParticipation(activityId: string, participantId: number) {
+  async cancelAcceptedParticipation(activityId: string, participantId: number) {
     const participation = await this.participationRepository.cancelParticipation(
       activityId,
       participantId,
@@ -35,6 +35,12 @@ export class ParticipationService {
 
     return participation;
   }
+
+  cancelPendingParticipation = async (
+    activityId: string,
+    participantId: number,
+  ) =>
+    this.participationRepository.cancelParticipation(activityId, participantId);
 
   getParticipationListAndCount = async (activityId: string) =>
     this.participationRepository.findAndCount({

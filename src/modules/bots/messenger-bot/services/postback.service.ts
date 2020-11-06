@@ -5,8 +5,9 @@ import {
   ACTIVITY_OPTIONS_TYPE,
   ADD_REMAINING_VACANCIES_TYPE,
   APPLY_FOR_ACTIVITY_TYPE,
+  CANCEL_ACCEPTED_PARTICIPATION_TYPE,
   CANCEL_ACTIVITY_TYPE,
-  CANCEL_PARTICIPATION_TYPE,
+  CANCEL_PENDING_PARTICIPATION_TYPE,
   CREATED_ACTIVITIES_TYPE,
   JOINED_ACTIVITIES_TYPE,
   ORGANIZER_TYPE,
@@ -73,6 +74,13 @@ export class PostbackService {
           { gender, locale },
         );
       }
+      case CANCEL_ACCEPTED_PARTICIPATION_TYPE: {
+        return this.resolverService.cancelAcceptedParticipation(
+          activity_id.toString(),
+          userId,
+          { gender, locale },
+        );
+      }
       case CANCEL_ACTIVITY_TYPE: {
         return this.resolverService.cancelActivity(
           activity_id.toString(),
@@ -80,8 +88,8 @@ export class PostbackService {
           locale,
         );
       }
-      case CANCEL_PARTICIPATION_TYPE: {
-        return this.resolverService.cancelParticipation(
+      case CANCEL_PENDING_PARTICIPATION_TYPE: {
+        return this.resolverService.cancelPendingParticipation(
           activity_id.toString(),
           userId,
           { gender, locale },

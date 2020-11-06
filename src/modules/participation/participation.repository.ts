@@ -42,6 +42,9 @@ export class ParticipationRepository extends Repository<ParticipationEntity> {
       .andWhere('activity.datetime > :now', {
         now: new Date().toUTCString(),
       })
+      .andWhere('participation.status IN (:...status)', {
+        status: [PARTICIPATION_STATUS.ACCEPTED, PARTICIPATION_STATUS.PENDING],
+      })
       .getOne();
     if (!participation) throw new Error("Participation doesn't exist");
 

@@ -93,6 +93,29 @@ export class ResolverService {
     }
   };
 
+  cancelAcceptedParticipation = async (
+    activityId: string,
+    userId: number,
+    options: I18nOptions,
+  ): Promise<string | string[]> => {
+    try {
+      await this.participationService
+        .cancelAcceptedParticipation(activityId, userId)
+        .then(async (participation: Participation) =>
+          this.notificationService.notifyOrganizerAboutParticipantCancelation(
+            participation.id,
+          ),
+        );
+      return this.responseService.getCancelParticipationSuccessResponse(
+        options,
+      );
+    } catch {
+      return this.responseService.getCancelParticipationFailureResponse(
+        options.locale,
+      );
+    }
+  };
+
   cancelActivity = async (
     activityId: string,
     organizerId: number,
@@ -125,14 +148,14 @@ export class ResolverService {
     }
   };
 
-  cancelParticipation = async (
+  cancelPendingParticipation = async (
     activityId: string,
     userId: number,
     options: I18nOptions,
   ): Promise<string | string[]> => {
     try {
       await this.participationService
-        .cancelParticipation(activityId, userId)
+        .cancelPendingParticipation(activityId, userId)
         .then(async (participation: Participation) =>
           this.notificationService.notifyOrganizerAboutParticipantCancelation(
             participation.id,
