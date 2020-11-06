@@ -12,6 +12,21 @@ export class ParticipationService {
   ) {}
 
   @Transactional()
+  async acceptParticipation(
+    participationId: string,
+    organizerId: number,
+  ): Promise<void> {
+    const participation = await this.participationRepository.acceptParticipation(
+      participationId,
+      organizerId,
+    );
+    await this.activityRepository.subtractRemainingVacancies(
+      participation.activity_id,
+      organizerId,
+    );
+  }
+
+  @Transactional()
   async cancelParticipation(
     activityId: string,
     participantId: number,

@@ -56,6 +56,8 @@
   },
   "participation": {
     "ACCEPT_PARTICIPATION": "Potvrdi",
+    "ACCEPT_PARTICIPATION_FAILURE": "Prihvatanje zahteva nije uspelo",
+    "ACCEPT_PARTICIPATION_SUCCESS": "Zahtev je prihvaćen",
     "CANCEL_PARTICIPATION": "Otkaži",
     "CANCEL_PARTICIPATION_FAILURE": "Otkazivanje nije uspelo",
     "CANCEL_PARTICIPATION_SUCCESS": "Uspešno si {GENDER, select, male {otkazao} female {otkazala} other {otkazao}}",

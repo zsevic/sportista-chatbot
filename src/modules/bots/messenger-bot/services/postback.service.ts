@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { parse } from 'querystring';
 import {
+  ACCEPT_PARTICIPATION_TYPE,
   ACTIVITY_OPTIONS_TYPE,
   ADD_REMAINING_VACANCIES_TYPE,
   APPLY_FOR_ACTIVITY_TYPE,
@@ -31,14 +32,26 @@ export class PostbackService {
   ) {}
 
   handlePostback = async (buttonPayload: string, userId: number) => {
-    const { gender, locale } = await this.userService.getUser(userId);
-    const { activity_id, type, page, user_id, latitude, longitude } = parse(
-      buttonPayload,
-    );
+    const { gender, locale, timezone } = await this.userService.getUser(userId);
+    const {
+      activity_id,
+      participation_id,
+      type,
+      page,
+      user_id,
+      latitude,
+      longitude,
+    } = parse(buttonPayload);
     if (type !== USER_LOCATION_TYPE) {
       await this.resolverService.resetState(userId);
     }
     switch (type) {
+      case ACCEPT_PARTICIPATION_TYPE:
+        return this.resolverService.acceptParticipation(
+          participation_id.toString(),
+          userId,
+          { locale, timezone },
+        );
       case ACTIVITY_OPTIONS_TYPE: {
         return this.responseService.getActivityOptionsResponse(
           activity_id.toString(),

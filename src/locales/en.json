@@ -56,6 +56,8 @@
   },
   "participation": {
     "ACCEPT_PARTICIPATION": "Accept",
+    "ACCEPT_PARTICIPATION_FAILURE": "Request failed",
+    "ACCEPT_PARTICIPATION_SUCCESS": "Request is accepted",
     "CANCEL_PARTICIPATION": "Cancel",
     "CANCEL_PARTICIPATION_FAILURE": "Canceling participation failed",
     "CANCEL_PARTICIPATION_SUCCESS": "You successfully {GENDER, select, other {canceled}} the participation",

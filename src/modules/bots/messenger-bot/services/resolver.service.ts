@@ -36,6 +36,26 @@ export class ResolverService {
     private readonly validationService: ValidationService,
   ) {}
 
+  acceptParticipation = async (
+    participationId: string,
+    organizerId: number,
+    options: I18nOptions,
+  ): Promise<string> => {
+    try {
+      await this.participationService.acceptParticipation(
+        participationId,
+        organizerId,
+      );
+      return this.responseService.getAcceptParticipationSuccessResponse(
+        options.locale,
+      );
+    } catch {
+      return this.responseService.getAcceptParticipationFailureResponse(
+        options.locale,
+      );
+    }
+  };
+
   addRemainingVacancies = async (
     activityId: string,
     organizerId: number,

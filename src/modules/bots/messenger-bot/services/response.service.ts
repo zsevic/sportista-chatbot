@@ -111,6 +111,8 @@ import {
   USER_SUBSCRIBE_TO_NOTIFICATIONS_SUCCESS,
   USER_UNSUBSCRIBE_TO_NOTIFICATIONS_SUCCESS,
   USER_UNSUBSCRIBE_TO_NOTIFICATIONS_FAILURE,
+  PARTICIPATION_ACCEPT_PARTICIPATION_SUCCESS,
+  PARTICIPATION_ACCEPT_PARTICIPATION_FAILURE,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import {
   I18n,
@@ -165,6 +167,18 @@ export class ResponseService {
         ),
     );
   };
+
+  getAcceptParticipationFailureResponse = (locale: string): string =>
+    this.i18nService.__({
+      phrase: PARTICIPATION_ACCEPT_PARTICIPATION_FAILURE,
+      locale,
+    });
+
+  getAcceptParticipationSuccessResponse = (locale: string): string =>
+    this.i18nService.__({
+      phrase: PARTICIPATION_ACCEPT_PARTICIPATION_SUCCESS,
+      locale,
+    });
 
   getActivityOptionsResponse = (activityId: string, locale: string) => {
     const { activity: activityI18n } = this.i18nService.getCatalog(locale);
@@ -447,12 +461,12 @@ export class ResponseService {
       {
         type: 'postback',
         title: acceptParticipationTitle,
-        payload: `type=${ACCEPT_PARTICIPATION_TYPE}&participationId=${participationId}`,
+        payload: `type=${ACCEPT_PARTICIPATION_TYPE}&participation_id=${participationId}`,
       },
       {
         type: 'postback',
         title: rejectParticipationTitle,
-        payload: `type=${REJECT_PARTICIPATION_TYPE}&participationId=${participationId}`,
+        payload: `type=${REJECT_PARTICIPATION_TYPE}&participation_id=${participationId}`,
       },
     ];
 
