@@ -15,6 +15,7 @@ import { Activity } from 'modules/activity/activity.dto';
 import {
   ABOUT_ME_1,
   ABOUT_ME_2,
+  ACCEPT_PARTICIPATION_TYPE,
   ACTIVITY_CANCEL_ACTIVITY_FAILURE,
   ACTIVITY_CANCEL_ACTIVITY_SUCCESS,
   ACTIVITY_JOIN_ACTIVITY_FAILURE,
@@ -69,10 +70,10 @@ import {
   PARTICIPANT_LIST,
   PARTICIPANT_LIST_TYPE,
   PARTICIPATION_CANCEL_PARTICIPATION_FAILURE,
-  PARTICIPATION_NO_RECEIVED_REQUESTS,
   PRICE_QUESTION,
   REGISTRATION,
   REGISTRATION_FAILURE,
+  REJECT_PARTICIPATION_TYPE,
   REMAINING_VACANCIES,
   REMAINING_VACANCIES_QUESTION,
   RESET_REMAINING_VACANCIES_TYPE,
@@ -194,7 +195,7 @@ export class ResponseService {
     activityType = null,
     noActivitiesText,
     viewMoreActivitiesText,
-    buttonPayloadActivityType,
+    viewMorePayloadType,
     isOrganizerShown,
     options,
   }) {
@@ -234,7 +235,7 @@ export class ResponseService {
           {
             type: 'postback',
             title: viewMoreTitle,
-            payload: `type=${buttonPayloadActivityType}&page=${nextPage}`,
+            payload: `type=${viewMorePayloadType}&page=${nextPage}`,
           },
         ],
       });
@@ -327,7 +328,7 @@ export class ResponseService {
       activityTypeText: activityI18n[OPTIONS],
       activityType: ACTIVITY_OPTIONS_TYPE,
       viewMoreActivitiesText: activityI18n[VIEW_MORE_CREATED_ACTIVITIES],
-      buttonPayloadActivityType: CREATED_ACTIVITIES_TYPE,
+      viewMorePayloadType: CREATED_ACTIVITIES_TYPE,
       isOrganizerShown: false,
       options,
     });
@@ -423,6 +424,7 @@ export class ResponseService {
 
   private getElementFromReceivedRequest(participation: Participation) {
     const {
+      id: participationId,
       activity: {
         datetime,
         organizer: { locale, timezone },
@@ -443,12 +445,12 @@ export class ResponseService {
       {
         type: 'postback',
         title: acceptParticipationTitle,
-        payload: 'payload',
+        payload: `type=${ACCEPT_PARTICIPATION_TYPE}&participationId=${participationId}`,
       },
       {
         type: 'postback',
         title: rejectParticipationTitle,
-        payload: 'payload',
+        payload: `type=${REJECT_PARTICIPATION_TYPE}&participationId=${participationId}`,
       },
     ];
 
@@ -623,7 +625,7 @@ export class ResponseService {
       activityTypeText,
       activityType: CANCEL_PARTICIPATION_TYPE,
       viewMoreActivitiesText: activityI18n[VIEW_MORE_JOINED_ACTIVITIES],
-      buttonPayloadActivityType: JOINED_ACTIVITIES_TYPE,
+      viewMorePayloadType: JOINED_ACTIVITIES_TYPE,
       isOrganizerShown: true,
       options,
     });
@@ -730,7 +732,7 @@ export class ResponseService {
       activityListData: requestList,
       noActivitiesText,
       viewMoreActivitiesText,
-      buttonPayloadActivityType: 'payload',
+      viewMorePayloadType: 'payload',
       isOrganizerShown: false,
       options,
     });
@@ -754,7 +756,7 @@ export class ResponseService {
       activityTypeText,
       activityType: CANCEL_PARTICIPATION_TYPE,
       viewMoreActivitiesText,
-      buttonPayloadActivityType: 'payload',
+      viewMorePayloadType: 'payload',
       isOrganizerShown: true,
       options,
     });
@@ -828,7 +830,7 @@ export class ResponseService {
       activityTypeText: activityI18n[APPLY_FOR_ACTIVITY],
       activityType: APPLY_FOR_ACTIVITY_TYPE,
       viewMoreActivitiesText: activityI18n[VIEW_MORE_UPCOMING_ACTIVITIES],
-      buttonPayloadActivityType: UPCOMING_ACTIVITIES_TYPE,
+      viewMorePayloadType: UPCOMING_ACTIVITIES_TYPE,
       isOrganizerShown: true,
       options,
     });
