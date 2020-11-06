@@ -56,7 +56,7 @@
     "NOTIFICATION_SUBSCRIPTION_FAILURE": "Pokušaj ponovo"
   },
   "participation": {
-    "ACCEPT_PARTICIPATION": "Potvrdi",
+    "ACCEPT_PARTICIPATION": "Prihvati",
     "ACCEPT_PARTICIPATION_FAILURE": "Prihvatanje prijave nije uspelo",
     "ACCEPT_PARTICIPATION_SUCCESS": "Prijava je prihvaćena",
     "CANCEL_PARTICIPATION": "Otkaži",
