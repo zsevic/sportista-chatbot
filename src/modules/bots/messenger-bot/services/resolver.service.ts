@@ -38,10 +38,13 @@ export class ResolverService {
     locale: string,
   ): Promise<string> => {
     try {
-      await this.participationService.acceptParticipation(
-        participationId,
-        organizerId,
-      );
+      await this.participationService
+        .acceptParticipation(participationId, organizerId)
+        .then(async () =>
+          this.notificationService.notifyParticipantAboutAcceptedParticipation(
+            participationId,
+          ),
+        );
       return this.responseService.getAcceptParticipationSuccessResponse(locale);
     } catch {
       return this.responseService.getAcceptParticipationFailureResponse(locale);

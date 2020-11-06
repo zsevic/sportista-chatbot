@@ -6,9 +6,11 @@ import { ACTIVITY_TYPES } from 'modules/activity/activity.constants';
 import { Activity } from 'modules/activity/activity.dto';
 import { ActivityRepository } from 'modules/activity/activity.repository';
 import {
+  ACTIVITY_LOCATION,
   ACTIVITY_REMAINING_VACANCIES,
   APPLY_FOR_ACTIVITY,
   APPLY_FOR_ACTIVITY_TYPE,
+  BOT_ACCEPTED_PARTICIPATION_NOTIFICATION,
   BOT_ACTIVITY_APPLICATION_NOTIFICATION,
   BOT_CANCEL_ACTIVITY_NOTIFICATION,
   BOT_CANCEL_PARTICIPATION_NOTIFICATION,
@@ -26,6 +28,7 @@ import {
   getImageUrl,
   getLocationUrl,
 } from 'modules/bots/messenger-bot/messenger-bot.utils';
+import { ParticipationRepository } from 'modules/participation/participation.repository';
 
 @Injectable()
 export class NotificationService {
@@ -33,6 +36,7 @@ export class NotificationService {
     private readonly activityRepository: ActivityRepository,
     @Inject(BOOTBOT_OPTIONS_FACTORY) private readonly bot,
     @Inject(I18N_OPTIONS_FACTORY) private readonly i18nService,
+    private readonly participationRepository: ParticipationRepository,
     private readonly userService: UserService,
   ) {}
 
@@ -100,6 +104,47 @@ export class NotificationService {
       },
     );
     await this.bot.sendTextMessage(organizer.id, textMessage);
+  };
+
+  notifyParticipantAboutAcceptedParticipation = async (
+    participationId: string,
+  ) => {
+    const {
+      activity: { datetime, type, location },
+      participant: { id: participantId, locale, timezone },
+    } = await this.participationRepository.findOne(participationId, {
+      relations: ['participant', 'activity', 'activity.location'],
+    });
+    const formattedDatetime = formatDatetime(datetime, { locale, timezone });
+    const locationUrl = getLocationUrl(location.latitude, location.longitude);
+    const textMessage = this.i18nService.__mf(
+      {
+        phrase: BOT_ACCEPTED_PARTICIPATION_NOTIFICATION,
+        locale,
+      },
+      {
+        type,
+        datetime: formattedDatetime,
+      },
+    );
+    const locationTitle = this.i18nService.__({
+      phrase: ACTIVITY_LOCATION,
+      locale,
+    });
+    const message = [
+      {
+        title: textMessage,
+        buttons: [
+          {
+            type: 'web_url',
+            title: locationTitle,
+            url: locationUrl,
+          },
+        ],
+      },
+    ];
+
+    return this.bot.sendGenericTemplate(participantId, message);
   };
 
   notifyParticipantsAboutCanceledActivity = async (
