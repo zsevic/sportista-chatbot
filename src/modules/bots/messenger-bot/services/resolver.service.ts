@@ -4,6 +4,8 @@ import { PaginatedResponse } from 'common/dtos';
 import { Activity } from 'modules/activity/activity.dto';
 import { ActivityService } from 'modules/activity/activity.service';
 import {
+  BOT_ACCEPTED_PARTICIPATION_NOTIFICATION,
+  BOT_REJECTED_PARTICIPATION_NOTIFICATION,
   CANCEL_ACCEPTED_PARTICIPATION_TYPE,
   CANCEL_PENDING_PARTICIPATION_TYPE,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
@@ -51,8 +53,9 @@ export class ResolverService {
       await this.participationService
         .acceptParticipation(participationId, organizerId)
         .then(async () =>
-          this.notificationService.notifyParticipantAboutAcceptedParticipation(
+          this.notificationService.notifyParticipantAboutParticipationUpdate(
             participationId,
+            BOT_ACCEPTED_PARTICIPATION_NOTIFICATION,
           ),
         );
       return this.responseService.getAcceptParticipationSuccessResponse(locale);
@@ -412,10 +415,14 @@ export class ResolverService {
     locale: string,
   ): Promise<string> => {
     try {
-      await this.participationService.rejectParticipation(
-        participationId,
-        organizerId,
-      );
+      await this.participationService
+        .rejectParticipation(participationId, organizerId)
+        .then(async () =>
+          this.notificationService.notifyParticipantAboutParticipationUpdate(
+            participationId,
+            BOT_REJECTED_PARTICIPATION_NOTIFICATION,
+          ),
+        );
       return this.responseService.getRejectParticipationSuccessResponse(locale);
     } catch {
       return this.responseService.getRejectParticipationFailureResponse(locale);

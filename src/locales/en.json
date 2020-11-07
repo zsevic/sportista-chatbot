@@ -13,7 +13,7 @@
     "CANCEL_ACTIVITY_FAILURE": "Canceling activity failed",
     "CANCEL_ACTIVITY_SUCCESS": "Canceling activity succeeded",
     "CREATED_ACTIVITIES": "📑 Check who applied",
-    "INITIALIZE_ACTIVITY": "🗓 Find playmates",
+    "INITIALIZE_ACTIVITY": "🗓 Organize an event",
     "JOINED_ACTIVITIES": "🕗 Reminder",
     "LOCATION": "Show location",
     "NO_CREATED_ACTIVITIES": "There are no created activities",
@@ -53,7 +53,8 @@
     "INITIALIZE_FEEDBACK": "Tell us your feedback",
     "MESSENGER_INFO": "This functionality is available only within Messenger app",
     "NOTIFICATION_SUBSCRIPTION_BUTTON": "🔔 Subscription",
-    "NOTIFICATION_SUBSCRIPTION_FAILURE": "Notification subscription failed, try again"
+    "NOTIFICATION_SUBSCRIPTION_FAILURE": "Notification subscription failed, try again",
+    "REJECTED_PARTICIPATION_NOTIFICATION": "Application for {type} ({datetime}) is not approved"
   },
   "participation": {
     "ACCEPT_PARTICIPATION": "Accept",

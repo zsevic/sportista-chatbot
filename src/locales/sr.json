@@ -13,7 +13,7 @@
     "CANCEL_ACTIVITY_FAILURE": "Otkazivanje termina nije uspelo",
     "CANCEL_ACTIVITY_SUCCESS": "Termin je uspešno otkazan",
     "CREATED_ACTIVITIES": "📑 Pregled prijava",
-    "INITIALIZE_ACTIVITY": "🗓 Nađi Sportiste",
+    "INITIALIZE_ACTIVITY": "🗓 Organizuj događaj",
     "JOINED_ACTIVITIES": "🕗 Podsetnik",
     "LOCATION": "Vidi lokaciju na mapi",
     "NO_CREATED_ACTIVITIES": "Nema kreiranih termina",
@@ -53,7 +53,8 @@
     "INITIALIZE_FEEDBACK": "Podeli sa nama svoje utiske",
     "MESSENGER_INFO": "Ova funkcionalnost je dostupna jedino preko Messenger aplikacije",
     "NOTIFICATION_SUBSCRIPTION_BUTTON": "🔔 Pretplata",
-    "NOTIFICATION_SUBSCRIPTION_FAILURE": "Pokušaj ponovo"
+    "NOTIFICATION_SUBSCRIPTION_FAILURE": "Pokušaj ponovo",
+    "REJECTED_PARTICIPATION_NOTIFICATION": "Prijava za {type} ({datetime}) nije odobrena"
   },
   "participation": {
     "ACCEPT_PARTICIPATION": "Prihvati",

@@ -1,13 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import convertToLatin from 'cyrillic-to-latin';
 import { DEFAULT_LOCALE, LOCALES } from 'common/config/constants';
+import { DatetimeOptions } from 'common/types';
 import { formatDatetime } from 'common/utils';
 import { ACTIVITY_TYPES } from 'modules/activity/activity.constants';
 import { Activity } from 'modules/activity/activity.dto';
-import { ActivityRepository } from 'modules/activity/activity.repository';
 import {
   ACCEPT_PARTICIPATION_TYPE,
-  ACTIVITY_LOCATION,
   ACTIVITY_REMAINING_VACANCIES,
   APPLY_FOR_ACTIVITY,
   APPLY_FOR_ACTIVITY_TYPE,
@@ -20,22 +19,20 @@ import {
   ORGANIZER_TYPE,
   REJECT_PARTICIPATION_TYPE,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
-import { BOOTBOT_OPTIONS_FACTORY } from 'modules/external/bootbot';
-import { I18N_OPTIONS_FACTORY } from 'modules/external/i18n';
-import { Participation } from 'modules/participation/participation.dto';
-import { User } from 'modules/user/user.dto';
-import { UserService } from 'modules/user/user.service';
-import { DatetimeOptions } from 'common/types';
 import {
   getImageUrl,
   getLocationUrl,
 } from 'modules/bots/messenger-bot/messenger-bot.utils';
+import { BOOTBOT_OPTIONS_FACTORY } from 'modules/external/bootbot';
+import { I18N_OPTIONS_FACTORY } from 'modules/external/i18n';
+import { Participation } from 'modules/participation/participation.dto';
 import { ParticipationRepository } from 'modules/participation/participation.repository';
+import { User } from 'modules/user/user.dto';
+import { UserService } from 'modules/user/user.service';
 
 @Injectable()
 export class NotificationService {
   constructor(
-    private readonly activityRepository: ActivityRepository,
     @Inject(BOOTBOT_OPTIONS_FACTORY) private readonly bot,
     @Inject(I18N_OPTIONS_FACTORY) private readonly i18nService,
     private readonly participationRepository: ParticipationRepository,
@@ -133,20 +130,20 @@ export class NotificationService {
     await this.bot.sendTextMessage(organizerId, textMessage);
   };
 
-  notifyParticipantAboutAcceptedParticipation = async (
+  notifyParticipantAboutParticipationUpdate = async (
     participationId: string,
+    phrase: string,
   ) => {
     const {
-      activity: { datetime, type, location },
+      activity: { datetime, type },
       participant: { id: participantId, locale, timezone },
     } = await this.participationRepository.findOne(participationId, {
-      relations: ['participant', 'activity', 'activity.location'],
+      relations: ['participant', 'activity'],
     });
     const formattedDatetime = formatDatetime(datetime, { locale, timezone });
-    const locationUrl = getLocationUrl(location.latitude, location.longitude);
     const textMessage = this.i18nService.__mf(
       {
-        phrase: BOT_ACCEPTED_PARTICIPATION_NOTIFICATION,
+        phrase,
         locale,
       },
       {
@@ -154,24 +151,8 @@ export class NotificationService {
         datetime: formattedDatetime,
       },
     );
-    const locationTitle = this.i18nService.__({
-      phrase: ACTIVITY_LOCATION,
-      locale,
-    });
-    const message = [
-      {
-        title: textMessage,
-        buttons: [
-          {
-            type: 'web_url',
-            title: locationTitle,
-            url: locationUrl,
-          },
-        ],
-      },
-    ];
 
-    return this.bot.sendGenericTemplate(participantId, message);
+    return this.bot.sendTextMessage(participantId, textMessage);
   };
 
   notifyParticipantsAboutCanceledActivity = async (
