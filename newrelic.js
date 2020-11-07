@@ -1,7 +1,7 @@
 const Package = require('./package');
 
 exports.config = {
-  app_name: [process.env.NEW_RELIC_APP_NAME || Package.name],
+  app_name: [Package.name],
   agent_enabled: true,
   high_security: false,
   labels: {
