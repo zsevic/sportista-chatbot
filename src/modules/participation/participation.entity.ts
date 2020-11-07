@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { ActivityEntity } from 'modules/activity/activity.entity';
 import { UserEntity } from 'modules/user/user.entity';
+import { PARTICIPATION_STATUS } from './participation.enums';
 
 @Entity('participation')
 @Unique(['activity_id', 'participant_id'])
@@ -27,6 +28,9 @@ export class ParticipationEntity {
     type: 'bigint',
   })
   participant_id: number;
+
+  @Column()
+  status: PARTICIPATION_STATUS;
 
   @CreateDateColumn()
   created_at: Date;

@@ -23,6 +23,10 @@ export class CreateParticipation1601332480306 implements MigrationInterface {
             type: 'bigint',
           },
           {
+            name: 'status',
+            type: 'varchar',
+          },
+          {
             name: 'created_at',
             type: 'timestamp',
             default: 'current_timestamp',

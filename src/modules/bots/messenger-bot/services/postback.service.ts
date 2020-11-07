@@ -1,16 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { parse } from 'querystring';
 import {
+  ACCEPT_PARTICIPATION_TYPE,
   ACTIVITY_OPTIONS_TYPE,
   ADD_REMAINING_VACANCIES_TYPE,
+  APPLY_FOR_ACTIVITY_TYPE,
+  CANCEL_ACCEPTED_PARTICIPATION_TYPE,
   CANCEL_ACTIVITY_TYPE,
-  CANCEL_PARTICIPATION_TYPE,
+  CANCEL_PENDING_PARTICIPATION_TYPE,
   CREATED_ACTIVITIES_TYPE,
   JOINED_ACTIVITIES_TYPE,
-  JOIN_ACTIVITY_TYPE,
   ORGANIZER_TYPE,
   PARTICIPANT_LIST_TYPE,
+  RECEIVED_PARTICIPATION_REQUESTS_TYPE,
+  REJECT_PARTICIPATION_TYPE,
   RESET_REMAINING_VACANCIES_TYPE,
+  SENT_PARTICIPATION_REQUESTS_TYPE,
   SUBTRACT_REMAINING_VACANCIES_TYPE,
   UPCOMING_ACTIVITIES_TYPE,
   UPDATE_REMAINING_VACANCIES_TYPE,
@@ -30,13 +35,25 @@ export class PostbackService {
 
   handlePostback = async (buttonPayload: string, userId: number) => {
     const { gender, locale } = await this.userService.getUser(userId);
-    const { activity_id, type, page, user_id, latitude, longitude } = parse(
-      buttonPayload,
-    );
+    const {
+      activity_id,
+      participation_id,
+      type,
+      page,
+      user_id,
+      latitude,
+      longitude,
+    } = parse(buttonPayload);
     if (type !== USER_LOCATION_TYPE) {
       await this.resolverService.resetState(userId);
     }
     switch (type) {
+      case ACCEPT_PARTICIPATION_TYPE:
+        return this.resolverService.acceptParticipation(
+          participation_id.toString(),
+          userId,
+          locale,
+        );
       case ACTIVITY_OPTIONS_TYPE: {
         return this.responseService.getActivityOptionsResponse(
           activity_id.toString(),
@@ -50,6 +67,21 @@ export class PostbackService {
           locale,
         );
       }
+      case APPLY_FOR_ACTIVITY_TYPE: {
+        return this.resolverService.applyForActivity(
+          activity_id.toString(),
+          userId,
+          { gender, locale },
+        );
+      }
+      case CANCEL_ACCEPTED_PARTICIPATION_TYPE: {
+        return this.resolverService.cancelParticipation(
+          type,
+          activity_id.toString(),
+          userId,
+          { gender, locale },
+        );
+      }
       case CANCEL_ACTIVITY_TYPE: {
         return this.resolverService.cancelActivity(
           activity_id.toString(),
@@ -57,8 +89,9 @@ export class PostbackService {
           locale,
         );
       }
-      case CANCEL_PARTICIPATION_TYPE: {
+      case CANCEL_PENDING_PARTICIPATION_TYPE: {
         return this.resolverService.cancelParticipation(
+          type,
           activity_id.toString(),
           userId,
           { gender, locale },
@@ -66,13 +99,6 @@ export class PostbackService {
       }
       case CREATED_ACTIVITIES_TYPE: {
         return this.resolverService.getCreatedActivities(userId, +page);
-      }
-      case JOIN_ACTIVITY_TYPE: {
-        return this.resolverService.joinActivity(
-          activity_id.toString(),
-          userId,
-          { gender, locale },
-        );
       }
       case JOINED_ACTIVITIES_TYPE: {
         return this.resolverService.getJoinedActivities(userId, +page);
@@ -86,6 +112,17 @@ export class PostbackService {
           locale,
         );
       }
+      case RECEIVED_PARTICIPATION_REQUESTS_TYPE:
+        return this.resolverService.getReceivedParticipationRequestList(
+          userId,
+          +page,
+        );
+      case REJECT_PARTICIPATION_TYPE:
+        return this.resolverService.rejectParticipation(
+          participation_id.toString(),
+          userId,
+          locale,
+        );
       case RESET_REMAINING_VACANCIES_TYPE: {
         return this.resolverService.resetRemainingVacancies(
           activity_id.toString(),
@@ -93,6 +130,11 @@ export class PostbackService {
           locale,
         );
       }
+      case SENT_PARTICIPATION_REQUESTS_TYPE:
+        return this.resolverService.getSentParticipationRequestList(
+          userId,
+          +page,
+        );
       case SUBTRACT_REMAINING_VACANCIES_TYPE: {
         return this.resolverService.subtractRemainingVacancies(
           activity_id.toString(),

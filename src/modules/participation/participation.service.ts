@@ -11,20 +11,52 @@ export class ParticipationService {
   ) {}
 
   @Transactional()
-  async cancelParticipation(
-    activityId: string,
-    participantId: number,
+  async acceptParticipation(
+    participationId: string,
+    organizerId: number,
   ): Promise<void> {
-    await this.participationRepository.cancelParticipation(
+    const participation = await this.participationRepository.acceptParticipation(
+      participationId,
+      organizerId,
+    );
+    await this.activityRepository.subtractRemainingVacancies(
+      participation.activity_id,
+      organizerId,
+    );
+  }
+
+  @Transactional()
+  async cancelAcceptedParticipation(activityId: string, participantId: number) {
+    const participation = await this.participationRepository.cancelParticipation(
       activityId,
       participantId,
     );
     await this.activityRepository.addRemainingVacancies(activityId);
+
+    return participation;
   }
 
-  getParticipationsAndCount = async (activityId: string) =>
+  cancelPendingParticipation = async (
+    activityId: string,
+    participantId: number,
+  ) =>
+    this.participationRepository.cancelParticipation(activityId, participantId);
+
+  getParticipationListAndCount = async (activityId: string) =>
     this.participationRepository.findAndCount({
       where: { activity_id: activityId },
       relations: ['activity', 'participant'],
     });
+
+  getReceivedRequestList = async (userId: number, page: number) =>
+    this.participationRepository.getReceivedRequestList(userId, page);
+
+  getSentRequestList = async (userId: number, page: number) =>
+    this.participationRepository.getSentRequestList(userId, page);
+
+  rejectParticipation = async (participationId: string, organizerId: number) =>
+    this.participationRepository.rejectParticipation(
+      participationId,
+      organizerId,
+    );
 }

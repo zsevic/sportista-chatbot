@@ -1,15 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { FIRST_PAGE } from 'common/config/constants';
+import { PaginatedResponse } from 'common/dtos';
 import { Activity } from 'modules/activity/activity.dto';
 import { ActivityService } from 'modules/activity/activity.service';
 import {
-  BOT_CANCEL_PARTICIPATION_NOTIFICATION,
-  BOT_JOIN_ACTIVITY_NOTIFICATION,
+  CANCEL_ACCEPTED_PARTICIPATION_TYPE,
+  CANCEL_PENDING_PARTICIPATION_TYPE,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { I18nOptions } from 'modules/bots/messenger-bot/messenger-bot.types';
 import { Feedback } from 'modules/feedback/feedback.dto';
 import { FeedbackService } from 'modules/feedback/feedback.service';
 import { NotificationService } from 'modules/notification/notification.service';
+import { Participation } from 'modules/participation/participation.dto';
 import { ParticipationService } from 'modules/participation/participation.service';
 import { RESET_STATE } from 'modules/state/state.constants';
 import { State } from 'modules/state/state.dto';
@@ -22,6 +24,12 @@ import { ValidationService } from './validation.service';
 @Injectable()
 export class ResolverService {
   private readonly logger = new Logger(ResolverService.name);
+  private readonly cancelParticipationFunctions = {
+    [CANCEL_ACCEPTED_PARTICIPATION_TYPE]: this.participationService
+      .cancelAcceptedParticipation,
+    [CANCEL_PENDING_PARTICIPATION_TYPE]: this.participationService
+      .cancelPendingParticipation,
+  };
 
   constructor(
     private readonly activityService: ActivityService,
@@ -33,6 +41,25 @@ export class ResolverService {
     private readonly userService: UserService,
     private readonly validationService: ValidationService,
   ) {}
+
+  acceptParticipation = async (
+    participationId: string,
+    organizerId: number,
+    locale: string,
+  ): Promise<string> => {
+    try {
+      await this.participationService
+        .acceptParticipation(participationId, organizerId)
+        .then(async () =>
+          this.notificationService.notifyParticipantAboutAcceptedParticipation(
+            participationId,
+          ),
+        );
+      return this.responseService.getAcceptParticipationSuccessResponse(locale);
+    } catch {
+      return this.responseService.getAcceptParticipationFailureResponse(locale);
+    }
+  };
 
   addRemainingVacancies = async (
     activityId: string,
@@ -55,49 +82,39 @@ export class ResolverService {
     }
   };
 
-  cancelActivity = async (
-    activityId: string,
-    organizerId: number,
-    locale: string,
-  ): Promise<string | string[]> => {
-    try {
-      const [
-        participations,
-        participantsCount,
-      ] = await this.participationService.getParticipationsAndCount(activityId);
-      await this.activityService.cancelActivity(activityId, organizerId);
-      const response = this.responseService.getCancelActivitySuccessResponse(
-        locale,
-      );
-      if (participantsCount > 0) {
-        await this.notificationService.notifyParticipantsAboutCanceledActivity(
-          participations,
-        );
-        const notifyParticipantsResponse = this.responseService.getNotifyParticipantsResponse(
-          locale,
-          participantsCount,
-        );
-        return [response, notifyParticipantsResponse];
-      }
-      return response;
-    } catch {
-      return this.responseService.getCancelActivityFailureResponse(locale);
-    }
-  };
-
-  cancelParticipation = async (
+  applyForActivity = async (
     activityId: string,
     userId: number,
     options: I18nOptions,
   ): Promise<string | string[]> => {
     try {
-      await this.participationService
-        .cancelParticipation(activityId, userId)
-        .then(async () =>
-          this.notificationService.notifyOrganizerAboutParticipantUpdate(
-            activityId,
-            userId,
-            BOT_CANCEL_PARTICIPATION_NOTIFICATION,
+      await this.activityService
+        .applyForActivity(activityId, userId)
+        .then(async (participation: Participation) =>
+          this.notificationService.notifyOrganizerAboutParticipantApplication(
+            participation.id,
+          ),
+        );
+      return this.responseService.getApplyForActivitySuccessResponse(options);
+    } catch {
+      return this.responseService.getApplyForActivityFailureResponse(
+        options.locale,
+      );
+    }
+  };
+
+  cancelParticipation = async (
+    type: string,
+    activityId: string,
+    userId: number,
+    options: I18nOptions,
+  ): Promise<string | string[]> => {
+    try {
+      await this.cancelParticipationFunctions[type]
+        .call(this.participationService, activityId, userId)
+        .then(async (participation: Participation) =>
+          this.notificationService.notifyOrganizerAboutParticipantCancelation(
+            participation.id,
           ),
         );
       return this.responseService.getCancelParticipationSuccessResponse(
@@ -107,6 +124,38 @@ export class ResolverService {
       return this.responseService.getCancelParticipationFailureResponse(
         options.locale,
       );
+    }
+  };
+
+  cancelActivity = async (
+    activityId: string,
+    organizerId: number,
+    locale: string,
+  ): Promise<string | string[]> => {
+    try {
+      const [
+        participationList,
+        participantCount,
+      ] = await this.participationService.getParticipationListAndCount(
+        activityId,
+      );
+      await this.activityService.cancelActivity(activityId, organizerId);
+      const response = this.responseService.getCancelActivitySuccessResponse(
+        locale,
+      );
+      if (participantCount > 0) {
+        await this.notificationService.notifyParticipantsAboutCanceledActivity(
+          participationList,
+        );
+        const notifyParticipantsResponse = this.responseService.getNotifyParticipantsResponse(
+          locale,
+          participantCount,
+        );
+        return [response, notifyParticipantsResponse];
+      }
+      return response;
+    } catch {
+      return this.responseService.getCancelActivityFailureResponse(locale);
     }
   };
 
@@ -186,6 +235,55 @@ export class ResolverService {
     return this.responseService.getParticipantListResponse(
       participantList,
       locale,
+    );
+  };
+
+  getReceivedParticipationRequestList = async (
+    userId: number,
+    page = FIRST_PAGE,
+  ) => {
+    const userData = await this.userService.getUser(userId);
+
+    const [
+      requestList,
+      total,
+    ] = await this.participationService.getReceivedRequestList(userId, page);
+    const result = {
+      results: requestList,
+      page,
+      total,
+    };
+
+    return this.responseService.getReceivedParticipationRequestListResponse(
+      result,
+      userData,
+    );
+  };
+
+  getSentParticipationRequestList = async (
+    userId: number,
+    page = FIRST_PAGE,
+  ) => {
+    const userData = await this.userService.getUser(userId);
+
+    const [
+      requestList,
+      total,
+    ] = await this.participationService.getSentRequestList(userId, page);
+    const activities = requestList.reduce(
+      (
+        acc: PaginatedResponse<Activity>,
+        current: Participation,
+      ): PaginatedResponse<Activity> => {
+        acc.results.push(current.activity);
+        return acc;
+      },
+      { results: [], page, total },
+    );
+
+    return this.responseService.getSentParticipationRequestListResponse(
+      activities,
+      userData,
     );
   };
 
@@ -294,29 +392,6 @@ export class ResolverService {
     return this.responseService.getInitializeFeedbackResponse(locale);
   };
 
-  joinActivity = async (
-    activityId: string,
-    userId: number,
-    options: I18nOptions,
-  ): Promise<string | string[]> => {
-    try {
-      await this.activityService
-        .joinActivity(activityId, userId)
-        .then(async () =>
-          this.notificationService.notifyOrganizerAboutParticipantUpdate(
-            activityId,
-            userId,
-            BOT_JOIN_ACTIVITY_NOTIFICATION,
-          ),
-        );
-      return this.responseService.getJoinActivitySuccessResponse(options);
-    } catch {
-      return this.responseService.getJoinActivityFailureResponse(
-        options.locale,
-      );
-    }
-  };
-
   registerUser = async (userDto: User) => {
     try {
       await this.userService.registerUser(userDto);
@@ -328,6 +403,22 @@ export class ResolverService {
       return this.responseService.getRegisterUserFailureResponse(
         userDto.locale,
       );
+    }
+  };
+
+  rejectParticipation = async (
+    participationId: string,
+    organizerId: number,
+    locale: string,
+  ): Promise<string> => {
+    try {
+      await this.participationService.rejectParticipation(
+        participationId,
+        organizerId,
+      );
+      return this.responseService.getRejectParticipationSuccessResponse(locale);
+    } catch {
+      return this.responseService.getRejectParticipationFailureResponse(locale);
     }
   };
 

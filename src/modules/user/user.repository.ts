@@ -3,6 +3,7 @@ import { LOCATION_RADIUS_METERS } from 'common/config/constants';
 import { UserLocation } from 'common/dtos';
 import { ActivityEntity } from 'modules/activity/activity.entity';
 import { ParticipationEntity } from 'modules/participation/participation.entity';
+import { PARTICIPATION_STATUS } from 'modules/participation/participation.enums';
 import { User } from './user.dto';
 import { UserEntity } from './user.entity';
 
@@ -35,6 +36,9 @@ export class UserRepository extends Repository<UserEntity> {
           .from(ParticipationEntity, 'participation')
           .where('participation.activity_id = CAST(:activity_id AS uuid)', {
             activity_id,
+          })
+          .andWhere('participation.status = :status', {
+            status: PARTICIPATION_STATUS.ACCEPTED,
           })
           .getQuery();
         return `participations.id IN ${subQuery}`;

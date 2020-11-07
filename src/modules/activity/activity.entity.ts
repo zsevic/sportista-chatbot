@@ -21,24 +21,24 @@ export class ActivityEntity {
   id: string;
 
   @Column({
-    type: 'bigint',
-  })
-  organizer_id: number;
-
-  @DbAwareColumn({
-    type: 'timestamp',
-  })
-  datetime: string;
-
-  @Column({
     type: 'uuid',
   })
   location_id: string;
 
   @Column({
+    type: 'bigint',
+  })
+  organizer_id: number;
+
+  @Column({
     type: 'uuid',
   })
   price_id: string;
+
+  @DbAwareColumn({
+    type: 'timestamp',
+  })
+  datetime: string;
 
   @Column({
     type: 'int',

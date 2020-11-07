@@ -15,10 +15,11 @@ import { Activity } from 'modules/activity/activity.dto';
 import {
   ABOUT_ME_1,
   ABOUT_ME_2,
+  ACCEPT_PARTICIPATION_TYPE,
+  ACTIVITY_ACTIVITY_APPLICATION_FAILURE,
+  ACTIVITY_APPLICATION_SUCCESS,
   ACTIVITY_CANCEL_ACTIVITY_FAILURE,
   ACTIVITY_CANCEL_ACTIVITY_SUCCESS,
-  ACTIVITY_CANCEL_PARTICIPATION_FAILURE,
-  ACTIVITY_JOIN_ACTIVITY_FAILURE,
   ACTIVITY_NO_PARTICIPANTS,
   ACTIVITY_NO_REMAINING_VACANCIES,
   ACTIVITY_NOTIFY_PARTICIPANTS,
@@ -31,15 +32,16 @@ import {
   ACTIVITY_VIEW_MORE,
   ADD_REMAINING_VACANCIES,
   ADD_REMAINING_VACANCIES_TYPE,
+  APPLY_FOR_ACTIVITY,
+  APPLY_FOR_ACTIVITY_TYPE,
   BOT_CREATE_FEEDBACK,
   BOT_DEFAULT_MESSAGE,
   BOT_INITIALIZE_FEEDBACK,
   BOT_NOTIFICATION_SUBSCRIPTION_FAILURE,
+  CANCEL_ACCEPTED_PARTICIPATION_TYPE,
   CANCEL_ACTIVITY,
   CANCEL_ACTIVITY_TYPE,
-  CANCEL_PARTICIPATION,
-  CANCEL_PARTICIPATION_SUCCESS,
-  CANCEL_PARTICIPATION_TYPE,
+  CANCEL_PENDING_PARTICIPATION_TYPE,
   CREATED_ACTIVITIES,
   CREATED_ACTIVITIES_PAYLOAD,
   CREATED_ACTIVITIES_TYPE,
@@ -54,9 +56,6 @@ import {
   JOINED_ACTIVITIES,
   JOINED_ACTIVITIES_PAYLOAD,
   JOINED_ACTIVITIES_TYPE,
-  JOIN_ACTIVITY,
-  JOIN_ACTIVITY_SUCCESS,
-  JOIN_ACTIVITY_TYPE,
   LOCATION,
   LOCATION_INSTRUCTION,
   LOCATION_QUESTION,
@@ -71,12 +70,20 @@ import {
   ORGANIZER_TYPE,
   PARTICIPANT_LIST,
   PARTICIPANT_LIST_TYPE,
+  PARTICIPATION_ACCEPT_PARTICIPATION_SUCCESS,
+  PARTICIPATION_ACCEPT_PARTICIPATION_FAILURE,
+  PARTICIPATION_CANCEL_PARTICIPATION_FAILURE,
+  PARTICIPATION_REJECT_PARTICIPATION_FAILURE,
+  PARTICIPATION_REJECT_PARTICIPATION_SUCCESS,
   PRICE_QUESTION,
+  RECEIVED_PARTICIPATION_REQUESTS_TYPE,
   REGISTRATION,
   REGISTRATION_FAILURE,
+  REJECT_PARTICIPATION_TYPE,
   REMAINING_VACANCIES,
   REMAINING_VACANCIES_QUESTION,
   RESET_REMAINING_VACANCIES_TYPE,
+  SENT_PARTICIPATION_REQUESTS_TYPE,
   STATE_ACTIVITY_TYPE_QUESTION,
   STATE_CREATE_ACTIVITY_CLOSING,
   STATE_DATETIME_CONFIRMATION,
@@ -119,6 +126,7 @@ import {
   getLocationUrl,
 } from 'modules/bots/messenger-bot/messenger-bot.utils';
 import { I18N_OPTIONS_FACTORY } from 'modules/external/i18n';
+import { Participation } from 'modules/participation/participation.dto';
 import { StateService } from 'modules/state/state.service';
 import { User } from 'modules/user/user.dto';
 
@@ -163,6 +171,18 @@ export class ResponseService {
     );
   };
 
+  getAcceptParticipationFailureResponse = (locale: string): string =>
+    this.i18nService.__({
+      phrase: PARTICIPATION_ACCEPT_PARTICIPATION_FAILURE,
+      locale,
+    });
+
+  getAcceptParticipationSuccessResponse = (locale: string): string =>
+    this.i18nService.__({
+      phrase: PARTICIPATION_ACCEPT_PARTICIPATION_SUCCESS,
+      locale,
+    });
+
   getActivityOptionsResponse = (activityId: string, locale: string) => {
     const { activity: activityI18n } = this.i18nService.getCatalog(locale);
 
@@ -190,11 +210,11 @@ export class ResponseService {
 
   private getActivitiesResponse({
     activityListData,
-    activityTypeText,
-    activityType,
+    activityTypeText = null,
+    activityType = null,
     noActivitiesText,
     viewMoreActivitiesText,
-    buttonPayloadActivityType,
+    viewMorePayloadType,
     isOrganizerShown,
     options,
   }) {
@@ -203,15 +223,20 @@ export class ResponseService {
 
     if (results.length === 0) return noActivitiesText;
 
-    const cards = results.map((activity: Activity) =>
-      this.getElementFromActivity({
-        activity,
-        buttonTitle: activityTypeText,
-        buttonPayload: `type=${activityType}&activity_id=${activity.id}`,
+    let cards;
+    if (activityTypeText && activityType) {
+      cards = this.getCardsFromActivities(
+        results,
+        activityTypeText,
+        activityType,
         isOrganizerShown,
         options,
-      }),
-    );
+      );
+    } else {
+      cards = results.map((participation: Participation) =>
+        this.getElementFromReceivedRequest(participation),
+      );
+    }
 
     const hasNextPage = PAGE_SIZE * page < total;
     const nextPage = page + 1;
@@ -229,7 +254,7 @@ export class ResponseService {
           {
             type: 'postback',
             title: viewMoreTitle,
-            payload: `type=${buttonPayloadActivityType}&page=${nextPage}`,
+            payload: `type=${viewMorePayloadType}&page=${nextPage}`,
           },
         ],
       });
@@ -247,6 +272,31 @@ export class ResponseService {
     }));
   };
 
+  getApplyForActivityFailureResponse = (locale: string): string =>
+    this.i18nService.__({
+      phrase: ACTIVITY_ACTIVITY_APPLICATION_FAILURE,
+      locale,
+    });
+
+  getApplyForActivitySuccessResponse = (options: I18nOptions): string[] => {
+    const { activity: activityI18n } = this.i18nService.getCatalog(
+      options.locale,
+    );
+
+    return [
+      this.i18nService.__mf(
+        {
+          phrase: activityI18n[ACTIVITY_APPLICATION_SUCCESS],
+          locale: options.locale,
+        },
+        {
+          GENDER: options.gender,
+        },
+      ),
+      activityI18n[NOTIFY_ORGANIZER],
+    ];
+  };
+
   getCancelActivitySuccessResponse = (locale: string): string =>
     this.i18nService.__({ phrase: ACTIVITY_CANCEL_ACTIVITY_SUCCESS, locale });
 
@@ -258,19 +308,20 @@ export class ResponseService {
 
   getCancelParticipationFailureResponse = (locale: string): string =>
     this.i18nService.__({
-      phrase: ACTIVITY_CANCEL_PARTICIPATION_FAILURE,
+      phrase: PARTICIPATION_CANCEL_PARTICIPATION_FAILURE,
       locale,
     });
 
   getCancelParticipationSuccessResponse = (options: I18nOptions): string[] => {
-    const { activity: activityI18n } = this.i18nService.getCatalog(
-      options.locale,
-    );
+    const {
+      activity: activityI18n,
+      participation: { CANCEL_PARTICIPATION_SUCCESS: phrase },
+    } = this.i18nService.getCatalog(options.locale);
 
     return [
       this.i18nService.__mf(
         {
-          phrase: activityI18n[CANCEL_PARTICIPATION_SUCCESS],
+          phrase,
           locale: options.locale,
         },
         {
@@ -280,6 +331,23 @@ export class ResponseService {
       activityI18n[NOTIFY_ORGANIZER],
     ];
   };
+
+  private getCardsFromActivities = (
+    activities: Activity[],
+    buttonTitle: string,
+    payloadType: string,
+    isOrganizerShown: boolean,
+    options: DatetimeOptions,
+  ) =>
+    activities.map((activity: Activity) =>
+      this.getElementFromActivity({
+        activity,
+        buttonTitle,
+        buttonPayload: `type=${payloadType}&activity_id=${activity.id}`,
+        isOrganizerShown,
+        options,
+      }),
+    );
 
   getCreateActivityResponse = (locale: string): string =>
     this.i18nService.__({
@@ -304,7 +372,7 @@ export class ResponseService {
       activityTypeText: activityI18n[OPTIONS],
       activityType: ACTIVITY_OPTIONS_TYPE,
       viewMoreActivitiesText: activityI18n[VIEW_MORE_CREATED_ACTIVITIES],
-      buttonPayloadActivityType: CREATED_ACTIVITIES_TYPE,
+      viewMorePayloadType: CREATED_ACTIVITIES_TYPE,
       isOrganizerShown: false,
       options,
     });
@@ -397,6 +465,46 @@ export class ResponseService {
       },
     ];
   };
+
+  private getElementFromReceivedRequest(participation: Participation) {
+    const {
+      id: participationId,
+      activity: {
+        datetime,
+        organizer: { locale, timezone },
+        type,
+        remaining_vacancies,
+      },
+      participant: { first_name, image_url, last_name },
+    } = participation;
+    const title = `${first_name} ${last_name} (fali ${remaining_vacancies} za ${type})`;
+    const subtitle = formatDatetime(datetime, { locale, timezone });
+    const {
+      participation: {
+        ACCEPT_PARTICIPATION: acceptParticipationTitle,
+        REJECT_PARTICIPATION: rejectParticipationTitle,
+      },
+    } = this.i18nService.getCatalog(locale);
+    const buttons = [
+      {
+        type: 'postback',
+        title: acceptParticipationTitle,
+        payload: `type=${ACCEPT_PARTICIPATION_TYPE}&participation_id=${participationId}`,
+      },
+      {
+        type: 'postback',
+        title: rejectParticipationTitle,
+        payload: `type=${REJECT_PARTICIPATION_TYPE}&participation_id=${participationId}`,
+      },
+    ];
+
+    return {
+      title,
+      subtitle,
+      image_url,
+      buttons,
+    };
+  }
 
   private getElementFromActivity({
     activity,
@@ -524,43 +632,22 @@ export class ResponseService {
     });
   };
 
-  getJoinActivityFailureResponse = (locale: string): string =>
-    this.i18nService.__({
-      phrase: ACTIVITY_JOIN_ACTIVITY_FAILURE,
-      locale,
-    });
-
-  getJoinActivitySuccessResponse = (options: I18nOptions): string[] => {
-    const { activity: activityI18n } = this.i18nService.getCatalog(
-      options.locale,
-    );
-
-    return [
-      this.i18nService.__mf(
-        { phrase: activityI18n[JOIN_ACTIVITY_SUCCESS], locale: options.locale },
-        {
-          GENDER: options.gender,
-        },
-      ),
-      activityI18n[NOTIFY_ORGANIZER],
-    ];
-  };
-
   getJoinedActivitiesResponse = (
     activityListData: PaginatedResponse<Activity>,
     options: DatetimeOptions,
   ) => {
-    const { activity: activityI18n } = this.i18nService.getCatalog(
-      options.locale,
-    );
+    const {
+      activity: activityI18n,
+      participation: { CANCEL_PARTICIPATION: activityTypeText },
+    } = this.i18nService.getCatalog(options.locale);
 
     return this.getActivitiesResponse({
       activityListData,
       noActivitiesText: activityI18n[NO_JOINED_ACTIVITIES],
-      activityTypeText: activityI18n[CANCEL_PARTICIPATION],
-      activityType: CANCEL_PARTICIPATION_TYPE,
+      activityTypeText,
+      activityType: CANCEL_ACCEPTED_PARTICIPATION_TYPE,
       viewMoreActivitiesText: activityI18n[VIEW_MORE_JOINED_ACTIVITIES],
-      buttonPayloadActivityType: JOINED_ACTIVITIES_TYPE,
+      viewMorePayloadType: JOINED_ACTIVITIES_TYPE,
       isOrganizerShown: true,
       options,
     });
@@ -574,14 +661,14 @@ export class ResponseService {
 
   getNotifyParticipantsResponse = (
     locale: string,
-    participantsCount: number,
+    participantCount: number,
   ): string =>
     this.i18nService.__mf(
       {
         phrase: ACTIVITY_NOTIFY_PARTICIPANTS,
         locale,
       },
-      { COUNT: participantsCount },
+      { COUNT: participantCount },
     );
 
   getOrganizerResponse = (organizer: User) => {
@@ -625,6 +712,18 @@ export class ResponseService {
     };
   };
 
+  getRejectParticipationFailureResponse = (locale: string): string =>
+    this.i18nService.__({
+      phrase: PARTICIPATION_REJECT_PARTICIPATION_FAILURE,
+      locale,
+    });
+
+  getRejectParticipationSuccessResponse = (locale: string): string =>
+    this.i18nService.__({
+      phrase: PARTICIPATION_REJECT_PARTICIPATION_SUCCESS,
+      locale,
+    });
+
   private getRemainingVacanciesButtons = (
     activityId: string,
     activityI18n: I18n,
@@ -651,6 +750,51 @@ export class ResponseService {
       phrase: ACTIVITY_RESET_REMAINING_VACANCIES,
       locale,
     });
+
+  getReceivedParticipationRequestListResponse = (
+    requestList: PaginatedResponse<Participation>,
+    options: User,
+  ) => {
+    const {
+      participation: {
+        NO_RECEIVED_REQUESTS: noActivitiesText,
+        VIEW_MORE_RECEIVED_REQUESTS: viewMoreActivitiesText,
+      },
+    } = this.i18nService.getCatalog(options.locale);
+
+    return this.getActivitiesResponse({
+      activityListData: requestList,
+      noActivitiesText,
+      viewMoreActivitiesText,
+      viewMorePayloadType: RECEIVED_PARTICIPATION_REQUESTS_TYPE,
+      isOrganizerShown: false,
+      options,
+    });
+  };
+
+  getSentParticipationRequestListResponse = (
+    activityListData: PaginatedResponse<Activity>,
+    options: User,
+  ) => {
+    const {
+      participation: {
+        CANCEL_PARTICIPATION: activityTypeText,
+        NO_SENT_REQUESTS: noActivitiesText,
+        VIEW_MORE_SENT_REQUESTS: viewMoreActivitiesText,
+      },
+    } = this.i18nService.getCatalog(options.locale);
+
+    return this.getActivitiesResponse({
+      activityListData,
+      noActivitiesText,
+      activityTypeText,
+      activityType: CANCEL_PENDING_PARTICIPATION_TYPE,
+      viewMoreActivitiesText,
+      viewMorePayloadType: SENT_PARTICIPATION_REQUESTS_TYPE,
+      isOrganizerShown: true,
+      options,
+    });
+  };
 
   getSubscribeToNotificationsFailureResponse = (locale: string): string =>
     this.i18nService.__({
@@ -717,10 +861,10 @@ export class ResponseService {
     return this.getActivitiesResponse({
       activityListData,
       noActivitiesText: activityI18n[NO_UPCOMING_ACTIVITIES],
-      activityTypeText: activityI18n[JOIN_ACTIVITY],
-      activityType: JOIN_ACTIVITY_TYPE,
+      activityTypeText: activityI18n[APPLY_FOR_ACTIVITY],
+      activityType: APPLY_FOR_ACTIVITY_TYPE,
       viewMoreActivitiesText: activityI18n[VIEW_MORE_UPCOMING_ACTIVITIES],
-      buttonPayloadActivityType: UPCOMING_ACTIVITIES_TYPE,
+      viewMorePayloadType: UPCOMING_ACTIVITIES_TYPE,
       isOrganizerShown: true,
       options,
     });

@@ -15,20 +15,16 @@ export class CreateActivity1601331561468 implements MigrationInterface {
             isPrimary: true,
           },
           {
-            name: 'organizer_id',
-            type: 'bigint',
-          },
-          {
             name: 'location_id',
             type: 'uuid',
           },
           {
-            name: 'price_id',
-            type: 'uuid',
+            name: 'organizer_id',
+            type: 'bigint',
           },
           {
-            name: 'type',
-            type: 'varchar',
+            name: 'price_id',
+            type: 'uuid',
           },
           {
             name: 'datetime',
@@ -37,6 +33,10 @@ export class CreateActivity1601331561468 implements MigrationInterface {
           {
             name: 'remaining_vacancies',
             type: 'int',
+          },
+          {
+            name: 'type',
+            type: 'varchar',
           },
           {
             name: 'created_at',

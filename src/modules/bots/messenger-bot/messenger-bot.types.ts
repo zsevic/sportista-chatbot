@@ -4,5 +4,6 @@ export type I18n = {
 
 export type I18nOptions = {
   locale: string;
-  gender: string;
+  gender?: string;
+  timezone?: string;
 };
