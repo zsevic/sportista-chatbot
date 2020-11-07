@@ -110,14 +110,13 @@ export class ResolverService {
     options: I18nOptions,
   ): Promise<string | string[]> => {
     try {
-      await this.cancelParticipationFunctions[type](
-        activityId,
-        userId,
-      ).then(async (participation: Participation) =>
-        this.notificationService.notifyOrganizerAboutParticipantCancelation(
-          participation.id,
-        ),
-      );
+      await this.cancelParticipationFunctions[type]
+        .call(this.participationService, activityId, userId)
+        .then(async (participation: Participation) =>
+          this.notificationService.notifyOrganizerAboutParticipantCancelation(
+            participation.id,
+          ),
+        );
       return this.responseService.getCancelParticipationSuccessResponse(
         options,
       );
