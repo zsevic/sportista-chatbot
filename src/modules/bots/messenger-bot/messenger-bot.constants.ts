@@ -232,11 +232,6 @@ export const USER_UNSUBSCRIBE_TO_NOTIFICATIONS_SUCCESS = `user.${UNSUBSCRIBE_TO_
 const EN_PERSISTENT_MENU = [
   {
     type: 'postback',
-    title: activityI18nEn[INITIALIZE_ACTIVITY],
-    payload: INITIALIZE_ACTIVITY_PAYLOAD,
-  },
-  {
-    type: 'postback',
     title: activityI18nEn[UPCOMING_ACTIVITIES],
     payload: UPCOMING_ACTIVITIES_PAYLOAD,
   },
@@ -244,6 +239,11 @@ const EN_PERSISTENT_MENU = [
     type: 'postback',
     title: activityI18nEn[JOINED_ACTIVITIES],
     payload: JOINED_ACTIVITIES_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: activityI18nEn[INITIALIZE_ACTIVITY],
+    payload: INITIALIZE_ACTIVITY_PAYLOAD,
   },
   {
     type: 'postback',
@@ -285,11 +285,6 @@ const EN_PERSISTENT_MENU = [
 const SR_PERSISTENT_MENU = [
   {
     type: 'postback',
-    title: activityI18nSr[INITIALIZE_ACTIVITY],
-    payload: INITIALIZE_ACTIVITY_PAYLOAD,
-  },
-  {
-    type: 'postback',
     title: activityI18nSr[UPCOMING_ACTIVITIES],
     payload: UPCOMING_ACTIVITIES_PAYLOAD,
   },
@@ -297,6 +292,11 @@ const SR_PERSISTENT_MENU = [
     type: 'postback',
     title: activityI18nSr[JOINED_ACTIVITIES],
     payload: JOINED_ACTIVITIES_PAYLOAD,
+  },
+  {
+    type: 'postback',
+    title: activityI18nSr[INITIALIZE_ACTIVITY],
+    payload: INITIALIZE_ACTIVITY_PAYLOAD,
   },
   {
     type: 'postback',
