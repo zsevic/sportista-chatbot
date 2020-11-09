@@ -8,6 +8,7 @@ export function loggerMiddleware(
   next: NextFunction,
 ) {
   const logger = new Logger(loggerMiddleware.name);
+  morgan.token('url', (request): string => request._parsedUrl.pathname);
   morgan(
     ':method :url :status (:req[content-length] length) (:response-time ms)',
     {

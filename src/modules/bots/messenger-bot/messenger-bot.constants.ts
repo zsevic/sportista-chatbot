@@ -237,13 +237,13 @@ const EN_PERSISTENT_MENU = [
   },
   {
     type: 'postback',
-    title: activityI18nEn[JOINED_ACTIVITIES],
-    payload: JOINED_ACTIVITIES_PAYLOAD,
+    title: activityI18nEn[INITIALIZE_ACTIVITY],
+    payload: INITIALIZE_ACTIVITY_PAYLOAD,
   },
   {
     type: 'postback',
-    title: activityI18nEn[INITIALIZE_ACTIVITY],
-    payload: INITIALIZE_ACTIVITY_PAYLOAD,
+    title: activityI18nEn[JOINED_ACTIVITIES],
+    payload: JOINED_ACTIVITIES_PAYLOAD,
   },
   {
     type: 'postback',
@@ -290,13 +290,13 @@ const SR_PERSISTENT_MENU = [
   },
   {
     type: 'postback',
-    title: activityI18nSr[JOINED_ACTIVITIES],
-    payload: JOINED_ACTIVITIES_PAYLOAD,
+    title: activityI18nSr[INITIALIZE_ACTIVITY],
+    payload: INITIALIZE_ACTIVITY_PAYLOAD,
   },
   {
     type: 'postback',
-    title: activityI18nSr[INITIALIZE_ACTIVITY],
-    payload: INITIALIZE_ACTIVITY_PAYLOAD,
+    title: activityI18nSr[JOINED_ACTIVITIES],
+    payload: JOINED_ACTIVITIES_PAYLOAD,
   },
   {
     type: 'postback',

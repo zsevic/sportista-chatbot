@@ -427,14 +427,14 @@ export class ResponseService {
   };
 
   getDefaultResponse = (locale: string) => {
-    const defaultMessage = this.i18nService.__({
+    const text = this.i18nService.__({
       phrase: BOT_DEFAULT_MESSAGE,
       locale,
     });
     const quickReplies = this.getDefaultResponseQuickReplies(locale);
 
     return {
-      text: defaultMessage,
+      text,
       quickReplies,
     };
   };
@@ -449,6 +449,11 @@ export class ResponseService {
         content_type: 'text',
       },
       {
+        title: activityI18n[INITIALIZE_ACTIVITY],
+        payload: INITIALIZE_ACTIVITY_PAYLOAD,
+        content_type: 'text',
+      },
+      {
         title: activityI18n[JOINED_ACTIVITIES],
         payload: JOINED_ACTIVITIES_PAYLOAD,
         content_type: 'text',
@@ -456,11 +461,6 @@ export class ResponseService {
       {
         title: activityI18n[CREATED_ACTIVITIES],
         payload: CREATED_ACTIVITIES_PAYLOAD,
-        content_type: 'text',
-      },
-      {
-        title: activityI18n[INITIALIZE_ACTIVITY],
-        payload: INITIALIZE_ACTIVITY_PAYLOAD,
         content_type: 'text',
       },
     ];
@@ -694,8 +694,19 @@ export class ResponseService {
     return response;
   };
 
-  getRegisterUserSuccessResponse = (locale: string): string =>
-    this.i18nService.__({ phrase: USER_REGISTRATION_SUCCESS, locale });
+  getRegisterUserSuccessResponse = (locale: string) => {
+    const text = this.i18nService.__({
+      phrase: USER_REGISTRATION_SUCCESS,
+      locale,
+    });
+
+    const quickReplies = this.getDefaultResponseQuickReplies(locale);
+
+    return {
+      text,
+      quickReplies,
+    };
+  };
 
   getRegisterUserFailureResponse = (locale: string) => {
     const { user: userI18n } = this.i18nService.getCatalog(locale);
