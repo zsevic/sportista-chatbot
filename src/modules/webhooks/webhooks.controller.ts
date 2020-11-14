@@ -2,9 +2,9 @@ import { Controller, Get, Post, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { handle } from 'main';
 
-@Controller('webhooks/messenger')
+@Controller('webhooks')
 export class WebhooksController {
-  @Get()
+  @Get('messenger')
   async validateWebhook(
     @Req() req: Request,
     @Res() res: Response,
@@ -12,7 +12,7 @@ export class WebhooksController {
     return handle(req, res);
   }
 
-  @Post()
+  @Post('messenger')
   async handleWebhook(
     @Req() req: Request,
     @Res() res: Response,
