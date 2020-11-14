@@ -22,7 +22,6 @@
     "start": "nest start",
     "start:dev": "NODE_ENV=development TZ=UTC nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "prestart:prod": "npm run messenger-profile:set",
     "start:prod": "NODE_PATH=./dist/src NODE_ENV=production TZ=UTC node -r newrelic dist/src/main.js",
     "test": "jest",
     "test:watch": "jest --watch",

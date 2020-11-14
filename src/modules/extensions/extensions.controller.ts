@@ -58,7 +58,9 @@ export class ExtensionsController {
   ) {
     const { datetime, user_id: userId } = data;
     const messageBody = {
-      text: new Date(datetime).toISOString(),
+      message: {
+        text: new Date(datetime).toISOString(),
+      },
     };
     const requestBody = this.getRequestBody(userId, messageBody);
 

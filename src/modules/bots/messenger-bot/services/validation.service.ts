@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { MessengerTypes } from 'bottender';
 import { isAfter, isValid, parseISO } from 'date-fns';
 import {
   ACTIVITY_TYPES,
