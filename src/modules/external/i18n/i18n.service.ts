@@ -9,7 +9,7 @@ interface II18nService {
 
 @Injectable()
 export class I18nService implements II18nService {
-  private _instance: any;
+  private _instance;
   constructor(@Inject(I18N_OPTIONS) private _I18nOptions: I18nOptions) {}
   getInstance() {
     if (!this._instance) {

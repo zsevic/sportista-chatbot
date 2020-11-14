@@ -1,4 +1,4 @@
-export * from './attachment.service';
+export * from './location.service';
 export * from './message.service';
 export * from './messenger-bot.service';
 export * from './postback.service';

@@ -25,20 +25,10 @@ npm run start:dev
 * Chatbot setup for local usage
 
 ```bash
-ngrok http 3000
+npx ngrok http 3000
+export EXTENSIONS_URL=<URL>
+npm run messenger-webhook:set <URL>/webhooks/messenger
 ```
-change `EXTENSIONS_URL` environment variable with the given ngrok Forwarding https value
-```bash
-curl -X POST -H "Content-Type: application/json" -d '{
-  "setting_type" : "domain_whitelisting",
-  "whitelisted_domains" : [$EXTENSIONS_URL],
-  "domain_action_type": "add"
-}' "https://graph.facebook.com/v2.6/me/thread_settings?access_token=$FB_PAGE_ACCESS_TOKEN"
-```
-```bash
-npm run start:dev
-```
-Change webhook callback URL with the given ngrok Forwarding https value and validate it inside Messenger/Settings section - https://developers.facebook.com/apps/<FB_APP_ID>/messenger/settings/
 
 ### Build
 
@@ -74,4 +64,4 @@ Generated at `/api-docs` endpoint
 
 ### Technologies used
 
-- Node.js, TypeScript, NestJS, TypeORM, BootBot
+- Node.js, TypeScript, NestJS, TypeORM, Bottender

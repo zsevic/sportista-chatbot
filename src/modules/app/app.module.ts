@@ -18,24 +18,19 @@ import {
   initializeTransactionalContext,
   patchTypeORMRepositoryWithBaseRepository,
 } from 'typeorm-transactional-cls-hooked';
-import config from 'common/config';
 import { I18N_FALLBACKS, NODEGEOCODER_PROVIDER } from 'common/config/constants';
 import databaseConfig from 'common/config/database';
 import { RATE_LIMIT_REQUESTS, RATE_LIMIT_TIME } from 'common/config/rate-limit';
 import { isEnv } from 'common/utils';
 import { BotsModule } from 'modules/bots/bots.module';
 import { ExtensionsModule } from 'modules/extensions/extensions.module';
-import { BootbotModule, BootbotOptions } from 'modules/external/bootbot';
 import { I18nModule } from 'modules/external/i18n';
 import { NodeGeocoderModule } from 'modules/external/node-geocoder';
-import { WebhookModule } from 'modules/webhook/webhook.module';
+import { WebhooksModule } from 'modules/webhooks/webhooks.module';
 import { AppController } from './app.controller';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      load: [config],
-    }),
     TypeOrmModule.forRootAsync({
       imports: [
         ConfigModule.forRoot({
@@ -48,15 +43,6 @@ import { AppController } from './app.controller';
         patchTypeORMRepositoryWithBaseRepository();
         return configService.get('database');
       },
-    }),
-    BootbotModule.registerAsync({
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService): BootbotOptions => ({
-        accessToken: configService.get('FB_PAGE_ACCESS_TOKEN'),
-        appSecret: configService.get('FB_APP_SECRET'),
-        graphApiVersion: configService.get('GRAPH_API_VERSION'),
-        verifyToken: configService.get('WEBHOOK_VERIFY_TOKEN'),
-      }),
     }),
     I18nModule.registerAsync({
       useFactory: () => {
@@ -75,8 +61,8 @@ import { AppController } from './app.controller';
       }),
     }),
     ExtensionsModule,
-    WebhookModule,
     BotsModule,
+    WebhooksModule,
   ],
   controllers: [AppController],
   providers: [
@@ -113,7 +99,7 @@ export class AppModule implements NestModule, OnApplicationShutdown {
         method: RequestMethod.GET,
       },
       {
-        path: '/webhook',
+        path: '/webhooks/messenger',
         method: RequestMethod.GET,
       },
     ];

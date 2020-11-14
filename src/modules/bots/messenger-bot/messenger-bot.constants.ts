@@ -1,3 +1,4 @@
+import { MessengerTypes } from 'bottender';
 import { PROJECT_NAME } from 'common/config/constants';
 import {
   activity as activityI18nEn,
@@ -14,7 +15,7 @@ import {
 
 export const ABOUT_ME_PAYLOAD = 'ABOUT_ME_PAYLOAD';
 export const CREATED_ACTIVITIES_PAYLOAD = 'CREATED_ACTIVITIES_PAYLOAD';
-export const GET_STARTED_PAYLOAD = 'BOOTBOT_GET_STARTED';
+export const GET_STARTED_PAYLOAD = 'GET_STARTED_PAYLOAD';
 export const INITIALIZE_ACTIVITY_PAYLOAD = 'INITIALIZE_ACTIVITY_PAYLOAD';
 export const INITIALIZE_FEEDBACK_PAYLOAD = 'INITIALIZE_FEEDBACK_PAYLOAD';
 export const JOINED_ACTIVITIES_PAYLOAD = 'JOINED_ACTIVITIES_PAYLOAD';
@@ -67,7 +68,7 @@ export const EN_US_LOCALE = 'en_US';
 export const SR_RS_LOCALE = 'sr_RS';
 const EN_GREETING_TEXT = `Hi! With ${PROJECT_NAME} you can find missing playmates or join some game. Use Messenger app for the best experience with ${PROJECT_NAME}`;
 const SR_GREETING_TEXT = `Zdravo! ${PROJECT_NAME} ti pomaže da lakše nađeš igrače ili da se pridružiš timu u zakazanom terminu! Koristi Messenger aplikaciju za najbolje iskustvo sa ${PROJECT_NAME}`;
-export const GREETING_TEXT = [
+export const GREETING_TEXT: MessengerTypes.GreetingConfig[] = [
   {
     locale: EN_GB_LOCALE,
     text: EN_GREETING_TEXT,
@@ -335,21 +336,25 @@ const SR_PERSISTENT_MENU = [
   },
 ];
 
-export const PERSISTENT_MENU = [
+export const PERSISTENT_MENU: MessengerTypes.PersistentMenu = [
   {
     locale: EN_GB_LOCALE,
-    call_to_actions: EN_PERSISTENT_MENU,
+    callToActions: EN_PERSISTENT_MENU,
+    composerInputDisabled: false,
   },
   {
     locale: EN_US_LOCALE,
-    call_to_actions: SR_PERSISTENT_MENU,
+    callToActions: SR_PERSISTENT_MENU,
+    composerInputDisabled: false,
   },
   {
     locale: SR_RS_LOCALE,
-    call_to_actions: SR_PERSISTENT_MENU,
+    callToActions: SR_PERSISTENT_MENU,
+    composerInputDisabled: false,
   },
   {
     locale: DEFAULT,
-    call_to_actions: SR_PERSISTENT_MENU,
+    callToActions: SR_PERSISTENT_MENU,
+    composerInputDisabled: false,
   },
 ];

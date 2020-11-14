@@ -16,11 +16,11 @@ export class MessageService {
     private readonly validationService: ValidationService,
   ) {}
 
-  handleMessage = async (message: any, userId: number) => {
+  handleMessage = async (message: any, userId: number): Promise<any> => {
     const state = await this.resolverService.getCurrentState(userId);
     const { locale, timezone } = await this.userService.getUser(userId);
 
-    let validationResponse: any = await this.validationService.validateMessage(
+    let validationResponse = this.validationService.validateMessage(
       message,
       state,
       locale,
@@ -58,7 +58,7 @@ export class MessageService {
       }),
       ...(state.current_state === this.stateService.states.activity_type && {
         activity_type: parse(
-          message.quick_reply.payload,
+          message.quickReply.payload,
         ).activity_type.toString(),
       }),
       current_state: this.stateService.nextStates[state.current_state] || null,
@@ -94,11 +94,11 @@ export class MessageService {
       locale,
     );
     if (state.current_state === this.stateService.states.datetime) {
-      const datetimeConfirmationResponse = await this.responseService.getDatetimeConfirmationResponse(
+      const datetimeConfirmationResponse = this.responseService.getDatetimeConfirmationResponse(
         text,
         { locale, timezone },
       );
-      return [datetimeConfirmationResponse, response];
+      return [datetimeConfirmationResponse, ...response];
     }
 
     return response;

@@ -9,7 +9,7 @@ import { StateModule } from 'modules/state/state.module';
 import { UserModule } from 'modules/user/user.module';
 import { MessengerBotController } from './messenger-bot.controller';
 import {
-  AttachmentService,
+  LocationService,
   MessageService,
   MessengerBotService,
   PostbackService,
@@ -32,7 +32,7 @@ import {
   ],
   controllers: [MessengerBotController],
   providers: [
-    AttachmentService,
+    LocationService,
     MessageService,
     MessengerBotController,
     MessengerBotService,
