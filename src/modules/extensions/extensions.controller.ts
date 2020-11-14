@@ -25,6 +25,7 @@ import {
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { I18N_OPTIONS_FACTORY } from 'modules/external/i18n';
 import { DatetimeMessageDto, LocationMessageDto } from './dto';
+import { MessageBody } from './extensions.types';
 
 @Controller('extensions')
 export class ExtensionsController {
@@ -103,7 +104,7 @@ export class ExtensionsController {
     return handle(req, res);
   }
 
-  private getRequestBody = (userId: number, messageBody) => ({
+  private getRequestBody = (userId: number, messageBody: MessageBody) => ({
     object: 'page',
     entry: [
       {
