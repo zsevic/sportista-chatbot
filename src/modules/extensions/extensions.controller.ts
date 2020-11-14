@@ -1,3 +1,4 @@
+import { createHmac } from 'crypto';
 import {
   Body,
   Controller,
@@ -9,9 +10,12 @@ import {
   Query,
   Render,
   Req,
+  Res,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Request, Response } from 'express';
 import { I18N_FALLBACK_LANGUAGE } from 'common/config/constants';
+import { handle } from 'main';
 import {
   STATE_DATETIME_BUTTON,
   USER_LOCATION_FAILURE,
@@ -19,14 +23,12 @@ import {
   USER_LOCATION_SETTINGS_FAILURE,
   USER_LOCATION_TYPE,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
-import { BOOTBOT_OPTIONS_FACTORY } from 'modules/external/bootbot';
 import { I18N_OPTIONS_FACTORY } from 'modules/external/i18n';
 import { DatetimeMessageDto, LocationMessageDto } from './dto';
 
 @Controller('extensions')
 export class ExtensionsController {
   constructor(
-    @Inject(BOOTBOT_OPTIONS_FACTORY) private readonly bot,
     private readonly configService: ConfigService,
     @Inject(I18N_OPTIONS_FACTORY) private readonly i18nService,
   ) {}
@@ -41,7 +43,7 @@ export class ExtensionsController {
     });
 
     return {
-      APP_ID: this.configService.get('FB_APP_ID'),
+      APP_ID: this.configService.get('MESSENGER_APP_ID'),
       DATETIME_BUTTON: datetimeButton,
       csrfToken: req.csrfToken(),
     };
@@ -49,24 +51,19 @@ export class ExtensionsController {
 
   @Post('datetime')
   @HttpCode(HttpStatus.OK)
-  getDatetime(@Body() data: DatetimeMessageDto) {
-    const { datetime, user_id } = data;
-    const messageData = {
-      object: 'page',
-      entry: [
-        {
-          messaging: [
-            {
-              sender: { id: user_id },
-              message: {
-                text: new Date(datetime).toISOString(),
-              },
-            },
-          ],
-        },
-      ],
+  getDatetime(
+    @Body() data: DatetimeMessageDto,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    const { datetime, user_id: userId } = data;
+    const messageBody = {
+      text: new Date(datetime).toISOString(),
     };
-    this.bot.handleFacebookData(messageData);
+    const requestBody = this.getRequestBody(userId, messageBody);
+
+    this.transformRequest(req, requestBody);
+    return handle(req, res);
   }
 
   @Get('location')
@@ -76,7 +73,7 @@ export class ExtensionsController {
     const { user: userI18n } = this.i18nService.getCatalog(locale);
 
     return {
-      APP_ID: this.configService.get('FB_APP_ID'),
+      APP_ID: this.configService.get('MESSENGER_APP_ID'),
       USER_LOCATION_FAILURE: userI18n[USER_LOCATION_FAILURE],
       USER_LOCATION_PAGE_TEXT: userI18n[USER_LOCATION_PAGE_TEXT],
       USER_LOCATION_SETTINGS_FAILURE: userI18n[USER_LOCATION_SETTINGS_FAILURE],
@@ -86,23 +83,53 @@ export class ExtensionsController {
 
   @Post('location')
   @HttpCode(HttpStatus.OK)
-  getLocation(@Body() data: LocationMessageDto) {
-    const { latitude, longitude, user_id } = data;
-    const messageData = {
-      object: 'page',
-      entry: [
-        {
-          messaging: [
-            {
-              sender: { id: user_id },
-              postback: {
-                payload: `type=${USER_LOCATION_TYPE}&latitude=${latitude}&longitude=${longitude}`,
-              },
-            },
-          ],
-        },
-      ],
+  getLocation(
+    @Body() data: LocationMessageDto,
+    @Req() req,
+    @Res() res: Response,
+  ) {
+    const { latitude, longitude, user_id: userId } = data;
+
+    const messageBody = {
+      postback: {
+        payload: `type=${USER_LOCATION_TYPE}&latitude=${latitude}&longitude=${longitude}`,
+      },
     };
-    this.bot.handleFacebookData(messageData);
+
+    const requestBody = this.getRequestBody(userId, messageBody);
+    this.transformRequest(req, requestBody);
+    return handle(req, res);
   }
+
+  private getRequestBody = (userId: number, messageBody) => ({
+    object: 'page',
+    entry: [
+      {
+        id: this.configService.get('MESSENGER_PAGE_ID'),
+        messaging: [
+          {
+            sender: { id: userId },
+            recipient: { id: this.configService.get('MESSENGER_PAGE_ID') },
+            ...messageBody,
+          },
+        ],
+      },
+    ],
+  });
+
+  private transformRequest = (req, requestBody) => {
+    const appSecret = this.configService.get('MESSENGER_APP_SECRET');
+    const hmac = createHmac('sha1', appSecret);
+    const signature = `sha1=${hmac
+      .update(Buffer.from(JSON.stringify(requestBody)))
+      .digest('hex')}`;
+
+    req.headers = {
+      ...req.headers,
+      'x-hub-signature': signature,
+    };
+    req.url = '/webhooks/messenger';
+    req.body = requestBody;
+    req.rawBody = Buffer.from(JSON.stringify(requestBody));
+  };
 }

@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { MessengerTypes } from 'bottender';
 import { FIRST_PAGE } from 'common/config/constants';
 import { PaginatedResponse } from 'common/dtos';
 import { Activity } from 'modules/activity/activity.dto';
@@ -9,7 +10,10 @@ import {
   CANCEL_ACCEPTED_PARTICIPATION_TYPE,
   CANCEL_PENDING_PARTICIPATION_TYPE,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
-import { I18nOptions } from 'modules/bots/messenger-bot/messenger-bot.types';
+import {
+  ButtonTemplate,
+  I18nOptions,
+} from 'modules/bots/messenger-bot/messenger-bot.types';
 import { Feedback } from 'modules/feedback/feedback.dto';
 import { FeedbackService } from 'modules/feedback/feedback.service';
 import { NotificationService } from 'modules/notification/notification.service';
@@ -207,7 +211,7 @@ export class ResolverService {
   getCurrentState = async (userId: number): Promise<State> =>
     this.stateService.getCurrentState(userId);
 
-  getDefaultResponse = async (locale: string) =>
+  getDefaultResponse = (locale: string): MessengerTypes.TextMessage =>
     this.responseService.getDefaultResponse(locale);
 
   getJoinedActivities = async (userId: number, page = FIRST_PAGE) => {
@@ -395,7 +399,9 @@ export class ResolverService {
     return this.responseService.getInitializeFeedbackResponse(locale);
   };
 
-  registerUser = async (userDto: User) => {
+  registerUser = async (
+    userDto: User,
+  ): Promise<MessengerTypes.TextMessage | ButtonTemplate> => {
     try {
       await this.userService.registerUser(userDto);
       return this.responseService.getRegisterUserSuccessResponse(

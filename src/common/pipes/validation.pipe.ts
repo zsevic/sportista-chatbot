@@ -13,7 +13,7 @@ export class CustomValidationPipe extends ValidationPipe {
       return await super.transform(value, metadata);
     } catch (e) {
       if (e instanceof BadRequestException) {
-        const response: any = e.getResponse(); // TODO remove any
+        const response: any = e.getResponse();
         const messages = response.message
           .map((message) =>
             message.constraints ? Object.values(message.constraints) : message,

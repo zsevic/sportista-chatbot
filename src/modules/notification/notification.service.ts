@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { getClient, MessengerTypes } from 'bottender';
 import convertToLatin from 'cyrillic-to-latin';
-import { DEFAULT_LOCALE, LOCALES } from 'common/config/constants';
+import { DEFAULT_MESSENGER_LOCALE, LOCALES } from 'common/config/constants';
 import { DatetimeOptions } from 'common/types';
 import { formatDatetime } from 'common/utils';
 import { ACTIVITY_TYPES } from 'modules/activity/activity.constants';
@@ -22,17 +23,18 @@ import {
   getImageUrl,
   getLocationUrl,
 } from 'modules/bots/messenger-bot/messenger-bot.utils';
-import { BOOTBOT_OPTIONS_FACTORY } from 'modules/external/bootbot';
 import { I18N_OPTIONS_FACTORY } from 'modules/external/i18n';
 import { Participation } from 'modules/participation/participation.dto';
 import { ParticipationRepository } from 'modules/participation/participation.repository';
 import { User } from 'modules/user/user.dto';
 import { UserService } from 'modules/user/user.service';
 
+const client = getClient('messenger');
+
 @Injectable()
 export class NotificationService {
+  private client;
   constructor(
-    @Inject(BOOTBOT_OPTIONS_FACTORY) private readonly bot,
     @Inject(I18N_OPTIONS_FACTORY) private readonly i18nService,
     private readonly participationRepository: ParticipationRepository,
     private readonly userService: UserService,
@@ -40,14 +42,14 @@ export class NotificationService {
 
   notifyOrganizerAboutParticipantApplication = async (
     participationId: string,
-  ) => {
+  ): Promise<MessengerTypes.SendMessageSuccessResponse | undefined> => {
     const {
       activity: {
         datetime,
         organizer: { id: organizerId, locale, timezone },
         type,
       },
-      participant: { first_name, gender, image_url, last_name },
+      participant: { first_name, gender, image_url: imageUrl, last_name },
     } = await this.participationRepository.findOne(participationId, {
       relations: ['activity', 'activity.organizer', 'participant'],
     });
@@ -74,10 +76,11 @@ export class NotificationService {
         REJECT_PARTICIPATION: rejectParticipationTitle,
       },
     } = this.i18nService.getCatalog(locale);
-    const message = [
+    const message: MessengerTypes.TemplateElement[] = [
       {
         title: messageTitle,
-        image_url,
+        subtitle: null,
+        imageUrl,
         buttons: [
           {
             type: 'postback',
@@ -90,15 +93,16 @@ export class NotificationService {
             payload: `type=${REJECT_PARTICIPATION_TYPE}&participation_id=${participationId}`,
           },
         ],
+        defaultAction: null,
       },
     ];
 
-    return this.bot.sendGenericTemplate(organizerId, message);
+    return client.sendGenericTemplate(organizerId.toString(), message);
   };
 
   notifyOrganizerAboutParticipantCancelation = async (
     participationId: string,
-  ) => {
+  ): Promise<MessengerTypes.SendMessageSuccessResponse> => {
     const {
       activity: {
         datetime,
@@ -126,13 +130,13 @@ export class NotificationService {
         datetime: formattedDatetime,
       },
     );
-    await this.bot.sendTextMessage(organizerId, textMessage);
+    return client.sendText(organizerId.toString(), textMessage);
   };
 
   notifyParticipantAboutParticipationUpdate = async (
     participationId: string,
     phrase: string,
-  ) => {
+  ): Promise<MessengerTypes.SendMessageSuccessResponse> => {
     const {
       activity: { datetime, type },
       participant: { id: participantId, locale, timezone },
@@ -151,12 +155,12 @@ export class NotificationService {
       },
     );
 
-    return this.bot.sendTextMessage(participantId, textMessage);
+    return client.sendText(participantId.toString(), textMessage);
   };
 
   notifyParticipantsAboutCanceledActivity = async (
     participationList: Participation[],
-  ) => {
+  ): Promise<MessengerTypes.SendMessageSuccessResponse[]> => {
     const sendTextMessages = participationList.map(
       (participation: Participation) => {
         const {
@@ -171,8 +175,8 @@ export class NotificationService {
           { phrase: BOT_CANCEL_ACTIVITY_NOTIFICATION, locale },
           { type, datetime: formattedDatetime },
         );
-        return this.bot.sendTextMessage(
-          participation.participant_id,
+        return client.sendText(
+          participation.participant_id.toString(),
           textMessage,
         );
       },
@@ -181,7 +185,9 @@ export class NotificationService {
     return Promise.all(sendTextMessages);
   };
 
-  notifySubscribedUsersAboutNewActivityNearby = async (activity: Activity) => {
+  notifySubscribedUsersAboutNewActivityNearby = async (
+    activity: Activity,
+  ): Promise<MessengerTypes.SendMessageSuccessResponse[] | undefined> => {
     const users = await this.userService.getSubscribedUsersNearby(
       activity.location.latitude,
       activity.location.longitude,
@@ -192,7 +198,7 @@ export class NotificationService {
         timezone: user.timezone,
       });
 
-      return this.bot.sendGenericTemplate(user.id, response);
+      return client.sendGenericTemplate(user.id.toString(), response);
     });
 
     return Promise.all(sendNewActivity);
@@ -201,7 +207,7 @@ export class NotificationService {
   private getNewActivityNotification = (
     activity: Activity,
     options: DatetimeOptions,
-  ) => {
+  ): MessengerTypes.TemplateElement[] => {
     const { locale } = options;
     const title = this.i18nService.__(
       { phrase: ACTIVITY_REMAINING_VACANCIES, locale },
@@ -217,7 +223,7 @@ export class NotificationService {
       activity.location.longitude,
     );
 
-    const buttons = [
+    const buttons: MessengerTypes.TemplateButton[] = [
       {
         type: 'postback',
         title: activityI18n[APPLY_FOR_ACTIVITY],
@@ -232,7 +238,7 @@ export class NotificationService {
     ];
     const datetime = formatDatetime(activity.datetime, options);
     const price = new Intl.NumberFormat(
-      LOCALES[options.locale] || LOCALES[DEFAULT_LOCALE],
+      LOCALES[options.locale] || LOCALES[DEFAULT_MESSENGER_LOCALE],
       { style: 'currency', currency: activity.price.currency_code },
     ).format(activity.price.value);
 
@@ -241,9 +247,10 @@ export class NotificationService {
         title,
         subtitle: `${datetime}, ${activity.location.title}, ${price}`,
         ...(ACTIVITY_TYPES[activity.type] && {
-          image_url: getImageUrl(ACTIVITY_TYPES[activity.type]),
+          imageUrl: getImageUrl(ACTIVITY_TYPES[activity.type]),
         }),
         buttons,
+        defaultAction: null,
       },
     ];
   };

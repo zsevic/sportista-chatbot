@@ -1,4 +1,9 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Logger } from '@nestjs/common';
+import { MessengerContext } from 'bottender';
+import {
+  DEFAULT_MESSENGER_GENDER,
+  DEFAULT_MESSENGER_LOCALE,
+} from 'common/config/constants';
 import {
   ABOUT_ME_PAYLOAD,
   CREATED_ACTIVITIES_PAYLOAD,
@@ -14,126 +19,152 @@ import {
   UPCOMING_ACTIVITIES_PAYLOAD,
   UPDATE_USER_LOCATION_PAYLOAD,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
-import { AttachmentService } from './services/attachment.service';
+import {
+  isButtonTemplate,
+  isGenericTemplate,
+  isQuickReplyTemplate,
+} from 'modules/bots/messenger-bot/messenger-bot.type-guards';
+import { Message } from 'modules/bots/messenger-bot/messenger-bot.types';
+import { LocationService } from './services/location.service';
 import { MessageService } from './services/message.service';
 import { PostbackService } from './services/postback.service';
 import { ResolverService } from './services/resolver.service';
 
 @Controller()
 export class MessengerBotController {
+  private readonly logger = new Logger(MessengerBotController.name);
+
   constructor(
-    private readonly attachmentService: AttachmentService,
+    private readonly locationService: LocationService,
     private readonly messageService: MessageService,
     private readonly postbackService: PostbackService,
     private readonly resolverService: ResolverService,
   ) {}
 
-  private aboutMeHandler = async (payload, chat) => {
+  private aboutMeHandler = async (context: MessengerContext) => {
     const response = await this.resolverService.getAboutMeResponse(
-      payload.sender.id,
+      context._session.user.id,
     );
 
-    return chat.say(response);
+    return this.say(context, response);
   };
 
-  attachmentHandler = async (payload, chat) => {
-    const {
-      message,
-      sender: { id: userId },
-    } = payload;
+  private createdActivitiesHandler = async (context: MessengerContext) => {
+    const response = await this.resolverService.getCreatedActivities(
+      context._session.user.id,
+    );
+    return this.say(context, response);
+  };
 
-    const response = await this.attachmentService.handleAttachment(
-      message,
+  private getStartedButtonHandler = async (context: MessengerContext) => {
+    const {
+      id,
+      firstName,
+      gender = DEFAULT_MESSENGER_GENDER,
+      lastName,
+      locale = DEFAULT_MESSENGER_LOCALE,
+      profilePic: image_url,
+    } = await context.getUserProfile({
+      fields: [
+        'id',
+        'first_name',
+        'gender',
+        'last_name',
+        'locale',
+        'profile_pic',
+      ],
+    });
+    const response = await this.resolverService.registerUser({
+      id: +id,
+      first_name: firstName,
+      gender,
+      image_url,
+      last_name: lastName,
+      locale,
+    });
+
+    return this.say(context, response);
+  };
+
+  private initializeActivityHandler = async (context: MessengerContext) => {
+    const response = await this.resolverService.initializeActivity(
+      context._session.user.id,
+    );
+    return this.say(context, response);
+  };
+
+  private initializeFeedbackHandler = async (context: MessengerContext) => {
+    const response = await this.resolverService.initializeFeedback(
+      context._session.user.id,
+    );
+    return this.say(context, response);
+  };
+
+  private joinedActivitiesHandler = async (context: MessengerContext) => {
+    const response = await this.resolverService.getJoinedActivities(
+      context._session.user.id,
+    );
+    return this.say(context, response);
+  };
+
+  private locationHandler = async (context: MessengerContext) => {
+    const {
+      event: { location },
+      _session: {
+        user: { id: userId },
+      },
+    } = context;
+    const response = await this.locationService.handleLocation(
+      location,
       userId,
     );
     if (!response) return;
 
-    return chat.say(response);
+    return this.say(context, response);
   };
 
-  private createdActivitiesHandler = async (payload, chat) => {
-    const response = await this.resolverService.getCreatedActivities(
-      payload.sender.id,
-    );
-    return chat.say(response);
-  };
-
-  private getStartedButtonHandler = async (_, chat) => {
+  messageHandler = async (context: MessengerContext) => {
     const {
-      id,
-      first_name,
-      gender,
-      last_name,
-      locale,
-      profile_pic: image_url,
-    } = await chat.getUserProfile();
-    const response = await this.resolverService.registerUser({
-      id,
-      first_name,
-      gender,
-      image_url,
-      last_name,
-      locale,
-    });
+      event,
+      _session: {
+        user: { id: userId },
+      },
+    } = context;
+    if (event.isLocation) {
+      return this.locationHandler(context);
+    }
 
-    return chat.say(response);
-  };
+    if (this.quickReplyHandlers[event.quickReply?.payload])
+      return this.quickReplyHandlers[event.quickReply.payload](context);
 
-  private initializeActivityHandler = async (payload, chat) => {
-    const response = await this.resolverService.initializeActivity(
-      payload.sender.id,
-    );
-    return chat.say(response);
-  };
-
-  private initializeFeedbackHandler = async (payload, chat) => {
-    const response = await this.resolverService.initializeFeedback(
-      payload.sender.id,
-    );
-    return chat.say(response);
-  };
-
-  private joinedActivitiesHandler = async (payload, chat) => {
-    const response = await this.resolverService.getJoinedActivities(
-      payload.sender.id,
-    );
-    return chat.say(response);
-  };
-
-  messageHandler = async (payload, chat) => {
-    const {
-      message,
-      sender: { id: userId },
-    } = payload;
-
-    if (this.quickReplyHandlers[message.quick_reply?.payload])
-      return this.quickReplyHandlers[message.quick_reply.payload](
-        payload,
-        chat,
-      );
-
-    const response = await this.messageService.handleMessage(message, userId);
+    const response = await this.messageService.handleMessage(event, userId);
     if (!response) return;
 
-    return chat.say(response);
+    return this.say(context, response);
   };
 
-  private notificationSubscriptionHandler = async (payload, chat) => {
+  private notificationSubscriptionHandler = async (
+    context: MessengerContext,
+  ) => {
     const response = await this.resolverService.handleNotificationSubscription(
-      payload.sender.id,
+      context._session.user.id,
     );
 
-    return chat.say(response);
+    return this.say(context, response);
   };
 
-  postbackHandler = async (payload, chat) => {
+  postbackHandler = async (context: MessengerContext) => {
     const {
-      postback: { payload: buttonPayload },
-      sender: { id: userId },
-    } = payload;
+      event: {
+        postback: { payload: buttonPayload },
+      },
+      _session: {
+        user: { id: userId },
+      },
+    } = context;
 
     if (this.postbackHandlers[buttonPayload])
-      return this.postbackHandlers[buttonPayload](payload, chat);
+      return this.postbackHandlers[buttonPayload](context);
 
     const response = await this.postbackService.handlePostback(
       buttonPayload,
@@ -141,54 +172,89 @@ export class MessengerBotController {
     );
     if (!response) return;
 
-    return chat.say(response);
+    return this.say(context, response);
   };
 
-  private receivedParticipationRequestsHandler = async (payload, chat) => {
+  private receivedParticipationRequestsHandler = async (
+    context: MessengerContext,
+  ) => {
     const response = await this.resolverService.getReceivedParticipationRequestList(
-      payload.sender.id,
+      context._session.user.id,
     );
 
-    return chat.say(response);
+    return this.say(context, response);
   };
 
-  private sentParticipationRequestsHandler = async (payload, chat) => {
+  say = async (context: MessengerContext, message: Message | Message[]) => {
+    const {
+      _session: {
+        user: { id: recipientId },
+      },
+    } = context;
+    if (typeof message === 'string') {
+      return context.client.sendText(recipientId, message);
+    } else if (isQuickReplyTemplate(message)) {
+      return context.client.sendText(recipientId, message.text, {
+        quickReplies: message.quickReplies,
+      });
+    } else if (isButtonTemplate(message)) {
+      return context.client.sendTemplate(recipientId, {
+        templateType: 'button',
+        ...message,
+      });
+    } else if (isGenericTemplate(message)) {
+      return context.client.sendGenericTemplate(recipientId, message.cards);
+    } else if (Array.isArray(message)) {
+      return message.reduce((promise, msg) => {
+        return promise.then(() => this.say(context, msg));
+      }, Promise.resolve(undefined));
+    }
+    this.logger.error('Invalid format for .say() message.');
+  };
+
+  private sentParticipationRequestsHandler = async (
+    context: MessengerContext,
+  ) => {
     const response = await this.resolverService.getSentParticipationRequestList(
-      payload.sender.id,
+      context._session.user.id,
     );
 
-    return chat.say(response);
+    return this.say(context, response);
   };
 
-  private subscribeToNotificationsHandler = async (payload, chat) => {
+  private subscribeToNotificationsHandler = async (
+    context: MessengerContext,
+  ) => {
     const response = await this.resolverService.subscribeToNotifications(
-      payload.sender.id,
+      context._session.user.id,
     );
 
-    return chat.say(response);
+    return this.say(context, response);
   };
 
-  private unsubscribeToNotificationsHandler = async (payload, chat) => {
+  private unsubscribeToNotificationsHandler = async (
+    context: MessengerContext,
+  ) => {
     const response = await this.resolverService.unsubscribeToNotifications(
-      payload.sender.id,
+      context._session.user.id,
     );
 
-    return chat.say(response);
+    return this.say(context, response);
   };
 
-  private upcomingActivitiesHandler = async (payload, chat) => {
+  private upcomingActivitiesHandler = async (context: MessengerContext) => {
     const response = await this.resolverService.getUpcomingActivities(
-      payload.sender.id,
+      context._session.user.id,
     );
-    return chat.say(response);
+    return this.say(context, response);
   };
 
-  private updateUserLocationHandler = async (payload, chat) => {
+  private updateUserLocationHandler = async (context: MessengerContext) => {
     const response = await this.resolverService.updateUserLocation(
-      payload.sender.id,
+      context._session.user.id,
     );
 
-    return chat.say(response);
+    return this.say(context, response);
   };
 
   postbackHandlers = {

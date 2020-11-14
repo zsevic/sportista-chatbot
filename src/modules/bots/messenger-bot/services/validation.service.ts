@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { MessengerTypes } from 'bottender';
 import { isAfter, isValid, parseISO } from 'date-fns';
 import {
   ACTIVITY_TYPES,
   MIN_REMAINING_VACANCIES,
 } from 'modules/activity/activity.constants';
+import { ValidationResponse } from 'modules/bots/messenger-bot/messenger-bot.types';
 import { State } from 'modules/state/state.dto';
 import { StateService } from 'modules/state/state.service';
 import { parse } from 'querystring';
@@ -27,15 +29,19 @@ export class ValidationService {
         Number.isNaN(coordinate) || Math.sign(coordinate) !== 1,
     );
 
-  validateMessage = async (message: any, state: State, locale: string) => {
-    const { quick_reply, text } = message;
+  validateMessage = (
+    message: any,
+    state: State,
+    locale: string,
+  ): ValidationResponse => {
+    const { quickReply, text } = message;
 
     if (!state || !state.current_state) {
       return this.responseService.getDefaultResponse(locale);
     }
 
     if (state.current_state === this.stateService.states.activity_type) {
-      const { activity_type } = parse(quick_reply?.payload);
+      const { activity_type } = parse(quickReply?.payload);
       if (
         !activity_type ||
         !ACTIVITY_TYPES.hasOwnProperty(activity_type.toString())

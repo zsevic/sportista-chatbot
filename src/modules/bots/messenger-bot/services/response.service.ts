@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { MessengerTypes } from 'bottender';
 import {
-  DEFAULT_LOCALE,
+  DEFAULT_MESSENGER_LOCALE,
   LOCALES,
   LOCATION_RADIUS_METERS,
   PAGE_SIZE,
@@ -118,8 +119,12 @@ import {
   USER_UNSUBSCRIBE_TO_NOTIFICATIONS_FAILURE,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import {
+  ButtonTemplate,
+  Button,
+  GenericTemplate,
   I18n,
   I18nOptions,
+  ResponseServiceMessages,
 } from 'modules/bots/messenger-bot/messenger-bot.types';
 import {
   getImageUrl,
@@ -132,7 +137,7 @@ import { User } from 'modules/user/user.dto';
 
 @Injectable()
 export class ResponseService {
-  messages: any = {
+  messages: ResponseServiceMessages = {
     [this.stateService.states.activity_type]: [ACTIVITY_TYPE_QUESTION],
     [this.stateService.states.datetime]: [DATETIME_QUESTION, DATETIME_BUTTON],
     [this.stateService.states.location]: [
@@ -183,7 +188,10 @@ export class ResponseService {
       locale,
     });
 
-  getActivityOptionsResponse = (activityId: string, locale: string) => {
+  getActivityOptionsResponse = (
+    activityId: string,
+    locale: string,
+  ): ButtonTemplate => {
     const { activity: activityI18n } = this.i18nService.getCatalog(locale);
 
     return {
@@ -241,7 +249,7 @@ export class ResponseService {
     const hasNextPage = PAGE_SIZE * page < total;
     const nextPage = page + 1;
 
-    const response: any = [{ cards }];
+    const response: Array<GenericTemplate | ButtonTemplate> = [{ cards }];
 
     if (hasNextPage) {
       const viewMoreTitle = this.i18nService.__({
@@ -263,10 +271,11 @@ export class ResponseService {
     return response;
   }
 
-  getActivityTypeOptions = (locale: string) => {
+  getActivityTypeOptions = (locale: string): MessengerTypes.QuickReply[] => {
     const { activity: activityI18n } = this.i18nService.getCatalog(locale);
 
     return Object.keys(ACTIVITY_TYPES).map((type) => ({
+      contentType: 'text',
       title: `${type} ${activityI18n[type]}`,
       payload: `type=activity_type&activity_type=${type}`,
     }));
@@ -396,7 +405,7 @@ export class ResponseService {
     );
   };
 
-  getDatetimeQuestionI18n = (locale: string) => {
+  getDatetimeQuestionI18n = (locale: string): Button<ButtonTemplate> => {
     const { state: stateI18n } = this.i18nService.getCatalog(locale);
 
     return this.getDatetimeQuestion(
@@ -406,7 +415,11 @@ export class ResponseService {
     );
   };
 
-  getDatetimeQuestion = (text: string, buttonTitle: string, locale: string) => {
+  getDatetimeQuestion = (
+    text: string,
+    buttonTitle: string,
+    locale: string,
+  ): Button<ButtonTemplate> => {
     const url = `${this.configService.get(
       'EXTENSIONS_URL',
     )}/extensions/datetime?lang=${locale}`;
@@ -418,15 +431,15 @@ export class ResponseService {
           type: 'web_url',
           title: buttonTitle,
           url,
-          messenger_extensions: true,
-          webview_height_ratio: 'compact',
-          webview_share_button: 'hide',
+          webviewHeightRatio: 'compact',
+          messengerExtensions: true,
+          webviewShareButton: 'hide',
         },
       ],
     };
   };
 
-  getDefaultResponse = (locale: string) => {
+  getDefaultResponse = (locale: string): MessengerTypes.TextMessage => {
     const text = this.i18nService.__({
       phrase: BOT_DEFAULT_MESSAGE,
       locale,
@@ -439,29 +452,31 @@ export class ResponseService {
     };
   };
 
-  getDefaultResponseQuickReplies = (locale: string) => {
+  getDefaultResponseQuickReplies = (
+    locale: string,
+  ): MessengerTypes.QuickReply[] => {
     const { activity: activityI18n } = this.i18nService.getCatalog(locale);
 
     return [
       {
         title: activityI18n[UPCOMING_ACTIVITIES],
         payload: UPCOMING_ACTIVITIES_PAYLOAD,
-        content_type: 'text',
+        contentType: 'text',
       },
       {
         title: activityI18n[INITIALIZE_ACTIVITY],
         payload: INITIALIZE_ACTIVITY_PAYLOAD,
-        content_type: 'text',
+        contentType: 'text',
       },
       {
         title: activityI18n[JOINED_ACTIVITIES],
         payload: JOINED_ACTIVITIES_PAYLOAD,
-        content_type: 'text',
+        contentType: 'text',
       },
       {
         title: activityI18n[CREATED_ACTIVITIES],
         payload: CREATED_ACTIVITIES_PAYLOAD,
-        content_type: 'text',
+        contentType: 'text',
       },
     ];
   };
@@ -552,7 +567,7 @@ export class ResponseService {
     }
     const datetime = formatDatetime(activity.datetime, options);
     const price = new Intl.NumberFormat(
-      LOCALES[options.locale] || LOCALES[DEFAULT_LOCALE],
+      LOCALES[options.locale] || LOCALES[DEFAULT_MESSENGER_LOCALE],
       { style: 'currency', currency: activity.price.currency_code },
     ).format(activity.price.value);
 
@@ -573,7 +588,9 @@ export class ResponseService {
     };
   }
 
-  getInitializeActivityResponse = (locale: string) => {
+  getInitializeActivityResponse = (
+    locale: string,
+  ): MessengerTypes.TextMessage => {
     const quickReplies = this.getActivityTypeOptions(locale);
     const activityTypeMessage = this.i18nService.__({
       phrase: STATE_ACTIVITY_TYPE_QUESTION,
@@ -592,7 +609,9 @@ export class ResponseService {
       locale,
     });
 
-  getInvalidActivityTypeResponse = (locale: string) => {
+  getInvalidActivityTypeResponse = (
+    locale: string,
+  ): MessengerTypes.TextMessage => {
     const quickReplies = this.getActivityTypeOptions(locale);
     const text = this.i18nService.__({
       phrase: STATE_INVALID_ACTIVITY_TYPE,
@@ -622,7 +641,9 @@ export class ResponseService {
       locale,
     });
 
-  getInvalidUserLocationResponse = (locale: string) => {
+  getInvalidUserLocationResponse = (
+    locale: string,
+  ): Button<ButtonTemplate>[] => {
     const { user: userI18n } = this.i18nService.getCatalog(locale);
 
     return this.getUserLocationResponse({
@@ -653,7 +674,7 @@ export class ResponseService {
     });
   };
 
-  getNotificationSubscriptionFailureResponse = (locale: string) =>
+  getNotificationSubscriptionFailureResponse = (locale: string): string =>
     this.i18nService.__({
       phrase: BOT_NOTIFICATION_SUBSCRIPTION_FAILURE,
       locale,
@@ -694,7 +715,9 @@ export class ResponseService {
     return response;
   };
 
-  getRegisterUserSuccessResponse = (locale: string) => {
+  getRegisterUserSuccessResponse = (
+    locale: string,
+  ): MessengerTypes.TextMessage => {
     const text = this.i18nService.__({
       phrase: USER_REGISTRATION_SUCCESS,
       locale,
@@ -708,7 +731,7 @@ export class ResponseService {
     };
   };
 
-  getRegisterUserFailureResponse = (locale: string) => {
+  getRegisterUserFailureResponse = (locale: string): ButtonTemplate => {
     const { user: userI18n } = this.i18nService.getCatalog(locale);
 
     return {
@@ -738,7 +761,7 @@ export class ResponseService {
   private getRemainingVacanciesButtons = (
     activityId: string,
     activityI18n: I18n,
-  ) => [
+  ): MessengerTypes.TemplateButton[] => [
     {
       type: 'postback',
       title: activityI18n[ADD_REMAINING_VACANCIES],
@@ -813,7 +836,7 @@ export class ResponseService {
       locale,
     });
 
-  getSubscribeToNotificationsResponse = (locale: string) => {
+  getSubscribeToNotificationsResponse = (locale: string): ButtonTemplate => {
     const { user: userI18n } = this.i18nService.getCatalog(locale);
 
     return {
@@ -840,7 +863,7 @@ export class ResponseService {
       locale,
     });
 
-  getUnsubscribeToNotificationsResponse = (locale: string) => {
+  getUnsubscribeToNotificationsResponse = (locale: string): ButtonTemplate => {
     const { user: userI18n } = this.i18nService.getCatalog(locale);
 
     return {
@@ -887,7 +910,7 @@ export class ResponseService {
   getUpdateRemainingVacanciesResponse = (
     activityId: string,
     locale: string,
-  ) => {
+  ): ButtonTemplate => {
     const { activity: activityI18n } = this.i18nService.getCatalog(locale);
 
     return {
@@ -905,7 +928,7 @@ export class ResponseService {
   getUpdateRemainingVacanciesSuccessResponse = (
     activity: Activity,
     locale: string,
-  ) => {
+  ): ButtonTemplate => {
     if (!activity || activity.remaining_vacancies === 0)
       return this.i18nService.__(
         { phrase: ACTIVITY_NO_REMAINING_VACANCIES, locale },
@@ -950,7 +973,7 @@ export class ResponseService {
     );
   };
 
-  getUserLocationI18n = (locale: string) => {
+  getUserLocationI18n = (locale: string): Button<ButtonTemplate>[] => {
     const { user: userI18n } = this.i18nService.getCatalog(locale);
 
     return this.getUserLocationResponse({
@@ -966,12 +989,12 @@ export class ResponseService {
     buttonTitle,
     descriptionText = null,
     locale,
-  }) => {
+  }): Button<ButtonTemplate>[] => {
     const url = `${this.configService.get(
       'EXTENSIONS_URL',
     )}/extensions/location?lang=${locale}`;
 
-    const response: any = [
+    const response: Button<ButtonTemplate>[] = [
       {
         text: descriptionText ? descriptionText : text,
         buttons: [
@@ -979,9 +1002,9 @@ export class ResponseService {
             type: 'web_url',
             title: buttonTitle,
             url,
-            messenger_extensions: true,
-            webview_height_ratio: 'compact',
-            webview_share_button: 'hide',
+            webviewHeightRatio: 'compact',
+            messengerExtensions: true,
+            webviewShareButton: 'hide',
           },
         ],
       },

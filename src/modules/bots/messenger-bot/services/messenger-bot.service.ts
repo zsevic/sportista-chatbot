@@ -1,50 +1,40 @@
-import { Inject, Injectable } from '@nestjs/common';
-import {
-  GET_STARTED_PAYLOAD,
-  GREETING_TEXT,
-  PERSISTENT_MENU,
-} from 'modules/bots/messenger-bot/messenger-bot.constants';
+import { Injectable } from '@nestjs/common';
+import { MessengerContext } from 'bottender';
+import { messenger, router } from 'bottender/router';
+import { DEFAULT_MESSENGER_LOCALE } from 'common/config/constants';
+import { GET_STARTED_PAYLOAD } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { MessengerBotController } from 'modules/bots/messenger-bot/messenger-bot.controller';
-import { BOOTBOT_OPTIONS_FACTORY } from 'modules/external/bootbot';
 import { UserService } from 'modules/user/user.service';
 import { ResponseService } from './response.service';
 
 @Injectable()
 export class MessengerBotService {
   constructor(
-    @Inject(BOOTBOT_OPTIONS_FACTORY) private readonly bot,
     private readonly controller: MessengerBotController,
     private readonly responseService: ResponseService,
     private readonly userService: UserService,
   ) {}
 
-  private asyncWrap = (fn) => async (payload, chat) => {
-    const user = await this.userService.validateUser(payload.sender.id);
+  private asyncWrap = (fn) => async (context: MessengerContext) => {
+    const user = await this.userService.validateUser(context._session.user.id);
 
-    if (!user && payload?.postback?.payload !== GET_STARTED_PAYLOAD) {
-      const { locale } = await chat.getUserProfile();
-      if (!locale) return;
+    if (!user && context.event.postback?.payload !== GET_STARTED_PAYLOAD) {
+      const {
+        locale = DEFAULT_MESSENGER_LOCALE,
+      } = await context.getUserProfile({ fields: ['locale'] });
 
-      const response = await this.responseService.getRegisterUserFailureResponse(
+      const response = this.responseService.getRegisterUserFailureResponse(
         locale,
       );
-      return chat.say(response);
+      return this.controller.say(context, response);
     }
 
-    await fn(payload, chat);
+    await fn(context);
   };
 
-  init = (): void => {
-    this.bot.setGreetingText(GREETING_TEXT);
-    this.bot.setPersistentMenu(PERSISTENT_MENU);
-
-    this.bot.on(
-      'attachment',
-      this.asyncWrap(this.controller.attachmentHandler),
-    );
-
-    this.bot.on('message', this.asyncWrap(this.controller.messageHandler));
-
-    this.bot.on('postback', this.asyncWrap(this.controller.postbackHandler));
-  };
+  handleMessenger = () =>
+    router([
+      messenger.message(this.asyncWrap(this.controller.messageHandler)),
+      messenger.postback(this.asyncWrap(this.controller.postbackHandler)),
+    ]);
 }

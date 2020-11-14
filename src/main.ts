@@ -1,11 +1,16 @@
 import path from 'path';
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { NestExpressApplication } from '@nestjs/platform-express';
+import {
+  ExpressAdapter,
+  NestExpressApplication,
+} from '@nestjs/platform-express';
 import * as Sentry from '@sentry/node';
 import bodyParser from 'body-parser';
+import { bottender } from 'bottender';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
+import express from 'express';
 import helmet from 'helmet';
 import { WinstonModule } from 'nest-winston';
 import throng from 'throng';
@@ -17,21 +22,35 @@ import { CustomValidationPipe } from 'common/pipes';
 import { isEnv } from 'common/utils';
 import { AppModule } from 'modules/app/app.module';
 
+const bottenderApp = bottender({ dev: !isEnv('production') });
+export const handle = bottenderApp.getRequestHandler();
+
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    logger: WinstonModule.createLogger({
-      format: format.combine(format.timestamp(), format.json()),
-      transports: [
-        new transports.Console({
-          level: process.env.LOG_LEVEL || 'info',
-        }),
-      ],
-    }),
-  });
+  const server = express();
+  const verify = (req, _, buf): void => {
+    req.rawBody = buf.toString();
+  };
+  server.use(bodyParser.json({ verify }));
+  server.use(bodyParser.urlencoded({ extended: false, verify }));
+
+  const app = await NestFactory.create<NestExpressApplication>(
+    AppModule,
+    new ExpressAdapter(server),
+    {
+      logger: WinstonModule.createLogger({
+        format: format.combine(format.timestamp(), format.json()),
+        transports: [
+          new transports.Console({
+            level: process.env.LOG_LEVEL || 'info',
+          }),
+        ],
+      }),
+    },
+  );
   const logger = new Logger(bootstrap.name);
   const configService = app.get('configService');
 
-  app.enable('trust proxy'); // used for rate limiter
+  app.enable('trust proxy');
   app.enableShutdownHooks();
   app.get(AppModule).subscribeToShutdown(() => app.close());
 
@@ -62,7 +81,6 @@ async function bootstrap(): Promise<void> {
       whitelist: true,
     }),
   );
-  app.use('/webhook', bodyParser.raw({ type: 'application/json' }));
 
   app.useStaticAssets(path.join(process.cwd(), 'public'));
   app.setViewEngine('ejs');
@@ -76,15 +94,22 @@ async function bootstrap(): Promise<void> {
     });
   }
 
-  await app.listen(configService.get('PORT')).then(() => {
-    logger.log(`Server is running on port ${configService.get('PORT')}`);
-  });
+  await app
+    .listen(configService.get('PORT'))
+    .then((): void =>
+      logger.log(`Server is running on port ${configService.get('PORT')}`),
+    );
+}
+
+async function worker() {
+  await bottenderApp.prepare();
+  await bootstrap();
 }
 
 throng({
   count: process.env.WEB_CONCURRENCY || 1,
   lifetime: Infinity,
-  worker: bootstrap,
+  worker,
 });
 
 process.on('unhandledRejection', function handleUnhandledRejection(
