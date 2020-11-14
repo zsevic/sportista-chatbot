@@ -31,6 +31,8 @@ export type I18nOptions = {
 
 export type Location = {
   coordinates: Coordinates;
+  title: string;
+  url: string;
 };
 
 export type Message =

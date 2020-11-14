@@ -5,7 +5,6 @@ import { Location } from 'modules/bots/messenger-bot/messenger-bot.types';
 import { StateService } from 'modules/state/state.service';
 import { UserService } from 'modules/user/user.service';
 import { ResolverService } from './resolver.service';
-import { PINNED_LOCATION } from 'modules/location/location.constants';
 
 @Injectable()
 export class LocationService {
@@ -17,7 +16,7 @@ export class LocationService {
     private readonly userService: UserService,
   ) {}
 
-  handleLocation = async (message: Location, userId: number): Promise<any> => {
+  handleLocation = async (location: Location, userId: number): Promise<any> => {
     const locale = await this.userService.getLocale(userId);
 
     const state = await this.resolverService.getCurrentState(userId);
@@ -28,7 +27,8 @@ export class LocationService {
     if (state.current_state === this.stateService.states.location) {
       const {
         coordinates: { lat, long },
-      } = message;
+        title,
+      } = location;
 
       const isValidLocation = await this.activityService.validateLocation(
         userId,
@@ -39,7 +39,7 @@ export class LocationService {
         return this.responseService.getInvalidLocationResponse(locale);
 
       const updatedState = {
-        location_title: PINNED_LOCATION,
+        location_title: title,
         location_latitude: lat,
         location_longitude: long,
         current_state:
