@@ -4,7 +4,6 @@ import { FIRST_PAGE } from 'common/config/constants';
 import { PaginatedResponse } from 'common/dtos';
 import { LocationService } from 'modules/location/location.service';
 import { ParticipationRepository } from 'modules/participation/participation.repository';
-import { StateRepository } from 'modules/state/state.repository';
 import { UserRepository } from 'modules/user/user.repository';
 import { Activity } from './activity.dto';
 import { ActivityRepository } from './activity.repository';
@@ -17,7 +16,6 @@ export class ActivityService {
     private readonly locationService: LocationService,
     private readonly participationRepository: ParticipationRepository,
     private readonly priceRepository: PriceRepository,
-    private readonly stateRepository: StateRepository,
     private readonly userRepository: UserRepository,
   ) {}
 
@@ -52,7 +50,6 @@ export class ActivityService {
       remaining_vacancies: activity.remaining_vacancies,
       type: activity.type,
     });
-    await this.stateRepository.resetState(activity.organizer_id);
 
     return { ...createdActivity, location, price };
   }

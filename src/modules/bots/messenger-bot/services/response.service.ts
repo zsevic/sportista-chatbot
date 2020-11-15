@@ -118,6 +118,7 @@ import {
   USER_UNSUBSCRIBE_TO_NOTIFICATIONS_SUCCESS,
   USER_UNSUBSCRIBE_TO_NOTIFICATIONS_FAILURE,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
+import { states } from 'modules/bots/messenger-bot/messenger-bot.states';
 import {
   ButtonTemplate,
   Button,
@@ -132,31 +133,22 @@ import {
 } from 'modules/bots/messenger-bot/messenger-bot.utils';
 import { I18N_OPTIONS_FACTORY } from 'modules/external/i18n';
 import { Participation } from 'modules/participation/participation.dto';
-import { StateService } from 'modules/state/state.service';
 import { User } from 'modules/user/user.dto';
 
 @Injectable()
 export class ResponseService {
   messages: ResponseServiceMessages = {
-    [this.stateService.states.activity_type]: [ACTIVITY_TYPE_QUESTION],
-    [this.stateService.states.datetime]: [DATETIME_QUESTION, DATETIME_BUTTON],
-    [this.stateService.states.location]: [
-      LOCATION_QUESTION,
-      LOCATION_INSTRUCTION,
-    ],
-    [this.stateService.states.price]: [PRICE_QUESTION],
-    [this.stateService.states.remaining_vacancies]: [
-      REMAINING_VACANCIES_QUESTION,
-    ],
-    [this.stateService.states.create_activity_closing]: [
-      CREATE_ACTIVITY_CLOSING,
-    ],
+    [states.activity_type]: [ACTIVITY_TYPE_QUESTION],
+    [states.activity_datetime]: [DATETIME_QUESTION, DATETIME_BUTTON],
+    [states.activity_location]: [LOCATION_QUESTION, LOCATION_INSTRUCTION],
+    [states.activity_price]: [PRICE_QUESTION],
+    [states.activity_remaining_vacancies]: [REMAINING_VACANCIES_QUESTION],
+    [states.create_activity_closing]: [CREATE_ACTIVITY_CLOSING],
   };
 
   constructor(
     private readonly configService: ConfigService,
     @Inject(I18N_OPTIONS_FACTORY) private readonly i18nService,
-    private readonly stateService: StateService,
   ) {}
 
   getAboutMeResponse = (locale: string): string[] => {
@@ -958,7 +950,7 @@ export class ResponseService {
       state: stateI18n,
       bot: { MESSENGER_INFO },
     } = this.i18nService.getCatalog(locale);
-    if (currentState === this.stateService.states.datetime) {
+    if (currentState === states.activity_datetime) {
       return [
         this.getDatetimeQuestion(
           stateI18n[DATETIME_QUESTION],

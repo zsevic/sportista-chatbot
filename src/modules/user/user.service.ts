@@ -3,7 +3,6 @@ import geoTz from 'geo-tz';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { PINNED_LOCATION } from 'modules/location/location.constants';
 import { LocationService } from 'modules/location/location.service';
-import { StateRepository } from 'modules/state/state.repository';
 import { User } from './user.dto';
 import { UserRepository } from './user.repository';
 
@@ -11,7 +10,6 @@ import { UserRepository } from './user.repository';
 export class UserService {
   constructor(
     private readonly locationService: LocationService,
-    private readonly stateRepository: StateRepository,
     private readonly userRepository: UserRepository,
   ) {}
 
@@ -45,23 +43,14 @@ export class UserService {
   getUser = async (id: number): Promise<User> =>
     this.userRepository.getUser(id);
 
-  @Transactional()
-  async registerUser(user: User): Promise<void> {
-    await this.userRepository.registerUser(user);
-    await this.stateRepository.initializeState(user.id);
-  }
+  registerUser = async (user: User): Promise<User> =>
+    this.userRepository.registerUser(user);
 
-  @Transactional()
-  async subscribeToNotifications(userId: number): Promise<void> {
-    await this.userRepository.subscribeToNotifications(userId);
-    await this.stateRepository.resetState(userId);
-  }
+  subscribeToNotifications = async (userId: number): Promise<User> =>
+    this.userRepository.subscribeToNotifications(userId);
 
-  @Transactional()
-  async unsubscribeToNotifications(userId: number): Promise<void> {
-    await this.userRepository.unsubscribeToNotifications(userId);
-    await this.stateRepository.resetState(userId);
-  }
+  unsubscribeToNotifications = async (userId: number): Promise<User> =>
+    this.userRepository.unsubscribeToNotifications(userId);
 
   @Transactional()
   async upsertLocation(

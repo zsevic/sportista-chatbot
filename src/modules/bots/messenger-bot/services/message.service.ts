@@ -1,6 +1,11 @@
 import { parse } from 'querystring';
 import { Injectable } from '@nestjs/common';
-import { StateService } from 'modules/state/state.service';
+import { MessengerContext } from 'bottender';
+import {
+  nextStates,
+  notificationSubscriptionStates,
+  states,
+} from 'modules/bots/messenger-bot/messenger-bot.states';
 import { UserService } from 'modules/user/user.service';
 import { ResolverService } from './resolver.service';
 import { ResponseService } from './response.service';
@@ -11,89 +16,74 @@ export class MessageService {
   constructor(
     private readonly responseService: ResponseService,
     private readonly resolverService: ResolverService,
-    private readonly stateService: StateService,
     private readonly userService: UserService,
     private readonly validationService: ValidationService,
   ) {}
 
-  handleMessage = async (message: any, userId: number): Promise<any> => {
-    const state = await this.resolverService.getCurrentState(userId);
+  handleMessage = async (context: MessengerContext): Promise<any> => {
+    const {
+      _session: {
+        user: { id: userId },
+      },
+    } = context;
     const { locale, timezone } = await this.userService.getUser(userId);
 
     let validationResponse = this.validationService.validateMessage(
-      message,
-      state,
+      context,
       locale,
     );
     if (validationResponse) return validationResponse;
 
-    const { text } = message;
-    if (state.current_state === this.stateService.states.initialize_feedback) {
-      return this.resolverService.createFeedback(
-        {
-          user_id: userId,
-          text,
-        },
-        locale,
-      );
+    const { text } = context.event;
+    const {
+      state: { current_state: currentState },
+    } = context;
+    if (currentState === states.initialize_feedback) {
+      return this.resolverService.createFeedback(context, locale);
     }
-    if (
-      this.stateService.notificationSubscriptionStates.includes(
-        state.current_state,
-      )
-    ) {
+    if (notificationSubscriptionStates.includes(currentState)) {
       return this.responseService.getNotificationSubscriptionFailureResponse(
         locale,
       );
     }
 
     const updatedState = {
-      [state.current_state]: text,
-      ...(state.current_state === this.stateService.states.price && {
-        price_value: +text,
-      }),
-      ...(state.current_state ===
-        this.stateService.states.remaining_vacancies && {
-        remaining_vacancies: +text,
-      }),
-      ...(state.current_state === this.stateService.states.activity_type && {
-        activity_type: parse(
-          message.quickReply.payload,
-        ).activity_type.toString(),
-      }),
-      current_state: this.stateService.nextStates[state.current_state] || null,
+      activity: {
+        ...context.state.activity,
+        ...(currentState === states.activity_datetime && {
+          datetime: text,
+        }),
+        ...(currentState === states.activity_price && {
+          price: +text,
+        }),
+        ...(currentState === states.activity_remaining_vacancies && {
+          remaining_vacancies: +text,
+        }),
+        ...(currentState === states.activity_type && {
+          type: parse(
+            context.event.quickReply.payload,
+          ).activity_type.toString(),
+        }),
+      },
+      current_state: nextStates[currentState] || null,
     };
 
-    if (
-      updatedState.current_state ===
-      this.stateService.states.create_activity_closing
-    ) {
+    if (updatedState.current_state === states.create_activity_closing) {
       validationResponse = await this.validationService.validateRemainingVacancies(
         +text,
         locale,
       );
       if (validationResponse) return validationResponse;
 
-      const newActivity = {
-        datetime: state.datetime,
-        organizer_id: userId,
-        location_title: state.location_title,
-        location_latitude: state.location_latitude,
-        location_longitude: state.location_longitude,
-        price: state.price_value,
-        remaining_vacancies: +text,
-        type: state.activity_type,
-      };
-
-      return this.resolverService.createActivity(newActivity, locale);
+      return this.resolverService.createActivity(context, locale);
     }
 
-    const response = await this.resolverService.updateState(
-      userId,
-      updatedState,
+    context.setState(updatedState);
+    const response = this.responseService.getUpdateStateResponse(
+      updatedState.current_state,
       locale,
     );
-    if (state.current_state === this.stateService.states.datetime) {
+    if (currentState === states.activity_datetime) {
       const datetimeConfirmationResponse = this.responseService.getDatetimeConfirmationResponse(
         text,
         { locale, timezone },

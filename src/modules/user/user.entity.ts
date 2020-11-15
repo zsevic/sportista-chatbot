@@ -6,14 +6,12 @@ import {
   ManyToMany,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { ActivityEntity } from 'modules/activity/activity.entity';
 import { FeedbackEntity } from 'modules/feedback/feedback.entity';
 import { LocationEntity } from 'modules/location/location.entity';
-import { StateEntity } from 'modules/state/state.entity';
 
 @Entity('user')
 export class UserEntity {
@@ -69,7 +67,4 @@ export class UserEntity {
     (activityEntity) => activityEntity.participants,
   )
   participations: ActivityEntity[];
-
-  @OneToOne(() => StateEntity, (stateEntity) => stateEntity.user)
-  state: StateEntity;
 }
