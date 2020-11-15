@@ -6,13 +6,13 @@ const {
 
 module.exports = {
   session: {
-    driver: 'memory',
+    driver: 'mongo',
     stores: {
       memory: {
         maxSize: 500,
       },
       mongo: {
-        url: 'mongodb://localhost:27017',
+        url: process.env.MONGODB_URL || 'mongodb://localhost:27017',
         collectionName: 'sessions',
       },
     },
