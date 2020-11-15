@@ -10,11 +10,6 @@ export type Button<T> = T & {
   webviewShareButton?: 'hide' | 'show';
 };
 
-type Coordinates = {
-  lat: number;
-  long: number;
-};
-
 export type GenericTemplate = {
   cards: MessengerTypes.TemplateElement[];
 };
@@ -27,12 +22,6 @@ export type I18nOptions = {
   locale: string;
   gender?: string;
   timezone?: string;
-};
-
-export type Location = {
-  coordinates: Coordinates;
-  title: string;
-  url: string;
 };
 
 export type Message =

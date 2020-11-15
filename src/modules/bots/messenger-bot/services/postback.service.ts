@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
 import { parse } from 'querystring';
+import { MessengerContext } from 'bottender';
+import { Injectable } from '@nestjs/common';
 import {
   ACCEPT_PARTICIPATION_TYPE,
   ACTIVITY_OPTIONS_TYPE,
@@ -21,9 +22,9 @@ import {
   UPDATE_REMAINING_VACANCIES_TYPE,
   USER_LOCATION_TYPE,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
+import { UserService } from 'modules/user/user.service';
 import { ResolverService } from './resolver.service';
 import { ResponseService } from './response.service';
-import { UserService } from 'modules/user/user.service';
 
 @Injectable()
 export class PostbackService {
@@ -33,7 +34,12 @@ export class PostbackService {
     private readonly userService: UserService,
   ) {}
 
-  handlePostback = async (buttonPayload: string, userId: number) => {
+  handlePostback = async (context: MessengerContext) => {
+    const {
+      _session: {
+        user: { id: userId },
+      },
+    } = context;
     const { gender, locale } = await this.userService.getUser(userId);
     const {
       activity_id,
@@ -43,9 +49,9 @@ export class PostbackService {
       user_id,
       latitude,
       longitude,
-    } = parse(buttonPayload);
+    } = parse(context.event.postback.payload);
     if (type !== USER_LOCATION_TYPE) {
-      await this.resolverService.resetState(userId);
+      context.resetState();
     }
     switch (type) {
       case ACCEPT_PARTICIPATION_TYPE:
@@ -143,7 +149,7 @@ export class PostbackService {
         );
       }
       case UPCOMING_ACTIVITIES_TYPE: {
-        return this.resolverService.getUpcomingActivities(userId, +page);
+        return this.resolverService.getUpcomingActivities(context, +page);
       }
       case UPDATE_REMAINING_VACANCIES_TYPE: {
         return this.resolverService.updateRemainingVacancies(
@@ -153,7 +159,7 @@ export class PostbackService {
       }
       case USER_LOCATION_TYPE: {
         return this.resolverService.getUserLocation(
-          userId,
+          context,
           +latitude,
           +longitude,
           locale,

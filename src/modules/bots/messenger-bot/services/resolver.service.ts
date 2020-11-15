@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { MessengerTypes } from 'bottender';
+import { MessengerContext, MessengerTypes } from 'bottender';
 import { FIRST_PAGE } from 'common/config/constants';
 import { PaginatedResponse } from 'common/dtos';
 import { Activity } from 'modules/activity/activity.dto';
@@ -10,6 +10,7 @@ import {
   CANCEL_ACCEPTED_PARTICIPATION_TYPE,
   CANCEL_PENDING_PARTICIPATION_TYPE,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
+import { states } from 'modules/bots/messenger-bot/messenger-bot.states';
 import {
   ButtonTemplate,
   I18nOptions,
@@ -19,9 +20,6 @@ import { FeedbackService } from 'modules/feedback/feedback.service';
 import { NotificationService } from 'modules/notification/notification.service';
 import { Participation } from 'modules/participation/participation.dto';
 import { ParticipationService } from 'modules/participation/participation.service';
-import { RESET_STATE } from 'modules/state/state.constants';
-import { State } from 'modules/state/state.dto';
-import { StateService } from 'modules/state/state.service';
 import { User } from 'modules/user/user.dto';
 import { UserService } from 'modules/user/user.service';
 import { ResponseService } from './response.service';
@@ -43,7 +41,6 @@ export class ResolverService {
     private readonly notificationService: NotificationService,
     private readonly participationService: ParticipationService,
     private readonly responseService: ResponseService,
-    private readonly stateService: StateService,
     private readonly userService: UserService,
     private readonly validationService: ValidationService,
   ) {}
@@ -166,7 +163,18 @@ export class ResolverService {
     }
   };
 
-  createActivity = async (newActivity: any, locale: string) => {
+  createActivity = async (context: MessengerContext, locale: string) => {
+    const newActivity = {
+      datetime: context.state.activity.datetime,
+      organizer_id: context._session.user.id,
+      location_title: context.state.activity.location_title,
+      location_latitude: context.state.activity.location_latitude,
+      location_longitude: context.state.activity.location_longitude,
+      price: context.state.activity.price,
+      remaining_vacancies: +context.event.text,
+      type: context.state.activity.type,
+    };
+
     await this.activityService
       .createActivity(newActivity)
       .then((createdActivity: Activity) =>
@@ -174,15 +182,21 @@ export class ResolverService {
           createdActivity,
         ),
       );
+    context.resetState();
 
     return this.responseService.getCreateActivityResponse(locale);
   };
 
   createFeedback = async (
-    feedbackDto: Feedback,
+    context: MessengerContext,
     locale: string,
   ): Promise<string> => {
-    await this.feedbackService.createFeedback(feedbackDto);
+    const feedback = {
+      user_id: context._session.user.id,
+      text: context.event.text,
+    };
+    await this.feedbackService.createFeedback(feedback);
+    context.resetState();
 
     return this.responseService.getCreateFeedbackResponse(locale);
   };
@@ -207,9 +221,6 @@ export class ResolverService {
       { locale, timezone },
     );
   };
-
-  getCurrentState = async (userId: number): Promise<State> =>
-    this.stateService.getCurrentState(userId);
 
   getDefaultResponse = (locale: string): MessengerTypes.TextMessage =>
     this.responseService.getDefaultResponse(locale);
@@ -294,17 +305,25 @@ export class ResolverService {
     );
   };
 
-  getUpcomingActivities = async (userId: number, page = FIRST_PAGE) => {
+  getUpcomingActivities = async (
+    context: MessengerContext,
+    page = FIRST_PAGE,
+  ) => {
+    const {
+      _session: {
+        user: { id: userId },
+      },
+    } = context;
     const { locale, timezone } = await this.userService.getUser(userId);
     const userLocation = await this.userService.getLocation(userId);
     if (!userLocation) {
-      await this.stateService.updateState(userId, {
-        current_state: this.stateService.states.get_upcoming_activities,
+      context.setState({
+        current_state: states.get_upcoming_activities,
       });
       return this.responseService.getUserLocationI18n(locale);
     }
 
-    await this.stateService.resetState(userId);
+    context.resetState();
     const activityListData = await this.activityService.getUpcomingActivities(
       userId,
       page,
@@ -323,11 +342,16 @@ export class ResolverService {
   };
 
   getUserLocation = async (
-    userId: number,
+    context: MessengerContext,
     latitude: number,
     longitude: number,
     locale: string,
   ) => {
+    const {
+      _session: {
+        user: { id: userId },
+      },
+    } = context;
     const validationResponse = this.validationService.validateLocation([
       latitude,
       longitude,
@@ -339,13 +363,11 @@ export class ResolverService {
     try {
       await this.userService.upsertLocation(userId, latitude, longitude);
 
-      const state = await this.stateService.getCurrentState(userId);
-
-      switch (state.current_state) {
-        case this.stateService.states.initialize_activity:
-          return this.initializeActivity(state.user_id);
-        case this.stateService.states.get_upcoming_activities:
-          return this.getUpcomingActivities(state.user_id, FIRST_PAGE);
+      switch (context.state.current_state) {
+        case states.initialize_activity:
+          return this.initializeActivity(context);
+        case states.get_upcoming_activities:
+          return this.getUpcomingActivities(context, FIRST_PAGE);
         default:
           return this.responseService.getUpdateLocationSuccessResponse(locale);
       }
@@ -354,46 +376,60 @@ export class ResolverService {
     }
   };
 
-  handleNotificationSubscription = async (userId: number) => {
+  handleNotificationSubscription = async (context: MessengerContext) => {
+    const {
+      _session: {
+        user: { id: userId },
+      },
+    } = context;
     const { is_subscribed, locale } = await this.userService.getUser(userId);
     if (!is_subscribed) {
-      await this.stateService.updateState(userId, {
-        current_state: this.stateService.states.subscribe_to_notifications,
+      context.setState({
+        current_state: states.subscribe_to_notifications,
       });
       return this.responseService.getSubscribeToNotificationsResponse(locale);
     }
 
-    await this.stateService.updateState(userId, {
-      current_state: this.stateService.states.unsubscribe_to_notifications,
+    context.setState({
+      current_state: states.unsubscribe_to_notifications,
     });
     return this.responseService.getUnsubscribeToNotificationsResponse(locale);
   };
 
-  initializeActivity = async (userId: number) => {
+  initializeActivity = async (context: MessengerContext) => {
+    const {
+      _session: {
+        user: { id: userId },
+      },
+    } = context;
     const locale = await this.userService.getLocale(userId);
 
     const userLocation = await this.userService.getLocation(userId);
     if (!userLocation) {
-      await this.stateService.updateState(userId, {
-        current_state: this.stateService.states.initialize_activity,
+      context.setState({
+        current_state: states.initialize_activity,
       });
       return this.responseService.getUserLocationI18n(locale);
     }
 
-    const state = {
-      current_state: this.stateService.states.activity_type,
-      ...RESET_STATE,
-    };
-    await this.stateService.updateState(userId, state);
+    context.setState({
+      activity: {},
+      current_state: states.activity_type,
+    });
 
     return this.responseService.getInitializeActivityResponse(locale);
   };
 
-  initializeFeedback = async (userId: number) => {
+  initializeFeedback = async (context: MessengerContext) => {
+    const {
+      _session: {
+        user: { id: userId },
+      },
+    } = context;
     const locale = await this.userService.getLocale(userId);
 
-    await this.stateService.updateState(userId, {
-      current_state: this.stateService.states.initialize_feedback,
+    context.setState({
+      current_state: states.initialize_feedback,
     });
 
     return this.responseService.getInitializeFeedbackResponse(locale);
@@ -455,9 +491,6 @@ export class ResolverService {
     }
   };
 
-  resetState = async (userId: number): Promise<State> =>
-    this.stateService.resetState(userId);
-
   subscribeToNotifications = async (userId: number): Promise<string> => {
     const locale = await this.userService.getLocale(userId);
     try {
@@ -513,15 +546,6 @@ export class ResolverService {
   updateRemainingVacancies = async (activityId: string, locale: string) => {
     return this.responseService.getUpdateRemainingVacanciesResponse(
       activityId,
-      locale,
-    );
-  };
-
-  updateState = async (userId: number, updatedState: State, locale: string) => {
-    await this.stateService.updateState(userId, updatedState);
-
-    return this.responseService.getUpdateStateResponse(
-      updatedState.current_state,
       locale,
     );
   };

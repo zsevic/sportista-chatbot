@@ -1,7 +1,7 @@
 const {
   GET_STARTED_PAYLOAD,
   GREETING_TEXT,
-  PERSISTENT_MENU
+  // PERSISTENT_MENU
 } = require('./dist/src/modules/bots/messenger-bot/messenger-bot.constants');
 
 module.exports = {

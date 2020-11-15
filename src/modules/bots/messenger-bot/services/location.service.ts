@@ -1,34 +1,42 @@
 import { Injectable } from '@nestjs/common';
+import { MessengerContext } from 'bottender';
 import { ActivityService } from 'modules/activity/activity.service';
+import {
+  nextStates,
+  states,
+} from 'modules/bots/messenger-bot/messenger-bot.states';
 import { ResponseService } from 'modules/bots/messenger-bot/services/response.service';
-import { Location } from 'modules/bots/messenger-bot/messenger-bot.types';
-import { StateService } from 'modules/state/state.service';
 import { UserService } from 'modules/user/user.service';
-import { ResolverService } from './resolver.service';
 
 @Injectable()
 export class LocationService {
   constructor(
     private readonly activityService: ActivityService,
-    private readonly resolverService: ResolverService,
     private readonly responseService: ResponseService,
-    private readonly stateService: StateService,
     private readonly userService: UserService,
   ) {}
 
-  handleLocation = async (location: Location, userId: number): Promise<any> => {
+  handleLocation = async (context: MessengerContext): Promise<any> => {
+    const {
+      _session: {
+        user: { id: userId },
+      },
+    } = context;
     const locale = await this.userService.getLocale(userId);
 
-    const state = await this.resolverService.getCurrentState(userId);
-    if (!state || !state.current_state) {
-      return this.resolverService.getDefaultResponse(locale);
+    if (!context.state.current_state) {
+      return this.responseService.getDefaultResponse(locale);
     }
 
-    if (state.current_state === this.stateService.states.location) {
+    if (context.state.current_state === states.activity_location) {
       const {
-        coordinates: { lat, long },
-        title,
-      } = location;
+        event: {
+          location: {
+            coordinates: { lat, long },
+            title,
+          },
+        },
+      } = context;
 
       const isValidLocation = await this.activityService.validateLocation(
         userId,
@@ -38,18 +46,20 @@ export class LocationService {
       if (!isValidLocation)
         return this.responseService.getInvalidLocationResponse(locale);
 
-      const updatedState = {
-        location_title: title,
-        location_latitude: lat,
-        location_longitude: long,
-        current_state:
-          this.stateService.nextStates[state.current_state] || null,
-      };
-
-      return this.resolverService.updateState(userId, updatedState, locale);
+      const nextState = nextStates[context.state.current_state] || null;
+      context.setState({
+        current_state: nextState,
+        activity: {
+          ...context.state.activity,
+          location_title: title,
+          location_latitude: lat,
+          location_longitude: long,
+        },
+      });
+      return this.responseService.getUpdateStateResponse(nextState, locale);
     }
 
-    await this.stateService.resetState(userId);
-    return this.resolverService.getDefaultResponse(locale);
+    context.resetState();
+    return this.responseService.getDefaultResponse(locale);
   };
 }

@@ -5,7 +5,6 @@ import { ActivityModule } from 'modules/activity/activity.module';
 import { FeedbackModule } from 'modules/feedback/feedback.module';
 import { NotificationModule } from 'modules/notification/notification.module';
 import { ParticipationModule } from 'modules/participation/participation.module';
-import { StateModule } from 'modules/state/state.module';
 import { UserModule } from 'modules/user/user.module';
 import { MessengerBotController } from './messenger-bot.controller';
 import {
@@ -27,7 +26,6 @@ import {
     FeedbackModule,
     NotificationModule,
     ParticipationModule,
-    StateModule,
     UserModule,
   ],
   controllers: [MessengerBotController],

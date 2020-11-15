@@ -87,16 +87,12 @@ export class MessengerBotController {
   };
 
   private initializeActivityHandler = async (context: MessengerContext) => {
-    const response = await this.resolverService.initializeActivity(
-      context._session.user.id,
-    );
+    const response = await this.resolverService.initializeActivity(context);
     return this.say(context, response);
   };
 
   private initializeFeedbackHandler = async (context: MessengerContext) => {
-    const response = await this.resolverService.initializeFeedback(
-      context._session.user.id,
-    );
+    const response = await this.resolverService.initializeFeedback(context);
     return this.say(context, response);
   };
 
@@ -108,28 +104,14 @@ export class MessengerBotController {
   };
 
   private locationHandler = async (context: MessengerContext) => {
-    const {
-      event: { location },
-      _session: {
-        user: { id: userId },
-      },
-    } = context;
-    const response = await this.locationService.handleLocation(
-      location,
-      userId,
-    );
+    const response = await this.locationService.handleLocation(context);
     if (!response) return;
 
     return this.say(context, response);
   };
 
   messageHandler = async (context: MessengerContext) => {
-    const {
-      event,
-      _session: {
-        user: { id: userId },
-      },
-    } = context;
+    const { event } = context;
     if (event.isLocation) {
       return this.locationHandler(context);
     }
@@ -137,7 +119,7 @@ export class MessengerBotController {
     if (this.quickReplyHandlers[event.quickReply?.payload])
       return this.quickReplyHandlers[event.quickReply.payload](context);
 
-    const response = await this.messageService.handleMessage(event, userId);
+    const response = await this.messageService.handleMessage(context);
     if (!response) return;
 
     return this.say(context, response);
@@ -147,7 +129,7 @@ export class MessengerBotController {
     context: MessengerContext,
   ) => {
     const response = await this.resolverService.handleNotificationSubscription(
-      context._session.user.id,
+      context,
     );
 
     return this.say(context, response);
@@ -158,18 +140,12 @@ export class MessengerBotController {
       event: {
         postback: { payload: buttonPayload },
       },
-      _session: {
-        user: { id: userId },
-      },
     } = context;
 
     if (this.postbackHandlers[buttonPayload])
       return this.postbackHandlers[buttonPayload](context);
 
-    const response = await this.postbackService.handlePostback(
-      buttonPayload,
-      userId,
-    );
+    const response = await this.postbackService.handlePostback(context);
     if (!response) return;
 
     return this.say(context, response);
@@ -228,6 +204,7 @@ export class MessengerBotController {
     const response = await this.resolverService.subscribeToNotifications(
       context._session.user.id,
     );
+    context.resetState();
 
     return this.say(context, response);
   };
@@ -238,14 +215,13 @@ export class MessengerBotController {
     const response = await this.resolverService.unsubscribeToNotifications(
       context._session.user.id,
     );
+    context.resetState();
 
     return this.say(context, response);
   };
 
   private upcomingActivitiesHandler = async (context: MessengerContext) => {
-    const response = await this.resolverService.getUpcomingActivities(
-      context._session.user.id,
-    );
+    const response = await this.resolverService.getUpcomingActivities(context);
     return this.say(context, response);
   };
 
