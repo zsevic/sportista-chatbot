@@ -6,6 +6,7 @@ import {
   states,
 } from 'modules/bots/messenger-bot/messenger-bot.states';
 import { ResponseService } from 'modules/bots/messenger-bot/services/response.service';
+import { PINNED_LOCATION } from 'modules/location/location.constants';
 import { UserService } from 'modules/user/user.service';
 
 @Injectable()
@@ -33,7 +34,7 @@ export class LocationService {
         event: {
           location: {
             coordinates: { lat, long },
-            title,
+            title: title = PINNED_LOCATION,
           },
         },
       } = context;
