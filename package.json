@@ -62,6 +62,7 @@
     "newrelic": "^6.13.2",
     "node-geocoder": "^3.27.0",
     "pg": "^8.4.0",
+    "redis-url-parse": "^2.0.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.6.3",
     "swagger-ui-express": "^4.1.4",

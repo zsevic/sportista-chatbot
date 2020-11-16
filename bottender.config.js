@@ -1,20 +1,25 @@
+const redisUrlParse = require('redis-url-parse');
+const { isEnv } = require('./dist/src/common/utils');
 const {
   GET_STARTED_PAYLOAD,
   GREETING_TEXT,
   // PERSISTENT_MENU
 } = require('./dist/src/modules/bots/messenger-bot/messenger-bot.constants');
+const redisConfig = process.env.REDIS_URL && redisUrlParse(process.env.REDIS_URL);
 
 module.exports = {
   session: {
-    driver: 'mongo',
+    driver: isEnv('production') ? 'redis' : 'memory',
     stores: {
       memory: {
         maxSize: 500,
       },
-      mongo: {
-        url: process.env.MONGODB_URL || 'mongodb://localhost:27017',
-        collectionName: 'sessions',
-      },
+      redis: redisConfig ? {
+        db: redisConfig.database,
+        host: redisConfig.host,
+        password: redisConfig.password,
+        port: redisConfig.port,
+      } : {},
     },
   },
   initialState: {},
