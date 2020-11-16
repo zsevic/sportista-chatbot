@@ -1,4 +1,4 @@
-export class User {
+export class BotUser {
   id: number;
 
   location_id?: string;

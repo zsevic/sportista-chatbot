@@ -22,7 +22,7 @@ import {
   UPDATE_REMAINING_VACANCIES_TYPE,
   USER_LOCATION_TYPE,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
-import { UserService } from 'modules/user/user.service';
+import { BotUserService } from 'modules/bot-user/user.service';
 import { ResolverService } from './resolver.service';
 import { ResponseService } from './response.service';
 
@@ -31,7 +31,7 @@ export class PostbackService {
   constructor(
     private readonly responseService: ResponseService,
     private readonly resolverService: ResolverService,
-    private readonly userService: UserService,
+    private readonly userService: BotUserService,
   ) {}
 
   handlePostback = async (context: MessengerContext) => {

@@ -10,7 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { ActivityEntity } from 'modules/activity/activity.entity';
-import { UserEntity } from 'modules/user/user.entity';
+import { BotUserEntity } from 'modules/bot-user/user.entity';
 import { PARTICIPATION_STATUS } from './participation.enums';
 
 @Entity('participation')
@@ -48,7 +48,10 @@ export class ParticipationEntity {
   @JoinColumn({ name: 'activity_id' })
   activity: ActivityEntity;
 
-  @ManyToOne(() => UserEntity, (userEntity) => userEntity.participations)
+  @ManyToOne(
+    () => BotUserEntity,
+    (botUserEntity) => botUserEntity.participations,
+  )
   @JoinColumn({ name: 'participant_id' })
-  participant: UserEntity;
+  participant: BotUserEntity;
 }

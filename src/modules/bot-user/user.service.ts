@@ -3,14 +3,14 @@ import geoTz from 'geo-tz';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { PINNED_LOCATION } from 'modules/location/location.constants';
 import { LocationService } from 'modules/location/location.service';
-import { User } from './user.dto';
-import { UserRepository } from './user.repository';
+import { BotUser } from './user.dto';
+import { BotUserRepository } from './user.repository';
 
 @Injectable()
-export class UserService {
+export class BotUserService {
   constructor(
     private readonly locationService: LocationService,
-    private readonly userRepository: UserRepository,
+    private readonly userRepository: BotUserRepository,
   ) {}
 
   getLocale = async (userId: number): Promise<string> => {
@@ -31,25 +31,25 @@ export class UserService {
     return user.location_id;
   };
 
-  getParticipantList = async (activityId: string): Promise<User[]> =>
+  getParticipantList = async (activityId: string): Promise<BotUser[]> =>
     this.userRepository.getParticipantListByActivity(activityId);
 
   getSubscribedUsersNearby = async (
     latitude: number,
     longitude: number,
-  ): Promise<User[]> =>
+  ): Promise<BotUser[]> =>
     this.userRepository.getSubscribedUsersNearby(latitude, longitude);
 
-  getUser = async (id: number): Promise<User> =>
+  getUser = async (id: number): Promise<BotUser> =>
     this.userRepository.getUser(id);
 
-  registerUser = async (user: User): Promise<User> =>
+  registerUser = async (user: BotUser): Promise<BotUser> =>
     this.userRepository.registerUser(user);
 
-  subscribeToNotifications = async (userId: number): Promise<User> =>
+  subscribeToNotifications = async (userId: number): Promise<BotUser> =>
     this.userRepository.subscribeToNotifications(userId);
 
-  unsubscribeToNotifications = async (userId: number): Promise<User> =>
+  unsubscribeToNotifications = async (userId: number): Promise<BotUser> =>
     this.userRepository.unsubscribeToNotifications(userId);
 
   @Transactional()
@@ -69,6 +69,6 @@ export class UserService {
     await this.userRepository.upsertTimezone(userId, timezone[0]);
   }
 
-  validateUser = async (id: number): Promise<User> =>
+  validateUser = async (id: number): Promise<BotUser> =>
     this.userRepository.validateUser(id);
 }

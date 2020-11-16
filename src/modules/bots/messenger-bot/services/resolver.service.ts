@@ -15,13 +15,12 @@ import {
   ButtonTemplate,
   I18nOptions,
 } from 'modules/bots/messenger-bot/messenger-bot.types';
-import { Feedback } from 'modules/feedback/feedback.dto';
 import { FeedbackService } from 'modules/feedback/feedback.service';
 import { NotificationService } from 'modules/notification/notification.service';
 import { Participation } from 'modules/participation/participation.dto';
 import { ParticipationService } from 'modules/participation/participation.service';
-import { User } from 'modules/user/user.dto';
-import { UserService } from 'modules/user/user.service';
+import { BotUser } from 'modules/bot-user/user.dto';
+import { BotUserService } from 'modules/bot-user/user.service';
 import { ResponseService } from './response.service';
 import { ValidationService } from './validation.service';
 
@@ -41,7 +40,7 @@ export class ResolverService {
     private readonly notificationService: NotificationService,
     private readonly participationService: ParticipationService,
     private readonly responseService: ResponseService,
-    private readonly userService: UserService,
+    private readonly userService: BotUserService,
     private readonly validationService: ValidationService,
   ) {}
 
@@ -436,7 +435,7 @@ export class ResolverService {
   };
 
   registerUser = async (
-    userDto: User,
+    userDto: BotUser,
   ): Promise<MessengerTypes.TextMessage | ButtonTemplate> => {
     try {
       await this.userService.registerUser(userDto);

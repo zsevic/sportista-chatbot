@@ -12,7 +12,7 @@ import {
 } from 'typeorm';
 import { DbAwareColumn } from 'common/utils/database';
 import { LocationEntity } from 'modules/location/location.entity';
-import { UserEntity } from 'modules/user/user.entity';
+import { BotUserEntity } from 'modules/bot-user/user.entity';
 import { PriceEntity } from './price/price.entity';
 
 @Entity('activity')
@@ -57,11 +57,14 @@ export class ActivityEntity {
   @DeleteDateColumn()
   deleted_at: Date;
 
-  @ManyToOne(() => UserEntity, (userEntity) => userEntity.activities)
+  @ManyToOne(() => BotUserEntity, (botUserEntity) => botUserEntity.activities)
   @JoinColumn({ name: 'organizer_id' })
-  organizer: UserEntity;
+  organizer: BotUserEntity;
 
-  @ManyToMany(() => UserEntity, (userEntity) => userEntity.participations)
+  @ManyToMany(
+    () => BotUserEntity,
+    (botUserEntity) => botUserEntity.participations,
+  )
   @JoinTable({
     name: 'participation',
     joinColumn: {
@@ -73,7 +76,7 @@ export class ActivityEntity {
       referencedColumnName: 'id',
     },
   })
-  participants: UserEntity[];
+  participants: BotUserEntity[];
 
   @ManyToOne(
     () => LocationEntity,

@@ -26,8 +26,8 @@ import {
 import { I18N_OPTIONS_FACTORY } from 'modules/external/i18n';
 import { Participation } from 'modules/participation/participation.dto';
 import { ParticipationRepository } from 'modules/participation/participation.repository';
-import { User } from 'modules/user/user.dto';
-import { UserService } from 'modules/user/user.service';
+import { BotUser } from 'modules/bot-user/user.dto';
+import { BotUserService } from 'modules/bot-user/user.service';
 
 const client = getClient('messenger');
 
@@ -37,7 +37,7 @@ export class NotificationService {
   constructor(
     @Inject(I18N_OPTIONS_FACTORY) private readonly i18nService,
     private readonly participationRepository: ParticipationRepository,
-    private readonly userService: UserService,
+    private readonly userService: BotUserService,
   ) {}
 
   notifyOrganizerAboutParticipantApplication = async (
@@ -192,7 +192,7 @@ export class NotificationService {
       activity.location.latitude,
       activity.location.longitude,
     );
-    const sendNewActivity = users.map((user: User) => {
+    const sendNewActivity = users.map((user: BotUser) => {
       const response = this.getNewActivityNotification(activity, {
         locale: user.locale,
         timezone: user.timezone,

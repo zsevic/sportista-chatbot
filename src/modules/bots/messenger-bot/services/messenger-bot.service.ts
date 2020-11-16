@@ -4,7 +4,7 @@ import { messenger, router } from 'bottender/router';
 import { DEFAULT_MESSENGER_LOCALE } from 'common/config/constants';
 import { GET_STARTED_PAYLOAD } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { MessengerBotController } from 'modules/bots/messenger-bot/messenger-bot.controller';
-import { UserService } from 'modules/user/user.service';
+import { BotUserService } from 'modules/bot-user/user.service';
 import { ResponseService } from './response.service';
 
 @Injectable()
@@ -12,7 +12,7 @@ export class MessengerBotService {
   constructor(
     private readonly controller: MessengerBotController,
     private readonly responseService: ResponseService,
-    private readonly userService: UserService,
+    private readonly userService: BotUserService,
   ) {}
 
   private asyncWrap = (fn) => async (context: MessengerContext) => {

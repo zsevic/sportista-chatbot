@@ -4,7 +4,7 @@ import { FIRST_PAGE } from 'common/config/constants';
 import { PaginatedResponse } from 'common/dtos';
 import { LocationService } from 'modules/location/location.service';
 import { ParticipationRepository } from 'modules/participation/participation.repository';
-import { UserRepository } from 'modules/user/user.repository';
+import { BotUserRepository } from 'modules/bot-user/user.repository';
 import { Activity } from './activity.dto';
 import { ActivityRepository } from './activity.repository';
 import { PriceRepository } from './price/price.repository';
@@ -16,7 +16,7 @@ export class ActivityService {
     private readonly locationService: LocationService,
     private readonly participationRepository: ParticipationRepository,
     private readonly priceRepository: PriceRepository,
-    private readonly userRepository: UserRepository,
+    private readonly userRepository: BotUserRepository,
   ) {}
 
   addRemainingVacancies = async (

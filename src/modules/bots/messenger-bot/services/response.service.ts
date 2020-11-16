@@ -133,7 +133,7 @@ import {
 } from 'modules/bots/messenger-bot/messenger-bot.utils';
 import { I18N_OPTIONS_FACTORY } from 'modules/external/i18n';
 import { Participation } from 'modules/participation/participation.dto';
-import { User } from 'modules/user/user.dto';
+import { BotUser } from 'modules/bot-user/user.dto';
 
 @Injectable()
 export class ResponseService {
@@ -573,7 +573,7 @@ export class ResponseService {
     };
   }
 
-  private getElementFromUser(user: User) {
+  private getElementFromUser(user: BotUser) {
     return {
       title: `${user.first_name} ${user.last_name}`,
       image_url: user.image_url,
@@ -684,7 +684,7 @@ export class ResponseService {
       { COUNT: participantCount },
     );
 
-  getOrganizerResponse = (organizer: User) => {
+  getOrganizerResponse = (organizer: BotUser) => {
     const elements = [this.getElementFromUser(organizer)];
 
     const response = [{ cards: elements }];
@@ -692,14 +692,14 @@ export class ResponseService {
     return response;
   };
 
-  getParticipantListResponse = (participantList: User[], locale: string) => {
+  getParticipantListResponse = (participantList: BotUser[], locale: string) => {
     const noParticipantsMessage = this.i18nService.__({
       phrase: ACTIVITY_NO_PARTICIPANTS,
       locale,
     });
     if (participantList.length === 0) return noParticipantsMessage;
 
-    const elements = participantList.map((participant: User) =>
+    const elements = participantList.map((participant: BotUser) =>
       this.getElementFromUser(participant),
     );
     const response = [{ cards: elements }];
@@ -779,7 +779,7 @@ export class ResponseService {
 
   getReceivedParticipationRequestListResponse = (
     requestList: PaginatedResponse<Participation>,
-    options: User,
+    options: BotUser,
   ) => {
     const {
       participation: {
@@ -800,7 +800,7 @@ export class ResponseService {
 
   getSentParticipationRequestListResponse = (
     activityListData: PaginatedResponse<Activity>,
-    options: User,
+    options: BotUser,
   ) => {
     const {
       participation: {

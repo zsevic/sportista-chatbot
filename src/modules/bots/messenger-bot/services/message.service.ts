@@ -6,7 +6,7 @@ import {
   notificationSubscriptionStates,
   states,
 } from 'modules/bots/messenger-bot/messenger-bot.states';
-import { UserService } from 'modules/user/user.service';
+import { BotUserService } from 'modules/bot-user/user.service';
 import { ResolverService } from './resolver.service';
 import { ResponseService } from './response.service';
 import { ValidationService } from './validation.service';
@@ -16,7 +16,7 @@ export class MessageService {
   constructor(
     private readonly responseService: ResponseService,
     private readonly resolverService: ResolverService,
-    private readonly userService: UserService,
+    private readonly userService: BotUserService,
     private readonly validationService: ValidationService,
   ) {}
 

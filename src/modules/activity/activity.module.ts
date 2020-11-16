@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LocationModule } from 'modules/location/location.module';
 import { ParticipationRepository } from 'modules/participation/participation.repository';
-import { UserRepository } from 'modules/user/user.repository';
+import { BotUserRepository } from 'modules/bot-user/user.repository';
 import { ActivityRepository } from './activity.repository';
 import { ActivityService } from './activity.service';
 import { PriceRepository } from './price/price.repository';
@@ -13,7 +13,7 @@ import { PriceRepository } from './price/price.repository';
       ActivityRepository,
       ParticipationRepository,
       PriceRepository,
-      UserRepository,
+      BotUserRepository,
     ]),
     LocationModule,
   ],

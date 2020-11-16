@@ -4,11 +4,11 @@ import { UserLocation } from 'common/dtos';
 import { ActivityEntity } from 'modules/activity/activity.entity';
 import { ParticipationEntity } from 'modules/participation/participation.entity';
 import { PARTICIPATION_STATUS } from 'modules/participation/participation.enums';
-import { User } from './user.dto';
-import { UserEntity } from './user.entity';
+import { BotUser } from './user.dto';
+import { BotUserEntity } from './user.entity';
 
-@EntityRepository(UserEntity)
-export class UserRepository extends Repository<UserEntity> {
+@EntityRepository(BotUserEntity)
+export class BotUserRepository extends Repository<BotUserEntity> {
   async getLocation(userId: number): Promise<UserLocation> {
     const { location } = await this.findOne(userId, {
       relations: ['location'],
@@ -24,9 +24,7 @@ export class UserRepository extends Repository<UserEntity> {
     return userLocation;
   }
 
-  async getParticipantListByActivity(
-    activity_id: string,
-  ): Promise<UserEntity[]> {
+  async getParticipantListByActivity(activity_id: string): Promise<BotUser[]> {
     return this.createQueryBuilder('user')
       .leftJoin('user.participations', 'participations')
       .where((queryBuilder: SelectQueryBuilder<ActivityEntity>) => {
@@ -61,21 +59,21 @@ export class UserRepository extends Repository<UserEntity> {
       )
       .getMany();
 
-  async getUser(id: number): Promise<UserEntity> {
+  async getUser(id: number): Promise<BotUser> {
     const user = await this.findOne(id);
     if (!user) throw new Error("User doesn't exist");
 
     return user;
   }
 
-  async registerUser(userDto: User): Promise<UserEntity> {
+  async registerUser(userDto: BotUser): Promise<BotUser> {
     const user = await this.findOne(userDto.id);
     if (!user) return this.save(userDto);
 
     return user;
   }
 
-  async subscribeToNotifications(userId: number): Promise<UserEntity> {
+  async subscribeToNotifications(userId: number): Promise<BotUser> {
     const user = await this.findOne(userId);
     if (!user) throw new Error("User doesn't exist");
 
@@ -85,7 +83,7 @@ export class UserRepository extends Repository<UserEntity> {
     });
   }
 
-  async unsubscribeToNotifications(userId: number): Promise<UserEntity> {
+  async unsubscribeToNotifications(userId: number): Promise<BotUser> {
     const user = await this.findOne(userId);
     if (!user) throw new Error("User doesn't exist");
 
@@ -95,10 +93,7 @@ export class UserRepository extends Repository<UserEntity> {
     });
   }
 
-  async upsertLocation(
-    userId: number,
-    location_id: string,
-  ): Promise<UserEntity> {
+  async upsertLocation(userId: number, location_id: string): Promise<BotUser> {
     const user = await this.findOne(userId);
     if (!user) throw new Error("User doesn't exist");
 
@@ -110,7 +105,7 @@ export class UserRepository extends Repository<UserEntity> {
     });
   }
 
-  async upsertTimezone(userId: number, timezone: string): Promise<UserEntity> {
+  async upsertTimezone(userId: number, timezone: string): Promise<BotUser> {
     const user = await this.findOne(userId);
     if (!user) throw new Error("User doesn't exist");
 
@@ -144,7 +139,7 @@ export class UserRepository extends Repository<UserEntity> {
     return true;
   }
 
-  async validateUser(id: number): Promise<User> {
+  async validateUser(id: number): Promise<BotUser> {
     const user = await this.findOne(id);
     if (!user) return;
 

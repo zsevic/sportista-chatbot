@@ -7,14 +7,14 @@ import {
 } from 'modules/bots/messenger-bot/messenger-bot.states';
 import { ResponseService } from 'modules/bots/messenger-bot/services/response.service';
 import { PINNED_LOCATION } from 'modules/location/location.constants';
-import { UserService } from 'modules/user/user.service';
+import { BotUserService } from 'modules/bot-user/user.service';
 
 @Injectable()
 export class LocationService {
   constructor(
     private readonly activityService: ActivityService,
     private readonly responseService: ResponseService,
-    private readonly userService: UserService,
+    private readonly userService: BotUserService,
   ) {}
 
   handleLocation = async (context: MessengerContext): Promise<any> => {

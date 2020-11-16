@@ -5,7 +5,7 @@ import { ActivityModule } from 'modules/activity/activity.module';
 import { FeedbackModule } from 'modules/feedback/feedback.module';
 import { NotificationModule } from 'modules/notification/notification.module';
 import { ParticipationModule } from 'modules/participation/participation.module';
-import { UserModule } from 'modules/user/user.module';
+import { BotUserModule } from 'modules/bot-user/user.module';
 import { MessengerBotController } from './messenger-bot.controller';
 import {
   LocationService,
@@ -26,7 +26,7 @@ import {
     FeedbackModule,
     NotificationModule,
     ParticipationModule,
-    UserModule,
+    BotUserModule,
   ],
   controllers: [MessengerBotController],
   providers: [

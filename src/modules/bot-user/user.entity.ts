@@ -13,8 +13,8 @@ import { ActivityEntity } from 'modules/activity/activity.entity';
 import { FeedbackEntity } from 'modules/feedback/feedback.entity';
 import { LocationEntity } from 'modules/location/location.entity';
 
-@Entity('user')
-export class UserEntity {
+@Entity('bot_user')
+export class BotUserEntity {
   @PrimaryColumn({
     type: 'bigint',
   })

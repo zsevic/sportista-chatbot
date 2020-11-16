@@ -5,7 +5,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { UserEntity } from 'modules/user/user.entity';
+import { BotUserEntity } from 'modules/bot-user/user.entity';
 
 @Entity('feedback')
 export class FeedbackEntity {
@@ -20,7 +20,7 @@ export class FeedbackEntity {
   @Column()
   text: string;
 
-  @ManyToOne(() => UserEntity, (userEntity) => userEntity.feedbacks)
+  @ManyToOne(() => BotUserEntity, (botUserEntity) => botUserEntity.feedbacks)
   @JoinColumn({ name: 'user_id' })
-  user: UserEntity;
+  user: BotUserEntity;
 }

@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { Activity } from 'modules/activity/activity.dto';
-import { User } from 'modules/user/user.dto';
+import { BotUser } from 'modules/bot-user/user.dto';
 import { PARTICIPATION_STATUS } from './participation.enums';
 
 export class Participation {
@@ -15,6 +15,6 @@ export class Participation {
   @Type(() => Activity)
   activity?: Activity;
 
-  @Type(() => User)
-  participant?: User;
+  @Type(() => BotUser)
+  participant?: BotUser;
 }
