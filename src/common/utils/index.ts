@@ -1,3 +1,4 @@
+import { MessengerContext } from 'bottender';
 import { utcToZonedTime } from 'date-fns-tz';
 import {
   DEFAULT_MESSENGER_LOCALE,
@@ -5,6 +6,7 @@ import {
   PAGE_SIZE,
 } from 'common/config/constants';
 import { DatetimeOptions } from 'common/types';
+import { BotUserOptions } from 'modules/bot-user/user.types';
 
 export const formatDatetime = (
   datetime: string,
@@ -27,6 +29,18 @@ export const formatDatetime = (
 };
 
 export const getSkip = (page: number): number => (page - 1) * PAGE_SIZE;
+
+export const getUserOptions = (context: MessengerContext): BotUserOptions => {
+  const {
+    platform,
+    _session: {
+      user: { id: userId },
+    },
+  } = context;
+  return {
+    [`${platform}_id`]: userId,
+  };
+};
 
 export const isEnv = (environment: string): boolean =>
   process.env.NODE_ENV === environment;

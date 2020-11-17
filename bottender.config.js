@@ -9,10 +9,14 @@ const redisConfig = process.env.REDIS_URL && redisUrlParse(process.env.REDIS_URL
 
 module.exports = {
   session: {
-    driver: isEnv('production') ? 'redis' : 'memory',
+    driver: isEnv('production') ? 'redis' : 'mongo',
     stores: {
       memory: {
         maxSize: 500,
+      },
+      mongo: {
+        url: 'mongodb://localhost:27017',
+        collectionName: 'sessions',
       },
       redis: redisConfig ? {
         db: redisConfig.database,

@@ -23,11 +23,11 @@ import {
   getImageUrl,
   getLocationUrl,
 } from 'modules/bots/messenger-bot/messenger-bot.utils';
+import { BotUser } from 'modules/bot-user/user.dto';
+import { BotUserService } from 'modules/bot-user/user.service';
 import { I18N_OPTIONS_FACTORY } from 'modules/external/i18n';
 import { Participation } from 'modules/participation/participation.dto';
 import { ParticipationRepository } from 'modules/participation/participation.repository';
-import { BotUser } from 'modules/bot-user/user.dto';
-import { BotUserService } from 'modules/bot-user/user.service';
 
 const client = getClient('messenger');
 
@@ -46,7 +46,7 @@ export class NotificationService {
     const {
       activity: {
         datetime,
-        organizer: { id: organizerId, locale, timezone },
+        organizer: { messenger_id: organizerId, locale, timezone },
         type,
       },
       participant: { first_name, gender, image_url: imageUrl, last_name },
@@ -97,7 +97,7 @@ export class NotificationService {
       },
     ];
 
-    return client.sendGenericTemplate(organizerId.toString(), message);
+    return client.sendGenericTemplate(organizerId, message);
   };
 
   notifyOrganizerAboutParticipantCancelation = async (
@@ -106,7 +106,7 @@ export class NotificationService {
     const {
       activity: {
         datetime,
-        organizer: { id: organizerId, locale, timezone },
+        organizer: { messenger_id: organizerId, locale, timezone },
         type,
       },
       participant: { first_name, gender, last_name },
@@ -130,7 +130,7 @@ export class NotificationService {
         datetime: formattedDatetime,
       },
     );
-    return client.sendText(organizerId.toString(), textMessage);
+    return client.sendText(organizerId, textMessage);
   };
 
   notifyParticipantAboutParticipationUpdate = async (
@@ -139,7 +139,7 @@ export class NotificationService {
   ): Promise<MessengerTypes.SendMessageSuccessResponse> => {
     const {
       activity: { datetime, type },
-      participant: { id: participantId, locale, timezone },
+      participant: { messenger_id: participantId, locale, timezone },
     } = await this.participationRepository.findOne(participationId, {
       relations: ['participant', 'activity'],
     });
@@ -155,7 +155,7 @@ export class NotificationService {
       },
     );
 
-    return client.sendText(participantId.toString(), textMessage);
+    return client.sendText(participantId, textMessage);
   };
 
   notifyParticipantsAboutCanceledActivity = async (
@@ -165,7 +165,7 @@ export class NotificationService {
       (participation: Participation) => {
         const {
           activity: { datetime, type },
-          participant: { locale, timezone },
+          participant: { messenger_id: participantId, locale, timezone },
         } = participation;
         const formattedDatetime = formatDatetime(datetime, {
           locale,
@@ -175,10 +175,7 @@ export class NotificationService {
           { phrase: BOT_CANCEL_ACTIVITY_NOTIFICATION, locale },
           { type, datetime: formattedDatetime },
         );
-        return client.sendText(
-          participation.participant_id.toString(),
-          textMessage,
-        );
+        return client.sendText(participantId, textMessage);
       },
     );
 
@@ -198,7 +195,7 @@ export class NotificationService {
         timezone: user.timezone,
       });
 
-      return client.sendGenericTemplate(user.id.toString(), response);
+      return client.sendGenericTemplate(user.messenger_id.toString(), response);
     });
 
     return Promise.all(sendNewActivity);

@@ -5,7 +5,7 @@
     "🏓": "stoni tenis",
     "🎾": "tenis",
     "ACTIVITY_APPLICATION_FAILURE": "Prijava nije uspela",
-    "ACTIVITY_APPLICATION_SUCCESS": "Uspešno si se {GENDER, select, male {prijavio} female {prijavila} other {prijavio}}",
+    "ACTIVITY_APPLICATION_SUCCESS": "Prijava je poslata",
     "ACTIVITY_OPTIONS": "Izaberi neke od opcija",
     "ADD_REMAINING_VACANCIES": "Povećaj za 1",
     "APPLY_FOR_ACTIVITY": "Prijavi se",

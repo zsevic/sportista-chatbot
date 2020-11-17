@@ -4,7 +4,9 @@ import { FIRST_PAGE } from 'common/config/constants';
 import { PaginatedResponse } from 'common/dtos';
 import { LocationService } from 'modules/location/location.service';
 import { ParticipationRepository } from 'modules/participation/participation.repository';
+import { BotUser } from 'modules/bot-user/user.dto';
 import { BotUserRepository } from 'modules/bot-user/user.repository';
+import { BotUserOptions } from 'modules/bot-user/user.types';
 import { Activity } from './activity.dto';
 import { ActivityRepository } from './activity.repository';
 import { PriceRepository } from './price/price.repository';
@@ -21,13 +23,16 @@ export class ActivityService {
 
   addRemainingVacancies = async (
     activityId: string,
-    organizerId: number,
+    organizerOptions: BotUserOptions,
   ): Promise<Activity> =>
-    this.activityRepository.addRemainingVacancies(activityId, organizerId);
+    this.activityRepository.addRemainingVacancies(activityId, organizerOptions);
 
   @Transactional()
-  async cancelActivity(activityId: string, organizerId: number): Promise<void> {
-    await this.activityRepository.cancelActivity(activityId, organizerId);
+  async cancelActivity(
+    activityId: string,
+    organizerOptions: BotUserOptions,
+  ): Promise<void> {
+    await this.activityRepository.cancelActivity(activityId, organizerOptions);
     await this.participationRepository.removeParticipationList(activityId);
   }
 
@@ -55,56 +60,69 @@ export class ActivityService {
   }
 
   getCreatedActivities = async (
-    organizerId: number,
+    organizerOptions: BotUserOptions,
     page = FIRST_PAGE,
   ): Promise<PaginatedResponse<Activity>> =>
-    this.activityRepository.getCreatedActivities(organizerId, page);
+    this.activityRepository.getCreatedActivities(organizerOptions, page);
 
   getJoinedActivities = async (
-    participantId: number,
+    userId: string,
     page = FIRST_PAGE,
   ): Promise<PaginatedResponse<Activity>> =>
-    this.activityRepository.getJoinedActivities(participantId, page);
+    this.activityRepository.getJoinedActivities(userId, page);
 
   @Transactional()
   async getUpcomingActivities(
-    userId: number,
+    userOptions: BotUserOptions,
     page = FIRST_PAGE,
   ): Promise<PaginatedResponse<Activity>> {
-    const userLocation = await this.userRepository.getLocation(userId);
+    const userLocation = await this.userRepository.getLocation(userOptions);
     return this.activityRepository.getUpcomingActivities(userLocation, page);
   }
 
   @Transactional()
-  async applyForActivity(activityId: string, userId: number) {
+  async applyForActivity(activityId: string, userOptions: BotUserOptions) {
     const { location } = await this.activityRepository.findOne(activityId, {
       relations: ['location'],
     });
-    const isValidLocation = await this.userRepository.validateActivityLocation(
-      userId,
+    const user = await this.userRepository.validateActivityLocation(
+      userOptions,
       location.latitude,
       location.longitude,
     );
-    if (!isValidLocation) throw new Error('Location is not valid');
-    return this.participationRepository.createParticipation(activityId, userId);
+    if (!user) throw new Error('Location is not valid');
+    return this.participationRepository.createParticipation(
+      activityId,
+      user.id,
+    );
   }
 
   resetRemainingVacancies = async (
     activityId: string,
-    organizerId: number,
+    organizerOptions: BotUserOptions,
   ): Promise<Activity> =>
-    this.activityRepository.resetRemainingVacancies(activityId, organizerId);
+    this.activityRepository.resetRemainingVacancies(
+      activityId,
+      organizerOptions,
+    );
 
   subtractRemainingVacancies = async (
     activityId: string,
-    organizerId: number,
+    organizerOptions: BotUserOptions,
   ): Promise<Activity> =>
-    this.activityRepository.subtractRemainingVacancies(activityId, organizerId);
+    this.activityRepository.subtractRemainingVacancies(
+      activityId,
+      organizerOptions,
+    );
 
   validateLocation = async (
-    userId: number,
+    userOptions: BotUserOptions,
     latitude: number,
     longitude: number,
-  ): Promise<boolean> =>
-    this.userRepository.validateActivityLocation(userId, latitude, longitude);
+  ): Promise<BotUser> =>
+    this.userRepository.validateActivityLocation(
+      userOptions,
+      latitude,
+      longitude,
+    );
 }

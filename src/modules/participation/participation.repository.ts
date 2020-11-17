@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { PAGE_SIZE } from 'common/config/constants';
 import { getSkip } from 'common/utils';
+import { BotUserOptions } from 'modules/bot-user/user.types';
 import { EntityRepository, Repository } from 'typeorm';
 import { ParticipationEntity } from './participation.entity';
 import { PARTICIPATION_STATUS } from './participation.enums';
@@ -9,15 +10,21 @@ import { PARTICIPATION_STATUS } from './participation.enums';
 export class ParticipationRepository extends Repository<ParticipationEntity> {
   private readonly logger = new Logger(ParticipationRepository.name);
 
-  acceptParticipation = async (id: string, organizer_id: number) => {
+  acceptParticipation = async (
+    id: string,
+    organizerOptions: BotUserOptions,
+  ) => {
+    const [platformIdKey] = Object.keys(organizerOptions);
     const participation = await this.createQueryBuilder('participation')
       .leftJoinAndSelect('participation.activity', 'activity')
+      .leftJoinAndSelect('activity.organizer', 'organizer')
       .where('participation.id = CAST(:id AS uuid)', {
         id,
       })
-      .andWhere('activity.organizer_id = CAST(:organizer_id AS bigint)', {
-        organizer_id,
-      })
+      .andWhere(
+        `organizer.${platformIdKey} = :${platformIdKey}`,
+        organizerOptions,
+      )
       .andWhere('participation.status = :status', {
         status: PARTICIPATION_STATUS.PENDING,
       })
@@ -31,14 +38,19 @@ export class ParticipationRepository extends Repository<ParticipationEntity> {
     });
   };
 
-  cancelParticipation = async (activity_id: string, participant_id: number) => {
+  cancelParticipation = async (
+    activityId: string,
+    participantOptions: BotUserOptions,
+  ) => {
+    const [platformIdKey] = Object.keys(participantOptions);
     const participation = await this.createQueryBuilder('participation')
       .leftJoin('participation.activity', 'activity')
-      .leftJoin('participation.participant', 'participant')
-      .where('activity.id = CAST(:activity_id AS uuid)', { activity_id })
-      .andWhere('participant.id = CAST(:participant_id AS bigint)', {
-        participant_id,
-      })
+      .leftJoinAndSelect('participation.participant', 'participant')
+      .where('activity.id = CAST(:activityId AS uuid)', { activityId })
+      .andWhere(
+        `participant.${platformIdKey} = :${platformIdKey}`,
+        participantOptions,
+      )
       .andWhere('activity.datetime > :now', {
         now: new Date().toUTCString(),
       })
@@ -55,39 +67,42 @@ export class ParticipationRepository extends Repository<ParticipationEntity> {
   };
 
   async createParticipation(
-    activity_id: string,
-    participant_id: number,
+    activityId: string,
+    participantId: string,
   ): Promise<ParticipationEntity> {
     const participation = await this.createQueryBuilder('participation')
       .leftJoinAndSelect('participation.activity', 'activity')
       .leftJoin('participation.participant', 'participant')
       .leftJoinAndSelect('activity.location', 'location')
-      .where('participation.activity_id = CAST(:activity_id AS uuid)', {
-        activity_id,
+      .where('participation.activity_id = CAST(:activityId AS uuid)', {
+        activityId,
       })
-      .andWhere(
-        'participation.participant_id = CAST(:participant_id AS bigint)',
-        { participant_id },
-      )
+      .andWhere('participation.participant_id = CAST(:participantId AS uuid)', {
+        participantId,
+      })
       .withDeleted()
       .getOne();
 
     if (participation) {
       this.logger.log(
-        `User ${participant_id} already applied for activity ${activity_id}`,
+        `User ${participantId} already applied for activity ${activityId}`,
       );
       throw new Error('User already applied for the activity');
     }
 
     return this.save({
-      activity_id,
-      participant_id,
+      activity_id: activityId,
+      participant_id: participantId,
       status: PARTICIPATION_STATUS.PENDING,
     });
   }
 
-  getReceivedRequestList = async (userId: number, page: number) => {
+  getReceivedRequestList = async (
+    organizerOptions: BotUserOptions,
+    page: number,
+  ) => {
     const skip = getSkip(page);
+    const [platformIdKey] = Object.keys(organizerOptions);
 
     return this.createQueryBuilder('participation')
       .leftJoinAndSelect('participation.participant', 'participant')
@@ -95,9 +110,7 @@ export class ParticipationRepository extends Repository<ParticipationEntity> {
       .leftJoinAndSelect('activity.location', 'location')
       .leftJoinAndSelect('activity.organizer', 'organizer')
       .leftJoinAndSelect('activity.price', 'price')
-      .where('activity.organizer_id = CAST(:organizerId AS bigint)', {
-        organizerId: userId,
-      })
+      .where(`organizer.${platformIdKey} = :${platformIdKey}`, organizerOptions)
       .andWhere('participation.status = :status', {
         status: PARTICIPATION_STATUS.PENDING,
       })
@@ -106,31 +119,45 @@ export class ParticipationRepository extends Repository<ParticipationEntity> {
       .getManyAndCount();
   };
 
-  getSentRequestList = async (userId: number, page: number) => {
+  getSentRequestList = async (
+    participantOptions: BotUserOptions,
+    page: number,
+  ) => {
     const skip = getSkip(page);
+    const [platformIdKey] = Object.keys(participantOptions);
 
-    return this.findAndCount({
-      where: { participant_id: userId, status: PARTICIPATION_STATUS.PENDING },
-      relations: [
-        'activity',
-        'participant',
-        'activity.location',
-        'activity.price',
-      ],
-      skip,
-      take: PAGE_SIZE,
-    });
+    return this.createQueryBuilder('participation')
+      .leftJoinAndSelect('participation.participant', 'participant')
+      .leftJoinAndSelect('participation.activity', 'activity')
+      .leftJoinAndSelect('activity.location', 'location')
+      .leftJoinAndSelect('activity.price', 'price')
+      .where(
+        `participant.${platformIdKey} = :${platformIdKey}`,
+        participantOptions,
+      )
+      .where('participation.status = :status', {
+        status: PARTICIPATION_STATUS.PENDING,
+      })
+      .skip(skip)
+      .take(PAGE_SIZE)
+      .getManyAndCount();
   };
 
-  rejectParticipation = async (id: string, organizer_id: number) => {
+  rejectParticipation = async (
+    id: string,
+    organizerOptions: BotUserOptions,
+  ) => {
+    const [platformIdKey] = Object.keys(organizerOptions);
     const participation = await this.createQueryBuilder('participation')
       .leftJoinAndSelect('participation.activity', 'activity')
+      .leftJoinAndSelect('activity.organizer', 'organizer')
       .where('participation.id = CAST(:id AS uuid)', {
         id,
       })
-      .andWhere('activity.organizer_id = CAST(:organizer_id AS bigint)', {
-        organizer_id,
-      })
+      .andWhere(
+        `organizer.${platformIdKey} = :${platformIdKey}`,
+        organizerOptions,
+      )
       .andWhere('participation.status = :status', {
         status: PARTICIPATION_STATUS.PENDING,
       })

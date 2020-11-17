@@ -1,5 +1,7 @@
 export class BotUser {
-  id: number;
+  id?: string;
+
+  messenger_id?: string;
 
   location_id?: string;
 

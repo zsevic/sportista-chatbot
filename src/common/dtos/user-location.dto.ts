@@ -3,5 +3,5 @@ export interface UserLocation {
 
   longitude: number;
 
-  userId: number;
+  userId: string;
 }

@@ -16,7 +16,7 @@ export class CreateFeedback1603221612726 implements MigrationInterface {
           },
           {
             name: 'user_id',
-            type: 'bigint',
+            type: 'uuid',
           },
           {
             name: 'text',

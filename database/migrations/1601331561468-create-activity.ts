@@ -20,7 +20,7 @@ export class CreateActivity1601331561468 implements MigrationInterface {
           },
           {
             name: 'organizer_id',
-            type: 'bigint',
+            type: 'uuid',
           },
           {
             name: 'price_id',

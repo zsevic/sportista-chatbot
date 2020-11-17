@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { MessengerContext } from 'bottender';
 import { messenger, router } from 'bottender/router';
 import { DEFAULT_MESSENGER_LOCALE } from 'common/config/constants';
+import { getUserOptions } from 'common/utils';
 import { GET_STARTED_PAYLOAD } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { MessengerBotController } from 'modules/bots/messenger-bot/messenger-bot.controller';
 import { BotUserService } from 'modules/bot-user/user.service';
@@ -16,9 +17,13 @@ export class MessengerBotService {
   ) {}
 
   private asyncWrap = (fn) => async (context: MessengerContext) => {
-    const user = await this.userService.validateUser(context._session.user.id);
+    const {
+      event: { postback },
+    } = context;
+    const userOptions = getUserOptions(context);
+    const user = await this.userService.validateUser(userOptions);
 
-    if (!user && context.event.postback?.payload !== GET_STARTED_PAYLOAD) {
+    if (!user && postback?.payload !== GET_STARTED_PAYLOAD) {
       const {
         locale = DEFAULT_MESSENGER_LOCALE,
       } = await context.getUserProfile({ fields: ['locale'] });

@@ -20,7 +20,7 @@ export class CreateParticipation1601332480306 implements MigrationInterface {
           },
           {
             name: 'participant_id',
-            type: 'bigint',
+            type: 'uuid',
           },
           {
             name: 'status',

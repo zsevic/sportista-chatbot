@@ -6,7 +6,7 @@ import { Price } from './price/price.dto';
 export class Activity {
   id?: string;
 
-  organizer_id: number;
+  organizer_id: string;
 
   datetime: string;
 
