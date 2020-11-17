@@ -24,10 +24,8 @@ export class ParticipationEntity {
   })
   activity_id: string;
 
-  @Column({
-    type: 'bigint',
-  })
-  participant_id: number;
+  @Column()
+  participant_id: string;
 
   @Column()
   status: PARTICIPATION_STATUS;

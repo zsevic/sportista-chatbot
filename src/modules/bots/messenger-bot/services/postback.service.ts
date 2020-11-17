@@ -1,6 +1,7 @@
 import { parse } from 'querystring';
 import { MessengerContext } from 'bottender';
 import { Injectable } from '@nestjs/common';
+import { getUserOptions } from 'common/utils';
 import {
   ACCEPT_PARTICIPATION_TYPE,
   ACTIVITY_OPTIONS_TYPE,
@@ -35,12 +36,8 @@ export class PostbackService {
   ) {}
 
   handlePostback = async (context: MessengerContext) => {
-    const {
-      _session: {
-        user: { id: userId },
-      },
-    } = context;
-    const { gender, locale } = await this.userService.getUser(userId);
+    const userOptions = getUserOptions(context);
+    const { gender, locale } = await this.userService.getUser(userOptions);
     const {
       activity_id,
       participation_id,
@@ -57,7 +54,7 @@ export class PostbackService {
       case ACCEPT_PARTICIPATION_TYPE:
         return this.resolverService.acceptParticipation(
           participation_id.toString(),
-          userId,
+          userOptions,
           locale,
         );
       case ACTIVITY_OPTIONS_TYPE: {
@@ -69,14 +66,14 @@ export class PostbackService {
       case ADD_REMAINING_VACANCIES_TYPE: {
         return this.resolverService.addRemainingVacancies(
           activity_id.toString(),
-          userId,
+          userOptions,
           locale,
         );
       }
       case APPLY_FOR_ACTIVITY_TYPE: {
         return this.resolverService.applyForActivity(
           activity_id.toString(),
-          userId,
+          userOptions,
           { gender, locale },
         );
       }
@@ -84,14 +81,14 @@ export class PostbackService {
         return this.resolverService.cancelParticipation(
           type,
           activity_id.toString(),
-          userId,
+          userOptions,
           { gender, locale },
         );
       }
       case CANCEL_ACTIVITY_TYPE: {
         return this.resolverService.cancelActivity(
           activity_id.toString(),
-          userId,
+          userOptions,
           locale,
         );
       }
@@ -99,18 +96,18 @@ export class PostbackService {
         return this.resolverService.cancelParticipation(
           type,
           activity_id.toString(),
-          userId,
+          userOptions,
           { gender, locale },
         );
       }
       case CREATED_ACTIVITIES_TYPE: {
-        return this.resolverService.getCreatedActivities(userId, +page);
+        return this.resolverService.getCreatedActivities(userOptions, +page);
       }
       case JOINED_ACTIVITIES_TYPE: {
-        return this.resolverService.getJoinedActivities(userId, +page);
+        return this.resolverService.getJoinedActivities(userOptions, +page);
       }
       case ORGANIZER_TYPE: {
-        return this.resolverService.getOrganizer(+user_id);
+        return this.resolverService.getOrganizer(user_id.toString());
       }
       case PARTICIPANT_LIST_TYPE: {
         return this.resolverService.getParticipantList(
@@ -120,31 +117,31 @@ export class PostbackService {
       }
       case RECEIVED_PARTICIPATION_REQUESTS_TYPE:
         return this.resolverService.getReceivedParticipationRequestList(
-          userId,
+          userOptions,
           +page,
         );
       case REJECT_PARTICIPATION_TYPE:
         return this.resolverService.rejectParticipation(
           participation_id.toString(),
-          userId,
+          userOptions,
           locale,
         );
       case RESET_REMAINING_VACANCIES_TYPE: {
         return this.resolverService.resetRemainingVacancies(
           activity_id.toString(),
-          userId,
+          userOptions,
           locale,
         );
       }
       case SENT_PARTICIPATION_REQUESTS_TYPE:
         return this.resolverService.getSentParticipationRequestList(
-          userId,
+          userOptions,
           +page,
         );
       case SUBTRACT_REMAINING_VACANCIES_TYPE: {
         return this.resolverService.subtractRemainingVacancies(
           activity_id.toString(),
-          userId,
+          userOptions,
           locale,
         );
       }

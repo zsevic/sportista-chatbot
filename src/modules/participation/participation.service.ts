@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { In } from 'typeorm';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { ActivityRepository } from 'modules/activity/activity.repository';
+import { BotUserOptions } from 'modules/bot-user/user.types';
+import { PARTICIPATION_STATUS } from './participation.enums';
 import { ParticipationRepository } from './participation.repository';
 
 @Injectable()
@@ -13,23 +16,26 @@ export class ParticipationService {
   @Transactional()
   async acceptParticipation(
     participationId: string,
-    organizerId: number,
+    organizerOptions: BotUserOptions,
   ): Promise<void> {
     const participation = await this.participationRepository.acceptParticipation(
       participationId,
-      organizerId,
+      organizerOptions,
     );
     await this.activityRepository.subtractRemainingVacancies(
       participation.activity_id,
-      organizerId,
+      organizerOptions,
     );
   }
 
   @Transactional()
-  async cancelAcceptedParticipation(activityId: string, participantId: number) {
+  async cancelAcceptedParticipation(
+    activityId: string,
+    participantOptions: BotUserOptions,
+  ) {
     const participation = await this.participationRepository.cancelParticipation(
       activityId,
-      participantId,
+      participantOptions,
     );
     await this.activityRepository.addRemainingVacancies(activityId);
 
@@ -38,25 +44,43 @@ export class ParticipationService {
 
   cancelPendingParticipation = async (
     activityId: string,
-    participantId: number,
+    participantOptions: BotUserOptions,
   ) =>
-    this.participationRepository.cancelParticipation(activityId, participantId);
+    this.participationRepository.cancelParticipation(
+      activityId,
+      participantOptions,
+    );
 
   getParticipationListAndCount = async (activityId: string) =>
     this.participationRepository.findAndCount({
-      where: { activity_id: activityId },
+      where: {
+        activity_id: activityId,
+        status: In([
+          PARTICIPATION_STATUS.ACCEPTED,
+          PARTICIPATION_STATUS.PENDING,
+        ]),
+      },
       relations: ['activity', 'participant'],
     });
 
-  getReceivedRequestList = async (userId: number, page: number) =>
-    this.participationRepository.getReceivedRequestList(userId, page);
+  getReceivedRequestList = async (
+    organizerOptions: BotUserOptions,
+    page: number,
+  ) =>
+    this.participationRepository.getReceivedRequestList(organizerOptions, page);
 
-  getSentRequestList = async (userId: number, page: number) =>
-    this.participationRepository.getSentRequestList(userId, page);
+  getSentRequestList = async (
+    participantOptions: BotUserOptions,
+    page: number,
+  ) =>
+    this.participationRepository.getSentRequestList(participantOptions, page);
 
-  rejectParticipation = async (participationId: string, organizerId: number) =>
+  rejectParticipation = async (
+    participationId: string,
+    organizerOptions: BotUserOptions,
+  ) =>
     this.participationRepository.rejectParticipation(
       participationId,
-      organizerId,
+      organizerOptions,
     );
 }

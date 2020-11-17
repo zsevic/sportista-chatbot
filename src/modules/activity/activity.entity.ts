@@ -26,9 +26,9 @@ export class ActivityEntity {
   location_id: string;
 
   @Column({
-    type: 'bigint',
+    type: 'uuid',
   })
-  organizer_id: number;
+  organizer_id: string;
 
   @Column({
     type: 'uuid',

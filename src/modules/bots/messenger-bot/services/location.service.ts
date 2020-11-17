@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { MessengerContext } from 'bottender';
+import { getUserOptions } from 'common/utils';
 import { ActivityService } from 'modules/activity/activity.service';
 import {
   nextStates,
@@ -19,17 +20,16 @@ export class LocationService {
 
   handleLocation = async (context: MessengerContext): Promise<any> => {
     const {
-      _session: {
-        user: { id: userId },
-      },
+      state: { current_state: currentState },
     } = context;
-    const locale = await this.userService.getLocale(userId);
+    const userOptions = getUserOptions(context);
+    const locale = await this.userService.getLocale(userOptions);
 
-    if (!context.state.current_state) {
+    if (!currentState) {
       return this.responseService.getDefaultResponse(locale);
     }
 
-    if (context.state.current_state === states.activity_location) {
+    if (currentState === states.activity_location) {
       const {
         event: {
           location: {
@@ -40,14 +40,14 @@ export class LocationService {
       } = context;
 
       const isValidLocation = await this.activityService.validateLocation(
-        userId,
+        userOptions,
         lat,
         long,
       );
       if (!isValidLocation)
         return this.responseService.getInvalidLocationResponse(locale);
 
-      const nextState = nextStates[context.state.current_state] || null;
+      const nextState = nextStates[currentState] || null;
       context.setState({
         current_state: nextState,
         activity: {

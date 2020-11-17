@@ -5,6 +5,7 @@ import { PINNED_LOCATION } from 'modules/location/location.constants';
 import { LocationService } from 'modules/location/location.service';
 import { BotUser } from './user.dto';
 import { BotUserRepository } from './user.repository';
+import { BotUserOptions } from './user.types';
 
 @Injectable()
 export class BotUserService {
@@ -13,8 +14,9 @@ export class BotUserService {
     private readonly userRepository: BotUserRepository,
   ) {}
 
-  getLocale = async (userId: number): Promise<string> => {
-    const user = await this.userRepository.findOne(userId, {
+  getLocale = async (userOptions: BotUserOptions): Promise<string> => {
+    const user = await this.userRepository.findOne({
+      where: userOptions,
       select: ['locale'],
     });
     if (!user) throw new Error("User doesn't exist");
@@ -22,8 +24,9 @@ export class BotUserService {
     return user.locale;
   };
 
-  getLocation = async (userId: number): Promise<string> => {
-    const user = await this.userRepository.findOne(userId, {
+  getLocation = async (userOptions: BotUserOptions): Promise<string> => {
+    const user = await this.userRepository.findOne({
+      where: userOptions,
       select: ['location_id'],
     });
     if (!user) return;
@@ -40,21 +43,27 @@ export class BotUserService {
   ): Promise<BotUser[]> =>
     this.userRepository.getSubscribedUsersNearby(latitude, longitude);
 
-  getUser = async (id: number): Promise<BotUser> =>
-    this.userRepository.getUser(id);
+  getUser = async (userOptions: BotUserOptions): Promise<BotUser> =>
+    this.userRepository.getUser(userOptions);
 
-  registerUser = async (user: BotUser): Promise<BotUser> =>
-    this.userRepository.registerUser(user);
+  registerUser = async (
+    userDto: BotUser,
+    userOptions: BotUserOptions,
+  ): Promise<BotUser> => this.userRepository.registerUser(userDto, userOptions);
 
-  subscribeToNotifications = async (userId: number): Promise<BotUser> =>
-    this.userRepository.subscribeToNotifications(userId);
+  subscribeToNotifications = async (
+    userOptions: BotUserOptions,
+  ): Promise<BotUser> =>
+    this.userRepository.subscribeToNotifications(userOptions);
 
-  unsubscribeToNotifications = async (userId: number): Promise<BotUser> =>
-    this.userRepository.unsubscribeToNotifications(userId);
+  unsubscribeToNotifications = async (
+    userOptions: BotUserOptions,
+  ): Promise<BotUser> =>
+    this.userRepository.unsubscribeToNotifications(userOptions);
 
   @Transactional()
   async upsertLocation(
-    userId: number,
+    userOptions: BotUserOptions,
     latitude: number,
     longitude: number,
   ): Promise<void> {
@@ -63,12 +72,12 @@ export class BotUserService {
       longitude,
       title: PINNED_LOCATION,
     });
-    await this.userRepository.upsertLocation(userId, location.id);
+    await this.userRepository.upsertLocation(userOptions, location.id);
     const timezone = geoTz(latitude, longitude);
     if (timezone.length === 0) throw new Error('Timezone is not valid');
-    await this.userRepository.upsertTimezone(userId, timezone[0]);
+    await this.userRepository.upsertTimezone(userOptions, timezone[0]);
   }
 
-  validateUser = async (id: number): Promise<BotUser> =>
-    this.userRepository.validateUser(id);
+  validateUser = async (userOptions: BotUserOptions): Promise<BotUser> =>
+    this.userRepository.validateUser(userOptions);
 }

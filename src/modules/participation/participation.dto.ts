@@ -8,7 +8,7 @@ export class Participation {
 
   activity_id: string;
 
-  participant_id: number;
+  participant_id: string;
 
   status: PARTICIPATION_STATUS;
 

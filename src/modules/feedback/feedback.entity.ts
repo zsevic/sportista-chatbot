@@ -13,9 +13,9 @@ export class FeedbackEntity {
   id: string;
 
   @Column({
-    type: 'bigint',
+    type: 'uuid',
   })
-  user_id: number;
+  user_id: string;
 
   @Column()
   text: string;

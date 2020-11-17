@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { MessengerContext, MessengerTypes } from 'bottender';
 import { FIRST_PAGE } from 'common/config/constants';
 import { PaginatedResponse } from 'common/dtos';
+import { getUserOptions } from 'common/utils';
 import { Activity } from 'modules/activity/activity.dto';
 import { ActivityService } from 'modules/activity/activity.service';
 import {
@@ -21,6 +22,7 @@ import { Participation } from 'modules/participation/participation.dto';
 import { ParticipationService } from 'modules/participation/participation.service';
 import { BotUser } from 'modules/bot-user/user.dto';
 import { BotUserService } from 'modules/bot-user/user.service';
+import { BotUserOptions } from 'modules/bot-user/user.types';
 import { ResponseService } from './response.service';
 import { ValidationService } from './validation.service';
 
@@ -46,12 +48,12 @@ export class ResolverService {
 
   acceptParticipation = async (
     participationId: string,
-    organizerId: number,
+    organizerOptions: BotUserOptions,
     locale: string,
   ): Promise<string> => {
     try {
       await this.participationService
-        .acceptParticipation(participationId, organizerId)
+        .acceptParticipation(participationId, organizerOptions)
         .then(async () =>
           this.notificationService.notifyParticipantAboutParticipationUpdate(
             participationId,
@@ -66,13 +68,13 @@ export class ResolverService {
 
   addRemainingVacancies = async (
     activityId: string,
-    organizerId: number,
+    organizerOptions: BotUserOptions,
     locale: string,
   ) => {
     try {
       const updatedActivity = await this.activityService.addRemainingVacancies(
         activityId,
-        organizerId,
+        organizerOptions,
       );
       return this.responseService.getUpdateRemainingVacanciesSuccessResponse(
         updatedActivity,
@@ -87,21 +89,23 @@ export class ResolverService {
 
   applyForActivity = async (
     activityId: string,
-    userId: number,
-    options: I18nOptions,
+    userOptions: BotUserOptions,
+    i18nOptions: I18nOptions,
   ): Promise<string | string[]> => {
     try {
       await this.activityService
-        .applyForActivity(activityId, userId)
+        .applyForActivity(activityId, userOptions)
         .then(async (participation: Participation) =>
           this.notificationService.notifyOrganizerAboutParticipantApplication(
             participation.id,
           ),
         );
-      return this.responseService.getApplyForActivitySuccessResponse(options);
+      return this.responseService.getApplyForActivitySuccessResponse(
+        i18nOptions,
+      );
     } catch {
       return this.responseService.getApplyForActivityFailureResponse(
-        options.locale,
+        i18nOptions.locale,
       );
     }
   };
@@ -109,30 +113,30 @@ export class ResolverService {
   cancelParticipation = async (
     type: string,
     activityId: string,
-    userId: number,
-    options: I18nOptions,
+    participantOptions: BotUserOptions,
+    i18nOptions: I18nOptions,
   ): Promise<string | string[]> => {
     try {
       await this.cancelParticipationFunctions[type]
-        .call(this.participationService, activityId, userId)
+        .call(this.participationService, activityId, participantOptions)
         .then(async (participation: Participation) =>
           this.notificationService.notifyOrganizerAboutParticipantCancelation(
             participation.id,
           ),
         );
       return this.responseService.getCancelParticipationSuccessResponse(
-        options,
+        i18nOptions,
       );
     } catch {
       return this.responseService.getCancelParticipationFailureResponse(
-        options.locale,
+        i18nOptions.locale,
       );
     }
   };
 
   cancelActivity = async (
     activityId: string,
-    organizerId: number,
+    organizerOptions: BotUserOptions,
     locale: string,
   ): Promise<string | string[]> => {
     try {
@@ -142,7 +146,7 @@ export class ResolverService {
       ] = await this.participationService.getParticipationListAndCount(
         activityId,
       );
-      await this.activityService.cancelActivity(activityId, organizerId);
+      await this.activityService.cancelActivity(activityId, organizerOptions);
       const response = this.responseService.getCancelActivitySuccessResponse(
         locale,
       );
@@ -162,10 +166,14 @@ export class ResolverService {
     }
   };
 
-  createActivity = async (context: MessengerContext, locale: string) => {
+  createActivity = async (
+    context: MessengerContext,
+    userId: string,
+    locale: string,
+  ) => {
     const newActivity = {
       datetime: context.state.activity.datetime,
-      organizer_id: context._session.user.id,
+      organizer_id: userId,
       location_title: context.state.activity.location_title,
       location_latitude: context.state.activity.location_latitude,
       location_longitude: context.state.activity.location_longitude,
@@ -190,25 +198,30 @@ export class ResolverService {
     context: MessengerContext,
     locale: string,
   ): Promise<string> => {
-    const feedback = {
-      user_id: context._session.user.id,
-      text: context.event.text,
-    };
-    await this.feedbackService.createFeedback(feedback);
+    const {
+      event: { text },
+    } = context;
+    const userOptions = getUserOptions(context);
+    await this.feedbackService.createFeedback(text, userOptions);
     context.resetState();
 
     return this.responseService.getCreateFeedbackResponse(locale);
   };
 
-  getAboutMeResponse = async (userId: number) => {
-    const locale = await this.userService.getLocale(userId);
+  getAboutMeResponse = async (userOptions: BotUserOptions) => {
+    const locale = await this.userService.getLocale(userOptions);
     return this.responseService.getAboutMeResponse(locale);
   };
 
-  getCreatedActivities = async (userId: number, page = FIRST_PAGE) => {
-    const { locale, timezone } = await this.userService.getUser(userId);
+  getCreatedActivities = async (
+    organizerOptions: BotUserOptions,
+    page = FIRST_PAGE,
+  ) => {
+    const { locale, timezone } = await this.userService.getUser(
+      organizerOptions,
+    );
     const activityListData = await this.activityService.getCreatedActivities(
-      userId,
+      organizerOptions,
       page,
     );
 
@@ -224,8 +237,13 @@ export class ResolverService {
   getDefaultResponse = (locale: string): MessengerTypes.TextMessage =>
     this.responseService.getDefaultResponse(locale);
 
-  getJoinedActivities = async (userId: number, page = FIRST_PAGE) => {
-    const { locale, timezone } = await this.userService.getUser(userId);
+  getJoinedActivities = async (
+    participantOptions: BotUserOptions,
+    page = FIRST_PAGE,
+  ) => {
+    const { id: userId, locale, timezone } = await this.userService.getUser(
+      participantOptions,
+    );
     const activityListData = await this.activityService.getJoinedActivities(
       userId,
       page,
@@ -240,8 +258,9 @@ export class ResolverService {
     );
   };
 
-  getOrganizer = async (id: number) => {
-    const organizer = await this.userService.getUser(id);
+  getOrganizer = async (id: string) => {
+    const options = { id };
+    const organizer = await this.userService.getUser(options);
 
     return this.responseService.getOrganizerResponse(organizer);
   };
@@ -256,15 +275,18 @@ export class ResolverService {
   };
 
   getReceivedParticipationRequestList = async (
-    userId: number,
+    organizerOptions: BotUserOptions,
     page = FIRST_PAGE,
   ) => {
-    const userData = await this.userService.getUser(userId);
+    const userData = await this.userService.getUser(organizerOptions);
 
     const [
       requestList,
       total,
-    ] = await this.participationService.getReceivedRequestList(userId, page);
+    ] = await this.participationService.getReceivedRequestList(
+      organizerOptions,
+      page,
+    );
     const result = {
       results: requestList,
       page,
@@ -278,15 +300,15 @@ export class ResolverService {
   };
 
   getSentParticipationRequestList = async (
-    userId: number,
+    userOptions: BotUserOptions,
     page = FIRST_PAGE,
   ) => {
-    const userData = await this.userService.getUser(userId);
+    const userData = await this.userService.getUser(userOptions);
 
     const [
       requestList,
       total,
-    ] = await this.participationService.getSentRequestList(userId, page);
+    ] = await this.participationService.getSentRequestList(userOptions, page);
     const activities = requestList.reduce(
       (
         acc: PaginatedResponse<Activity>,
@@ -308,13 +330,9 @@ export class ResolverService {
     context: MessengerContext,
     page = FIRST_PAGE,
   ) => {
-    const {
-      _session: {
-        user: { id: userId },
-      },
-    } = context;
-    const { locale, timezone } = await this.userService.getUser(userId);
-    const userLocation = await this.userService.getLocation(userId);
+    const userOptions = getUserOptions(context);
+    const { locale, timezone } = await this.userService.getUser(userOptions);
+    const userLocation = await this.userService.getLocation(userOptions);
     if (!userLocation) {
       context.setState({
         current_state: states.get_upcoming_activities,
@@ -324,7 +342,7 @@ export class ResolverService {
 
     context.resetState();
     const activityListData = await this.activityService.getUpcomingActivities(
-      userId,
+      userOptions,
       page,
     );
 
@@ -346,11 +364,6 @@ export class ResolverService {
     longitude: number,
     locale: string,
   ) => {
-    const {
-      _session: {
-        user: { id: userId },
-      },
-    } = context;
     const validationResponse = this.validationService.validateLocation([
       latitude,
       longitude,
@@ -360,7 +373,8 @@ export class ResolverService {
     }
 
     try {
-      await this.userService.upsertLocation(userId, latitude, longitude);
+      const userOptions = getUserOptions(context);
+      await this.userService.upsertLocation(userOptions, latitude, longitude);
 
       switch (context.state.current_state) {
         case states.initialize_activity:
@@ -376,12 +390,10 @@ export class ResolverService {
   };
 
   handleNotificationSubscription = async (context: MessengerContext) => {
-    const {
-      _session: {
-        user: { id: userId },
-      },
-    } = context;
-    const { is_subscribed, locale } = await this.userService.getUser(userId);
+    const userOptions = getUserOptions(context);
+    const { is_subscribed, locale } = await this.userService.getUser(
+      userOptions,
+    );
     if (!is_subscribed) {
       context.setState({
         current_state: states.subscribe_to_notifications,
@@ -396,14 +408,10 @@ export class ResolverService {
   };
 
   initializeActivity = async (context: MessengerContext) => {
-    const {
-      _session: {
-        user: { id: userId },
-      },
-    } = context;
-    const locale = await this.userService.getLocale(userId);
+    const userOptions = getUserOptions(context);
+    const locale = await this.userService.getLocale(userOptions);
 
-    const userLocation = await this.userService.getLocation(userId);
+    const userLocation = await this.userService.getLocation(userOptions);
     if (!userLocation) {
       context.setState({
         current_state: states.initialize_activity,
@@ -420,12 +428,8 @@ export class ResolverService {
   };
 
   initializeFeedback = async (context: MessengerContext) => {
-    const {
-      _session: {
-        user: { id: userId },
-      },
-    } = context;
-    const locale = await this.userService.getLocale(userId);
+    const userOptions = getUserOptions(context);
+    const locale = await this.userService.getLocale(userOptions);
 
     context.setState({
       current_state: states.initialize_feedback,
@@ -436,9 +440,10 @@ export class ResolverService {
 
   registerUser = async (
     userDto: BotUser,
+    userOptions: BotUserOptions,
   ): Promise<MessengerTypes.TextMessage | ButtonTemplate> => {
     try {
-      await this.userService.registerUser(userDto);
+      await this.userService.registerUser(userDto, userOptions);
       return this.responseService.getRegisterUserSuccessResponse(
         userDto.locale,
       );
@@ -452,12 +457,12 @@ export class ResolverService {
 
   rejectParticipation = async (
     participationId: string,
-    organizerId: number,
+    organizerOptions: BotUserOptions,
     locale: string,
   ): Promise<string> => {
     try {
       await this.participationService
-        .rejectParticipation(participationId, organizerId)
+        .rejectParticipation(participationId, organizerOptions)
         .then(async () =>
           this.notificationService.notifyParticipantAboutParticipationUpdate(
             participationId,
@@ -472,13 +477,13 @@ export class ResolverService {
 
   resetRemainingVacancies = async (
     activityId: string,
-    organizerId: number,
+    organizerOptions: BotUserOptions,
     locale: string,
   ): Promise<string> => {
     try {
       await this.activityService.resetRemainingVacancies(
         activityId,
-        organizerId,
+        organizerOptions,
       );
       return this.responseService.getResetRemainingVacanciesSuccessResponse(
         locale,
@@ -490,10 +495,12 @@ export class ResolverService {
     }
   };
 
-  subscribeToNotifications = async (userId: number): Promise<string> => {
-    const locale = await this.userService.getLocale(userId);
+  subscribeToNotifications = async (
+    userOptions: BotUserOptions,
+  ): Promise<string> => {
+    const locale = await this.userService.getLocale(userOptions);
     try {
-      await this.userService.subscribeToNotifications(userId);
+      await this.userService.subscribeToNotifications(userOptions);
 
       return this.responseService.getSubscribeToNotificationsSuccessResponse(
         locale,
@@ -507,13 +514,13 @@ export class ResolverService {
 
   subtractRemainingVacancies = async (
     activityId: string,
-    organizerId: number,
+    organizerOptions: BotUserOptions,
     locale: string,
   ) => {
     try {
       const updatedActivity = await this.activityService.subtractRemainingVacancies(
         activityId,
-        organizerId,
+        organizerOptions,
       );
 
       return this.responseService.getUpdateRemainingVacanciesSuccessResponse(
@@ -527,10 +534,12 @@ export class ResolverService {
     }
   };
 
-  unsubscribeToNotifications = async (userId: number): Promise<string> => {
-    const locale = await this.userService.getLocale(userId);
+  unsubscribeToNotifications = async (
+    userOptions: BotUserOptions,
+  ): Promise<string> => {
+    const locale = await this.userService.getLocale(userOptions);
     try {
-      await this.userService.unsubscribeToNotifications(userId);
+      await this.userService.unsubscribeToNotifications(userOptions);
 
       return this.responseService.getUnsubscribeToNotificationsSuccessResponse(
         locale,
@@ -549,8 +558,8 @@ export class ResolverService {
     );
   };
 
-  updateUserLocation = async (userId: number) => {
-    const locale = await this.userService.getLocale(userId);
+  updateUserLocation = async (userOptions: BotUserOptions) => {
+    const locale = await this.userService.getLocale(userOptions);
 
     return this.responseService.getUserLocationI18n(locale);
   };

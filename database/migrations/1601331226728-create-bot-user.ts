@@ -8,8 +8,17 @@ export class CreateBotUser1601331226728 implements MigrationInterface {
         columns: [
           {
             name: 'id',
-            type: 'bigint',
+            type: 'uuid',
+            default: 'uuid_generate_v4()',
+            generationStrategy: 'uuid',
+            isGenerated: true,
             isPrimary: true,
+          },
+          {
+            name: 'messenger_id',
+            type: 'varchar',
+            isNullable: true,
+            isUnique: true,
           },
           {
             name: 'location_id',

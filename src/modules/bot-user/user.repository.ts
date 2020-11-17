@@ -6,11 +6,13 @@ import { ParticipationEntity } from 'modules/participation/participation.entity'
 import { PARTICIPATION_STATUS } from 'modules/participation/participation.enums';
 import { BotUser } from './user.dto';
 import { BotUserEntity } from './user.entity';
+import { BotUserOptions } from './user.types';
 
 @EntityRepository(BotUserEntity)
 export class BotUserRepository extends Repository<BotUserEntity> {
-  async getLocation(userId: number): Promise<UserLocation> {
-    const { location } = await this.findOne(userId, {
+  async getLocation(userOptions: BotUserOptions): Promise<UserLocation> {
+    const { id: userId, location } = await this.findOne({
+      where: userOptions,
       relations: ['location'],
     });
     if (!location) throw new Error("User's location is not set");
@@ -24,7 +26,7 @@ export class BotUserRepository extends Repository<BotUserEntity> {
     return userLocation;
   }
 
-  async getParticipantListByActivity(activity_id: string): Promise<BotUser[]> {
+  async getParticipantListByActivity(activityId: string): Promise<BotUser[]> {
     return this.createQueryBuilder('user')
       .leftJoin('user.participations', 'participations')
       .where((queryBuilder: SelectQueryBuilder<ActivityEntity>) => {
@@ -32,8 +34,8 @@ export class BotUserRepository extends Repository<BotUserEntity> {
           .subQuery()
           .select('activity_id')
           .from(ParticipationEntity, 'participation')
-          .where('participation.activity_id = CAST(:activity_id AS uuid)', {
-            activity_id,
+          .where('participation.activity_id = CAST(:activityId AS uuid)', {
+            activityId,
           })
           .andWhere('participation.status = :status', {
             status: PARTICIPATION_STATUS.ACCEPTED,
@@ -59,22 +61,27 @@ export class BotUserRepository extends Repository<BotUserEntity> {
       )
       .getMany();
 
-  async getUser(id: number): Promise<BotUser> {
-    const user = await this.findOne(id);
+  async getUser(userOptions: BotUserOptions): Promise<BotUser> {
+    const user = await this.findOne({ where: userOptions });
     if (!user) throw new Error("User doesn't exist");
 
     return user;
   }
 
-  async registerUser(userDto: BotUser): Promise<BotUser> {
-    const user = await this.findOne(userDto.id);
+  async registerUser(
+    userDto: BotUser,
+    userOptions: BotUserOptions,
+  ): Promise<BotUser> {
+    const user = await this.findOne({ where: userOptions });
     if (!user) return this.save(userDto);
 
     return user;
   }
 
-  async subscribeToNotifications(userId: number): Promise<BotUser> {
-    const user = await this.findOne(userId);
+  async subscribeToNotifications(
+    userOptions: BotUserOptions,
+  ): Promise<BotUser> {
+    const user = await this.findOne({ where: userOptions });
     if (!user) throw new Error("User doesn't exist");
 
     return this.save({
@@ -83,8 +90,10 @@ export class BotUserRepository extends Repository<BotUserEntity> {
     });
   }
 
-  async unsubscribeToNotifications(userId: number): Promise<BotUser> {
-    const user = await this.findOne(userId);
+  async unsubscribeToNotifications(
+    userOptions: BotUserOptions,
+  ): Promise<BotUser> {
+    const user = await this.findOne({ where: userOptions });
     if (!user) throw new Error("User doesn't exist");
 
     return this.save({
@@ -93,8 +102,11 @@ export class BotUserRepository extends Repository<BotUserEntity> {
     });
   }
 
-  async upsertLocation(userId: number, location_id: string): Promise<BotUser> {
-    const user = await this.findOne(userId);
+  async upsertLocation(
+    userOptions: BotUserOptions,
+    location_id: string,
+  ): Promise<BotUser> {
+    const user = await this.findOne({ where: userOptions });
     if (!user) throw new Error("User doesn't exist");
 
     if (user.location_id === location_id) return user;
@@ -105,8 +117,11 @@ export class BotUserRepository extends Repository<BotUserEntity> {
     });
   }
 
-  async upsertTimezone(userId: number, timezone: string): Promise<BotUser> {
-    const user = await this.findOne(userId);
+  async upsertTimezone(
+    userOptions: BotUserOptions,
+    timezone: string,
+  ): Promise<BotUser> {
+    const user = await this.findOne({ where: userOptions });
     if (!user) throw new Error("User doesn't exist");
 
     if (user.timezone === timezone) return user;
@@ -118,13 +133,14 @@ export class BotUserRepository extends Repository<BotUserEntity> {
   }
 
   async validateActivityLocation(
-    userId: number,
+    userOptions: BotUserOptions,
     latitude: number,
     longitude: number,
-  ): Promise<boolean> {
+  ): Promise<BotUser> {
+    const [platformIdKey] = Object.keys(userOptions);
     const user = await this.createQueryBuilder('user')
       .leftJoinAndSelect('user.location', 'location')
-      .where('user.id = CAST(:user_id AS bigint)', { user_id: userId })
+      .where(`user.${platformIdKey} = :${platformIdKey}`, userOptions)
       .andWhere(
         'ST_Distance(ST_Point(location.longitude, location.latitude)::geography, ST_Point(:longitude, :latitude)::geography) < :distance',
         {
@@ -134,13 +150,13 @@ export class BotUserRepository extends Repository<BotUserEntity> {
         },
       )
       .getOne();
-    if (!user) return false;
+    if (!user) return;
 
-    return true;
+    return user;
   }
 
-  async validateUser(id: number): Promise<BotUser> {
-    const user = await this.findOne(id);
+  async validateUser(userOptions: BotUserOptions): Promise<BotUser> {
+    const user = await this.findOne({ where: userOptions });
     if (!user) return;
 
     return user;

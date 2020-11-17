@@ -4,6 +4,7 @@ import {
   DEFAULT_MESSENGER_GENDER,
   DEFAULT_MESSENGER_LOCALE,
 } from 'common/config/constants';
+import { getUserOptions } from 'common/utils';
 import {
   ABOUT_ME_PAYLOAD,
   CREATED_ACTIVITIES_PAYLOAD,
@@ -42,23 +43,22 @@ export class MessengerBotController {
   ) {}
 
   private aboutMeHandler = async (context: MessengerContext) => {
-    const response = await this.resolverService.getAboutMeResponse(
-      context._session.user.id,
-    );
+    const userOptions = getUserOptions(context);
+    const response = await this.resolverService.getAboutMeResponse(userOptions);
 
     return this.say(context, response);
   };
 
   private createdActivitiesHandler = async (context: MessengerContext) => {
+    const organizerOptions = getUserOptions(context);
     const response = await this.resolverService.getCreatedActivities(
-      context._session.user.id,
+      organizerOptions,
     );
     return this.say(context, response);
   };
 
   private getStartedButtonHandler = async (context: MessengerContext) => {
     const {
-      id,
       firstName,
       gender = DEFAULT_MESSENGER_GENDER,
       lastName,
@@ -74,14 +74,18 @@ export class MessengerBotController {
         'profile_pic',
       ],
     });
-    const response = await this.resolverService.registerUser({
-      id: +id,
-      first_name: firstName,
-      gender,
-      image_url,
-      last_name: lastName,
-      locale,
-    });
+    const userOptions = getUserOptions(context);
+    const response = await this.resolverService.registerUser(
+      {
+        ...userOptions,
+        first_name: firstName,
+        gender,
+        image_url,
+        last_name: lastName,
+        locale,
+      },
+      userOptions,
+    );
 
     return this.say(context, response);
   };
@@ -97,8 +101,9 @@ export class MessengerBotController {
   };
 
   private joinedActivitiesHandler = async (context: MessengerContext) => {
+    const participantOptions = getUserOptions(context);
     const response = await this.resolverService.getJoinedActivities(
-      context._session.user.id,
+      participantOptions,
     );
     return this.say(context, response);
   };
@@ -154,8 +159,9 @@ export class MessengerBotController {
   private receivedParticipationRequestsHandler = async (
     context: MessengerContext,
   ) => {
+    const organizerOptions = getUserOptions(context);
     const response = await this.resolverService.getReceivedParticipationRequestList(
-      context._session.user.id,
+      organizerOptions,
     );
 
     return this.say(context, response);
@@ -191,8 +197,9 @@ export class MessengerBotController {
   private sentParticipationRequestsHandler = async (
     context: MessengerContext,
   ) => {
+    const userOptions = getUserOptions(context);
     const response = await this.resolverService.getSentParticipationRequestList(
-      context._session.user.id,
+      userOptions,
     );
 
     return this.say(context, response);
@@ -201,8 +208,9 @@ export class MessengerBotController {
   private subscribeToNotificationsHandler = async (
     context: MessengerContext,
   ) => {
+    const userOptions = getUserOptions(context);
     const response = await this.resolverService.subscribeToNotifications(
-      context._session.user.id,
+      userOptions,
     );
     context.resetState();
 
@@ -212,8 +220,9 @@ export class MessengerBotController {
   private unsubscribeToNotificationsHandler = async (
     context: MessengerContext,
   ) => {
+    const userOptions = getUserOptions(context);
     const response = await this.resolverService.unsubscribeToNotifications(
-      context._session.user.id,
+      userOptions,
     );
     context.resetState();
 
@@ -226,9 +235,8 @@ export class MessengerBotController {
   };
 
   private updateUserLocationHandler = async (context: MessengerContext) => {
-    const response = await this.resolverService.updateUserLocation(
-      context._session.user.id,
-    );
+    const userOptions = getUserOptions(context);
+    const response = await this.resolverService.updateUserLocation(userOptions);
 
     return this.say(context, response);
   };

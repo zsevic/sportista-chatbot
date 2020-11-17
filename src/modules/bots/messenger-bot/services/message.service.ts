@@ -1,6 +1,7 @@
 import { parse } from 'querystring';
 import { Injectable } from '@nestjs/common';
 import { MessengerContext } from 'bottender';
+import { getUserOptions } from 'common/utils';
 import {
   nextStates,
   notificationSubscriptionStates,
@@ -21,12 +22,12 @@ export class MessageService {
   ) {}
 
   handleMessage = async (context: MessengerContext): Promise<any> => {
+    const userOptions = getUserOptions(context);
     const {
-      _session: {
-        user: { id: userId },
-      },
-    } = context;
-    const { locale, timezone } = await this.userService.getUser(userId);
+      id: organizerId,
+      locale,
+      timezone,
+    } = await this.userService.getUser(userOptions);
 
     let validationResponse = this.validationService.validateMessage(
       context,
@@ -75,7 +76,7 @@ export class MessageService {
       );
       if (validationResponse) return validationResponse;
 
-      return this.resolverService.createActivity(context, locale);
+      return this.resolverService.createActivity(context, organizerId, locale);
     }
 
     context.setState(updatedState);

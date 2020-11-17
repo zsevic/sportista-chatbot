@@ -6,7 +6,7 @@ import {
   ManyToMany,
   ManyToOne,
   OneToMany,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { ActivityEntity } from 'modules/activity/activity.entity';
@@ -15,10 +15,16 @@ import { LocationEntity } from 'modules/location/location.entity';
 
 @Entity('bot_user')
 export class BotUserEntity {
-  @PrimaryColumn({
-    type: 'bigint',
+  @PrimaryGeneratedColumn({
+    type: 'uuid',
   })
-  id: number;
+  id: string;
+
+  @Column({
+    nullable: true,
+    unique: true,
+  })
+  messenger_id?: string;
 
   @Column({ nullable: true, type: 'uuid' })
   location_id?: string;
