@@ -22,6 +22,7 @@
     "NO_REMAINING_VACANCIES": "Skupili smo se za {{type}}",
     "NO_REMAINING_VACANCIES_BUTTON": "Skupili smo se",
     "NO_UPCOMING_ACTIVITIES": "Nema ništa u blizini",
+    "NOTIFY_ORGANIZER_ABOUT_APPLICATION": "Organizator je obavešten, dobićeš odgovor da li je tvoja prijava prihvaćena",
     "NOTIFY_ORGANIZER": "Organizator je obavešten",
     "NOTIFY_PARTICIPANTS": "{COUNT, plural, one {Učesnik je obavešten} other {Učesnici su obavešteni}}",
     "OPTIONS": "Prikaži opcije",

@@ -22,6 +22,7 @@
     "NO_REMAINING_VACANCIES": "We gathered for {{type}}",
     "NO_REMAINING_VACANCIES_BUTTON": "We gathered",
     "NO_UPCOMING_ACTIVITIES": "There are no upcoming activities",
+    "NOTIFY_ORGANIZER_ABOUT_APPLICATION": "Organizer is notified, you will get a message about your request acceptance",
     "NOTIFY_ORGANIZER": "Organizer is notified",
     "NOTIFY_PARTICIPANTS": "{COUNT, plural, one {Participant is} other {Participants are}} notified",
     "OPTIONS": "Show me the options",
