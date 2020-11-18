@@ -1,4 +1,3 @@
-import { MessengerContext } from 'bottender';
 import { utcToZonedTime } from 'date-fns-tz';
 import {
   DEFAULT_MESSENGER_LOCALE,
@@ -6,7 +5,6 @@ import {
   PAGE_SIZE,
 } from 'common/config/constants';
 import { DatetimeOptions } from 'common/types';
-import { BotUserOptions } from 'modules/bot-user/user.types';
 
 export const formatDatetime = (
   datetime: string,

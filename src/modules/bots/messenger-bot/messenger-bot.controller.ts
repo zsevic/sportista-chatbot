@@ -1,4 +1,4 @@
-import { Controller, Logger } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { MessengerContext } from 'bottender';
 import {
   DEFAULT_MESSENGER_GENDER,
@@ -19,12 +19,7 @@ import {
   UPCOMING_ACTIVITIES_PAYLOAD,
   UPDATE_USER_LOCATION_PAYLOAD,
 } from './messenger-bot.constants';
-import { Message } from './messenger-bot.types';
-import {
-  isButtonTemplate,
-  isGenericTemplate,
-  isQuickReplyTemplate,
-} from './messenger-bot.type-guards';
+import { PayloadHandlers } from './messenger-bot.types';
 import { getUserOptions } from './messenger-bot.utils';
 import { LocationService } from './services/location.service';
 import { MessageService } from './services/message.service';
@@ -33,8 +28,6 @@ import { ResolverService } from './services/resolver.service';
 
 @Controller()
 export class MessengerBotController {
-  private readonly logger = new Logger(MessengerBotController.name);
-
   constructor(
     private readonly locationService: LocationService,
     private readonly messageService: MessageService,
@@ -44,17 +37,12 @@ export class MessengerBotController {
 
   private aboutMeHandler = async (context: MessengerContext) => {
     const userOptions = getUserOptions(context);
-    const response = await this.resolverService.getAboutMeResponse(userOptions);
-
-    return this.say(context, response);
+    return this.resolverService.getAboutMeResponse(userOptions);
   };
 
   private createdActivitiesHandler = async (context: MessengerContext) => {
     const organizerOptions = getUserOptions(context);
-    const response = await this.resolverService.getCreatedActivities(
-      organizerOptions,
-    );
-    return this.say(context, response);
+    return this.resolverService.getCreatedActivities(organizerOptions);
   };
 
   private getStartedButtonHandler = async (context: MessengerContext) => {
@@ -75,7 +63,7 @@ export class MessengerBotController {
       ],
     });
     const userOptions = getUserOptions(context);
-    const response = await this.resolverService.registerUser(
+    return this.resolverService.registerUser(
       {
         ...userOptions,
         first_name: firstName,
@@ -86,34 +74,21 @@ export class MessengerBotController {
       },
       userOptions,
     );
-
-    return this.say(context, response);
   };
 
-  private initializeActivityHandler = async (context: MessengerContext) => {
-    const response = await this.resolverService.initializeActivity(context);
-    return this.say(context, response);
-  };
+  private initializeActivityHandler = async (context: MessengerContext) =>
+    this.resolverService.initializeActivity(context);
 
-  private initializeFeedbackHandler = async (context: MessengerContext) => {
-    const response = await this.resolverService.initializeFeedback(context);
-    return this.say(context, response);
-  };
+  private initializeFeedbackHandler = async (context: MessengerContext) =>
+    this.resolverService.initializeFeedback(context);
 
   private joinedActivitiesHandler = async (context: MessengerContext) => {
     const participantOptions = getUserOptions(context);
-    const response = await this.resolverService.getJoinedActivities(
-      participantOptions,
-    );
-    return this.say(context, response);
+    return this.resolverService.getJoinedActivities(participantOptions);
   };
 
-  private locationHandler = async (context: MessengerContext) => {
-    const response = await this.locationService.handleLocation(context);
-    if (!response) return;
-
-    return this.say(context, response);
-  };
+  private locationHandler = async (context: MessengerContext) =>
+    this.locationService.handleLocation(context);
 
   messageHandler = async (context: MessengerContext) => {
     const { event } = context;
@@ -124,21 +99,11 @@ export class MessengerBotController {
     if (this.quickReplyHandlers[event.quickReply?.payload])
       return this.quickReplyHandlers[event.quickReply.payload](context);
 
-    const response = await this.messageService.handleMessage(context);
-    if (!response) return;
-
-    return this.say(context, response);
+    return this.messageService.handleMessage(context);
   };
 
-  private notificationSubscriptionHandler = async (
-    context: MessengerContext,
-  ) => {
-    const response = await this.resolverService.handleNotificationSubscription(
-      context,
-    );
-
-    return this.say(context, response);
-  };
+  private notificationSubscriptionHandler = async (context: MessengerContext) =>
+    this.resolverService.handleNotificationSubscription(context);
 
   postbackHandler = async (context: MessengerContext) => {
     const {
@@ -150,59 +115,23 @@ export class MessengerBotController {
     if (this.postbackHandlers[buttonPayload])
       return this.postbackHandlers[buttonPayload](context);
 
-    const response = await this.postbackService.handlePostback(context);
-    if (!response) return;
-
-    return this.say(context, response);
+    return this.postbackService.handlePostback(context);
   };
 
   private receivedParticipationRequestsHandler = async (
     context: MessengerContext,
   ) => {
     const organizerOptions = getUserOptions(context);
-    const response = await this.resolverService.getReceivedParticipationRequestList(
+    return this.resolverService.getReceivedParticipationRequestList(
       organizerOptions,
     );
-
-    return this.say(context, response);
-  };
-
-  say = async (context: MessengerContext, message: Message | Message[]) => {
-    const {
-      _session: {
-        user: { id: recipientId },
-      },
-    } = context;
-    if (typeof message === 'string') {
-      return context.client.sendText(recipientId, message);
-    } else if (isQuickReplyTemplate(message)) {
-      return context.client.sendText(recipientId, message.text, {
-        quickReplies: message.quickReplies,
-      });
-    } else if (isButtonTemplate(message)) {
-      return context.client.sendTemplate(recipientId, {
-        templateType: 'button',
-        ...message,
-      });
-    } else if (isGenericTemplate(message)) {
-      return context.client.sendGenericTemplate(recipientId, message.cards);
-    } else if (Array.isArray(message)) {
-      return message.reduce((promise, msg) => {
-        return promise.then(() => this.say(context, msg));
-      }, Promise.resolve(undefined));
-    }
-    this.logger.error('Invalid format for .say() message.');
   };
 
   private sentParticipationRequestsHandler = async (
     context: MessengerContext,
   ) => {
     const userOptions = getUserOptions(context);
-    const response = await this.resolverService.getSentParticipationRequestList(
-      userOptions,
-    );
-
-    return this.say(context, response);
+    return this.resolverService.getSentParticipationRequestList(userOptions);
   };
 
   private subscribeToNotificationsHandler = async (
@@ -214,7 +143,7 @@ export class MessengerBotController {
     );
     context.resetState();
 
-    return this.say(context, response);
+    return response;
   };
 
   private unsubscribeToNotificationsHandler = async (
@@ -226,22 +155,18 @@ export class MessengerBotController {
     );
     context.resetState();
 
-    return this.say(context, response);
+    return response;
   };
 
-  private upcomingActivitiesHandler = async (context: MessengerContext) => {
-    const response = await this.resolverService.getUpcomingActivities(context);
-    return this.say(context, response);
-  };
+  private upcomingActivitiesHandler = async (context: MessengerContext) =>
+    this.resolverService.getUpcomingActivities(context);
 
   private updateUserLocationHandler = async (context: MessengerContext) => {
     const userOptions = getUserOptions(context);
-    const response = await this.resolverService.updateUserLocation(userOptions);
-
-    return this.say(context, response);
+    return this.resolverService.updateUserLocation(userOptions);
   };
 
-  postbackHandlers = {
+  postbackHandlers: PayloadHandlers = {
     [ABOUT_ME_PAYLOAD]: this.aboutMeHandler,
     [CREATED_ACTIVITIES_PAYLOAD]: this.createdActivitiesHandler,
     [GET_STARTED_PAYLOAD]: this.getStartedButtonHandler,
@@ -260,7 +185,7 @@ export class MessengerBotController {
     [UPDATE_USER_LOCATION_PAYLOAD]: this.updateUserLocationHandler,
   };
 
-  quickReplyHandlers = {
+  quickReplyHandlers: PayloadHandlers = {
     [CREATED_ACTIVITIES_PAYLOAD]: this.createdActivitiesHandler,
     [INITIALIZE_ACTIVITY_PAYLOAD]: this.initializeActivityHandler,
     [JOINED_ACTIVITIES_PAYLOAD]: this.joinedActivitiesHandler,
