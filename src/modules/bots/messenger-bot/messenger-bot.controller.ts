@@ -4,7 +4,6 @@ import {
   DEFAULT_MESSENGER_GENDER,
   DEFAULT_MESSENGER_LOCALE,
 } from 'common/config/constants';
-import { getUserOptions } from 'common/utils';
 import {
   ABOUT_ME_PAYLOAD,
   CREATED_ACTIVITIES_PAYLOAD,
@@ -19,13 +18,14 @@ import {
   UNSUBSCRIBE_TO_NOTIFICATIONS_PAYLOAD,
   UPCOMING_ACTIVITIES_PAYLOAD,
   UPDATE_USER_LOCATION_PAYLOAD,
-} from 'modules/bots/messenger-bot/messenger-bot.constants';
+} from './messenger-bot.constants';
+import { Message } from './messenger-bot.types';
 import {
   isButtonTemplate,
   isGenericTemplate,
   isQuickReplyTemplate,
-} from 'modules/bots/messenger-bot/messenger-bot.type-guards';
-import { Message } from 'modules/bots/messenger-bot/messenger-bot.types';
+} from './messenger-bot.type-guards';
+import { getUserOptions } from './messenger-bot.utils';
 import { LocationService } from './services/location.service';
 import { MessageService } from './services/message.service';
 import { PostbackService } from './services/postback.service';

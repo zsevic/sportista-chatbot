@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { MessengerContext } from 'bottender';
 import { messenger, router } from 'bottender/router';
 import { DEFAULT_MESSENGER_LOCALE } from 'common/config/constants';
-import { getUserOptions } from 'common/utils';
 import { GET_STARTED_PAYLOAD } from 'modules/bots/messenger-bot/messenger-bot.constants';
 import { MessengerBotController } from 'modules/bots/messenger-bot/messenger-bot.controller';
+import { getUserOptions } from 'modules/bots/messenger-bot/messenger-bot.utils';
 import { BotUserService } from 'modules/bot-user/user.service';
 import { ResponseService } from './response.service';
 

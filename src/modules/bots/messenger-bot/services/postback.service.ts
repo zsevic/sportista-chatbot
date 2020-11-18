@@ -1,7 +1,6 @@
 import { parse } from 'querystring';
 import { MessengerContext } from 'bottender';
 import { Injectable } from '@nestjs/common';
-import { getUserOptions } from 'common/utils';
 import {
   ACCEPT_PARTICIPATION_TYPE,
   ACTIVITY_OPTIONS_TYPE,
@@ -23,6 +22,7 @@ import {
   UPDATE_REMAINING_VACANCIES_TYPE,
   USER_LOCATION_TYPE,
 } from 'modules/bots/messenger-bot/messenger-bot.constants';
+import { getUserOptions } from 'modules/bots/messenger-bot/messenger-bot.utils';
 import { BotUserService } from 'modules/bot-user/user.service';
 import { ResolverService } from './resolver.service';
 import { ResponseService } from './response.service';
@@ -163,6 +163,7 @@ export class PostbackService {
         );
       }
       default:
+        return this.responseService.getDefaultResponse(locale);
     }
   };
 }

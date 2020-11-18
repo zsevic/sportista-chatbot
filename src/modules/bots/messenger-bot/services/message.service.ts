@@ -1,12 +1,12 @@
 import { parse } from 'querystring';
 import { Injectable } from '@nestjs/common';
 import { MessengerContext } from 'bottender';
-import { getUserOptions } from 'common/utils';
 import {
   nextStates,
   notificationSubscriptionStates,
   states,
 } from 'modules/bots/messenger-bot/messenger-bot.states';
+import { getUserOptions } from 'modules/bots/messenger-bot/messenger-bot.utils';
 import { BotUserService } from 'modules/bot-user/user.service';
 import { ResolverService } from './resolver.service';
 import { ResponseService } from './response.service';

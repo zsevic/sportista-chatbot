@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { MessengerContext } from 'bottender';
-import { getUserOptions } from 'common/utils';
 import { ActivityService } from 'modules/activity/activity.service';
 import {
   nextStates,
   states,
 } from 'modules/bots/messenger-bot/messenger-bot.states';
-import { ResponseService } from 'modules/bots/messenger-bot/services/response.service';
+import { getUserOptions } from 'modules/bots/messenger-bot/messenger-bot.utils';
 import { PINNED_LOCATION } from 'modules/location/location.constants';
 import { BotUserService } from 'modules/bot-user/user.service';
+import { ResponseService } from './response.service';
 
 @Injectable()
 export class LocationService {

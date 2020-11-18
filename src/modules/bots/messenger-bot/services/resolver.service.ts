@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { MessengerContext, MessengerTypes } from 'bottender';
 import { FIRST_PAGE } from 'common/config/constants';
 import { PaginatedResponse } from 'common/dtos';
-import { getUserOptions } from 'common/utils';
 import { Activity } from 'modules/activity/activity.dto';
 import { ActivityService } from 'modules/activity/activity.service';
 import {
@@ -16,6 +15,7 @@ import {
   ButtonTemplate,
   I18nOptions,
 } from 'modules/bots/messenger-bot/messenger-bot.types';
+import { getUserOptions } from 'modules/bots/messenger-bot/messenger-bot.utils';
 import { FeedbackService } from 'modules/feedback/feedback.service';
 import { NotificationService } from 'modules/notification/notification.service';
 import { Participation } from 'modules/participation/participation.dto';
