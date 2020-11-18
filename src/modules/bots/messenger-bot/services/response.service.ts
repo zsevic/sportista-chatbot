@@ -414,7 +414,7 @@ export class ResponseService {
     locale: string,
   ): Button<ButtonTemplate> => {
     const url = `${this.configService.get(
-      'EXTENSIONS_URL',
+      'MESSENGER_EXTENSIONS_URL',
     )}/extensions/datetime?lang=${locale}`;
 
     return {
@@ -984,7 +984,7 @@ export class ResponseService {
     locale,
   }): Button<ButtonTemplate>[] => {
     const url = `${this.configService.get(
-      'EXTENSIONS_URL',
+      'MESSENGER_EXTENSIONS_URL',
     )}/extensions/location?lang=${locale}`;
 
     const response: Button<ButtonTemplate>[] = [

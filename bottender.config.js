@@ -43,7 +43,7 @@ module.exports = {
         },
         greeting: GREETING_TEXT,
         // persistentMenu: PERSISTENT_MENU,
-        whitelistedDomains: [process.env.EXTENSIONS_URL],
+        whitelistedDomains: [process.env.MESSENGER_EXTENSIONS_URL],
       },
     },
   },

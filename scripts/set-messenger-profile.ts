@@ -19,7 +19,7 @@ client
     },
     greeting: GREETING_TEXT,
     persistentMenu: PERSISTENT_MENU,
-    whitelistedDomains: [process.env.EXTENSIONS_URL],
+    whitelistedDomains: [process.env.MESSENGER_EXTENSIONS_URL],
   })
   .then(() => console.log('Messenger profile is set'))
   .catch(() => console.error('Messenger profile is not set'));

@@ -26,7 +26,7 @@ npm run start:dev
 
 ```bash
 npx ngrok http 3000
-export EXTENSIONS_URL=<URL>
+export MESSENGER_EXTENSIONS_URL=<URL>
 npm run messenger-profile:set
 echo "Y" | npm run messenger-webhook:set <URL>/webhooks/messenger
 ```
