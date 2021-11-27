@@ -1,6 +1,6 @@
 # sportista-chatbot
 
-> Chatbot for sportista.fit
+> Messenger chatbot for managing sports activities
 
 ## Getting started
 
@@ -8,6 +8,7 @@
 
 - Node version 14
 - Local PostgreSQL database
+- Local Redis instance
 
 ### Setup
 
@@ -19,6 +20,7 @@ cd sportista-chatbot
 cp .env.sample .env # change values after copying
 npm i
 pg_ctl -D /usr/local/var/postgres restart
+redis-server
 npm run start:dev
 ```
 
@@ -65,4 +67,4 @@ Generated at `/api-docs` endpoint
 
 ### Technologies used
 
-- Node.js, TypeScript, NestJS, TypeORM, Bottender
+- Node.js, TypeScript, NestJS, Bottender, Redis, TypeORM
