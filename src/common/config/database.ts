@@ -16,6 +16,10 @@ export default registerAs('database', () => {
   const environmentsConfig = {
     production: {
       ...options,
+      migrationsRun: true,
+      ssl: {
+        rejectUnauthorized: false,
+      },
       type: 'postgres',
       url: process.env.DATABASE_URL,
     },
